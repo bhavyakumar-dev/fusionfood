@@ -1530,7 +1530,7 @@ class FusionApp {
         } else {
           sound.playWrong();
           btn.classList.add('wrong-shake');
-          setTimeout(() => btn.classList.remove('wrong-shake'), 400);
+          setTimeout(() => btn.classList.remove('wrong-shake'), 220);
 
           const impostor = dish.pantryItems.find(i => i.name === name);
           feedbackBox.innerHTML = `
@@ -2137,18 +2137,18 @@ class FusionApp {
     const arcDeg = 360 / totalSegments;
 
     const targetIndex = Math.floor(Math.random() * totalSegments);
-    const extraSpins = 5 + Math.floor(Math.random() * 3);
+    const extraSpins = 3 + Math.floor(Math.random() * 2);
     const targetAngle = (extraSpins * 360) + (360 - (targetIndex * arcDeg) - (arcDeg / 2) - 90);
 
-    canvas.style.transition = 'transform 3.8s cubic-bezier(0.15, 0.9, 0.25, 1)';
+    canvas.style.transition = 'transform 1.35s cubic-bezier(0.12, 0.9, 0.2, 1)';
     canvas.style.transform = `rotate(${targetAngle}deg)`;
 
     let tickCount = 0;
     const tickInterval = setInterval(() => {
       sound.playTick();
       tickCount++;
-      if (tickCount > 24) clearInterval(tickInterval);
-    }, 140);
+      if (tickCount > 18) clearInterval(tickInterval);
+    }, 65);
 
     setTimeout(() => {
       this.isSpinning = false;
@@ -2156,7 +2156,7 @@ class FusionApp {
       sound.playFanfare();
       launchConfetti();
       this.showScienceExplainer(CULINARY_SCIENCE_TOPICS[targetIndex]);
-    }, 3900);
+    }, 1400);
   }
 
   showScienceExplainer(topic) {
@@ -2748,7 +2748,7 @@ Guidelines:
         const fallbackText = this.getContextualFallback(dish, prompt);
         this.appendAiMessage(messagesContainer, fallbackText);
         sound.playCorrect();
-      }, 550);
+      }, 120);
     }
   }
 

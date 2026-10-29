@@ -69,8 +69,8 @@
   --radius-lg: 24px;
   --radius-full: 9999px;
   
-  --transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
-  --bounce: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  --transition: transform 0.14s ease, opacity 0.14s ease, background-color 0.14s ease, border-color 0.14s ease, box-shadow 0.14s ease;
+  --bounce: transform 0.15s ease-out, box-shadow 0.15s ease-out, border-color 0.12s ease;
 }
 
 [data-theme="dark"] {
@@ -182,6 +182,8 @@ a {
   color: var(--primary);
   text-decoration: none;
   transition: var(--transition);
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 button {
@@ -191,6 +193,8 @@ button {
   outline: none;
   background: transparent;
   transition: var(--transition);
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* General Button Styles with RGB Hover Aura */
@@ -433,13 +437,13 @@ button {
 
 .main-tab-pane.active {
   display: block;
-  animation: tabFadeIn 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: tabFadeIn 0.12s ease-out;
 }
 
 @keyframes tabFadeIn {
   from {
     opacity: 0;
-    transform: translateY(14px);
+    transform: translateY(4px);
   }
   to {
     opacity: 1;
@@ -760,7 +764,7 @@ button {
   background-size: 250% 100%;
   animation: rgbFlow 3s linear infinite;
   border-radius: var(--radius-full);
-  transition: width 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: width 0.3s ease-out;
   position: relative;
   box-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
 }
@@ -1043,7 +1047,7 @@ button {
 }
 
 .ingredient-btn.wrong-shake {
-  animation: shake 0.4s ease-in-out;
+  animation: shake 0.22s ease-in-out;
   border-color: #DC2626 !important;
   background: #FEF2F2 !important;
 }
@@ -1494,7 +1498,7 @@ button {
   position: relative;
   z-index: 1;
   box-shadow: 0 10px 36px rgba(0,0,0,0.3), 0 0 0 6px var(--bg-card);
-  transition: transform 3.8s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+  transition: transform 1.35s cubic-bezier(0.12, 0.9, 0.2, 1);
 }
 
 .spin-trigger-btn {
@@ -1632,7 +1636,7 @@ button {
   padding: 1.5rem;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.25s ease;
+  transition: opacity 0.14s ease;
 }
 
 .modal-overlay.open {
@@ -1649,8 +1653,8 @@ button {
   padding: 2.25rem;
   box-shadow: 0 24px 48px rgba(0,0,0,0.35);
   position: relative;
-  transform: translateY(20px);
-  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(10px);
+  transition: transform 0.15s ease-out;
 }
 
 .modal-overlay.open .modal-dialog {
@@ -2106,8 +2110,8 @@ input:checked + .slider:before {
   box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.7), 0 0 24px var(--primary-glow);
   position: relative;
   overflow: hidden;
-  transform: scale(0.92) translateY(24px);
-  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+  transform: scale(0.97) translateY(8px);
+  transition: transform 0.16s ease-out, opacity 0.14s ease;
 }
 
 .modal-overlay.open .recipe-popout-dialog {
