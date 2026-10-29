@@ -237,7 +237,7 @@ const FUSION_DISHES = [
     id: 'gulab-jamun-cheesecake',
     name: 'Eggless Gulab Jamun Cheesecake',
     originalName: 'Gulab Jamun Cheesecake',
-    origin: 'Indo-French / Euro-Asian',
+    origin: 'Indo-French',
     pronunciationIPA: '/ɡuːˈlɑːb ˈdʒɑː.mʊn ˈtʃiːz.keɪk/',
     phonetic: 'goo-lahb jah-moon cheez-kayk',
     syllables: ['goo', 'lahb', 'jah', 'moon', 'cheez', 'kayk'],
@@ -888,7 +888,7 @@ class SoundEngine {
 const sound = new SoundEngine();
 
 // ==========================================
-// 3. CANVAS CONFETTI ENGINE
+// 3. CANVAS CONFETTI & TOAST ENGINE
 // ==========================================
 function launchConfetti(originX = window.innerWidth / 2, originY = window.innerHeight / 2) {
   let canvas = document.getElementById('fusion-confetti-canvas');
@@ -976,7 +976,6 @@ function launchConfetti(originX = window.innerWidth / 2, originY = window.innerH
   update();
 }
 
-// Toast notification helper
 function showToast(message, type = 'info') {
   const container = document.getElementById('toast-container');
   if (!container) return;
@@ -1001,6 +1000,7 @@ function showToast(message, type = 'info') {
 // ==========================================
 const DEFAULT_STATE = {
   currentProfile: 'kid',
+  currentTab: 'games', // 'games', 'kitchen', 'leaderboard'
   profiles: {
     kid: {
       name: 'Kid Chef Maya',
@@ -1028,6 +1028,7 @@ const DEFAULT_STATE = {
   },
   adminPin: 'careers2026',
   activeGameTab: 'buildDish',
+  recipeFilter: 'all',
   theme: 'light'
 };
 
@@ -1071,79 +1072,74 @@ class FusionApp {
     this.applyTheme(this.state.theme);
     this.renderHeader();
     this.renderProgressStrip();
+    this.initMainTabs();
     this.renderGameTabs();
     this.renderActiveGame();
-    this.renderKitchenLab();
+    this.renderKitchenLab(this.state.recipeFilter);
     this.renderLeaderboard();
     this.bindEvents();
-    this.initScrollSpy();
     this.initWheel();
   }
 
   // ========================================================
-  // SCROLLSPY & DYNAMIC NAVBAR TRACKING
+  // INSTANT TAB SWITCHER (NO ENDLESS VERTICAL SCROLLING)
   // ========================================================
-  initScrollSpy() {
-    const navLinks = document.querySelectorAll('.nav-link[data-nav-target]');
-    const sections = [
-      { id: 'game-arena-section', el: document.getElementById('game-arena-section') },
-      { id: 'kitchen-lab-section', el: document.getElementById('kitchen-lab-section') },
-      { id: 'leaderboard-section', el: document.getElementById('leaderboard-section') }
-    ];
-
-    const updateActiveNav = () => {
-      const scrollPos = window.scrollY + 200;
-      let currentSectionId = 'game-arena-section';
-
-      sections.forEach(sec => {
-        if (sec.el) {
-          const top = sec.el.offsetTop;
-          const height = sec.el.offsetHeight;
-          if (scrollPos >= top && scrollPos < top + height) {
-            currentSectionId = sec.id;
-          }
-        }
-      });
-
-      // Special check: near bottom of page activates leaderboard
-      if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 250) {
-        currentSectionId = 'leaderboard-section';
-      }
-
-      navLinks.forEach(link => {
-        if (link.getAttribute('data-nav-target') === currentSectionId) {
-          link.classList.add('active');
-        } else {
-          link.classList.remove('active');
-        }
-      });
-    };
-
-    window.addEventListener('scroll', updateActiveNav, { passive: true });
-    updateActiveNav();
-
-    // Smooth navigation click
-    navLinks.forEach(link => {
-      link.addEventListener('click', (e) => {
+  initMainTabs() {
+    const tabButtons = document.querySelectorAll('.site-nav .nav-link[data-tab-target]');
+    
+    tabButtons.forEach(btn => {
+      btn.addEventListener('click', (e) => {
         e.preventDefault();
-        sound.playClick();
-        const targetId = link.getAttribute('data-nav-target');
-        const targetEl = document.getElementById(targetId);
-        if (targetEl) {
-          const headerOffset = 90;
-          const elementPosition = targetEl.getBoundingClientRect().top;
-          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
-          navLinks.forEach(l => l.classList.remove('active'));
-          link.classList.add('active');
-
-          window.scrollTo({
-            top: offsetPosition,
-            behavior: 'smooth'
-          });
-        }
+        const tabTarget = btn.getAttribute('data-tab-target');
+        this.switchMainTab(tabTarget);
       });
     });
+
+    // Also support footer links
+    document.querySelectorAll('.footer-nav-link[data-tab]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const tab = link.getAttribute('data-tab');
+        this.switchMainTab(tab);
+      });
+    });
+
+    // Logo returns to Games Hub
+    document.getElementById('logo-home-link')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      this.switchMainTab('games');
+    });
+
+    // Activate initial tab from state
+    this.switchMainTab(this.state.currentTab || 'games', false);
+  }
+
+  switchMainTab(tabId, playSound = true) {
+    if (playSound) sound.playClick();
+    this.state.currentTab = tabId;
+    this.saveState();
+
+    // Update Nav Buttons
+    document.querySelectorAll('.site-nav .nav-link').forEach(btn => {
+      if (btn.getAttribute('data-tab-target') === tabId) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+
+    // Update Tab Panes
+    document.querySelectorAll('.main-tab-pane').forEach(pane => {
+      pane.classList.remove('active');
+    });
+
+    const targetPane = document.getElementById(`pane-${tabId}`);
+    if (targetPane) {
+      targetPane.classList.add('active');
+    }
+
+    // Scroll back to top of main content smoothly
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   getActiveProfile() {
@@ -1274,19 +1270,22 @@ class FusionApp {
     `;
   }
 
+  // ========================================================
+  // HORIZONTAL SCROLLABLE GAME SELECTOR CAROUSEL
+  // ========================================================
   renderGameTabs() {
-    const tabsContainer = document.getElementById('games-grid-tabs');
-    if (!tabsContainer) return;
+    const track = document.getElementById('games-grid-tabs');
+    if (!track) return;
 
     const games = [
-      { id: 'buildDish', name: 'Build-a-Dish', icon: '🥘', desc: 'Pantry Rush & Recipe Simulation', activeDesc: 'Timed ingredient hunt + step sequence' },
-      { id: 'pronunciation', name: 'Pronounce Lab', icon: '🗣️', desc: 'Phonetic Matching & Audio Voice', activeDesc: 'Listen, reorder syllables & speak' },
-      { id: 'trivia', name: 'Family Trivia', icon: '🧠', desc: '10 Qs with Soft Timer & Hints', activeDesc: 'Food science, origins & bazaar tips' },
+      { id: 'buildDish', name: 'Build-a-Dish', icon: '🥘', desc: 'Pantry Rush & Recipe Simulation', activeDesc: 'Timed hunt + step sequence' },
+      { id: 'pronunciation', name: 'Pronounce Lab', icon: '🗣️', desc: 'Phonetic Matching & Voice Check', activeDesc: 'Listen, reorder & speak' },
+      { id: 'trivia', name: 'Family Trivia', icon: '🧠', desc: '10 Qs with Soft Timer & Hints', activeDesc: 'Food science & origins' },
       { id: 'indiaMap', name: 'India Fusion Map', icon: '🗺️', desc: 'Metro Quests & Availability', activeDesc: 'Explore luxury vs street hubs' },
-      { id: 'spinScience', name: 'Science Wheel', icon: '🎡', desc: 'Food Chemistry Explanations', activeDesc: 'Spin & discover acid, heat & emulsions' }
+      { id: 'spinScience', name: 'Science Wheel', icon: '🎡', desc: 'Food Chemistry Explanations', activeDesc: 'Spin & discover reactions' }
     ];
 
-    tabsContainer.innerHTML = games.map(g => {
+    track.innerHTML = games.map(g => {
       const isEnabled = this.state.gameToggles[g.id];
       const isActive = this.state.activeGameTab === g.id;
 
@@ -1315,7 +1314,8 @@ class FusionApp {
       `;
     }).join('');
 
-    tabsContainer.querySelectorAll('.game-card-tab').forEach(tab => {
+    // Bind Game Tab Clicks
+    track.querySelectorAll('.game-card-tab').forEach(tab => {
       tab.addEventListener('click', () => {
         const gameId = tab.getAttribute('data-game-id');
         if (!this.state.gameToggles[gameId]) {
@@ -1329,6 +1329,24 @@ class FusionApp {
         this.renderActiveGame();
       });
     });
+
+    // Horizontal Scroll Arrows
+    const leftBtn = document.getElementById('games-scroll-left');
+    const rightBtn = document.getElementById('games-scroll-right');
+
+    if (leftBtn) {
+      leftBtn.onclick = () => {
+        sound.playClick();
+        track.scrollBy({ left: -270, behavior: 'smooth' });
+      };
+    }
+
+    if (rightBtn) {
+      rightBtn.onclick = () => {
+        sound.playClick();
+        track.scrollBy({ left: 270, behavior: 'smooth' });
+      };
+    }
   }
 
   renderActiveGame() {
@@ -2205,13 +2223,20 @@ class FusionApp {
   }
 
   // ========================================================
-  // KITCHEN LAB RECIPE REPLICATOR
+  // KITCHEN LAB RECIPE CAROUSEL (WITH CUISINE FILTER)
   // ========================================================
-  renderKitchenLab() {
+  renderKitchenLab(filter = 'all') {
     const container = document.getElementById('kitchen-lab-recipes');
     if (!container) return;
 
-    container.innerHTML = FUSION_DISHES.map(dish => `
+    this.state.recipeFilter = filter;
+    this.saveState();
+
+    const filteredDishes = filter === 'all' 
+      ? FUSION_DISHES 
+      : FUSION_DISHES.filter(d => d.origin.toLowerCase().includes(filter.toLowerCase()));
+
+    container.innerHTML = filteredDishes.map(dish => `
       <div class="cookbook-recipe-card">
         <div>
           <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.65rem;">
@@ -2269,6 +2294,32 @@ class FusionApp {
         });
       });
     });
+
+    // Filter Chips
+    document.querySelectorAll('#cuisine-filter-chips .recipe-chip').forEach(chip => {
+      chip.classList.toggle('active', chip.getAttribute('data-filter') === filter);
+      chip.onclick = () => {
+        sound.playClick();
+        const newFilter = chip.getAttribute('data-filter');
+        this.renderKitchenLab(newFilter);
+      };
+    });
+
+    // Horizontal Scroll Arrows for Recipes
+    const rLeft = document.getElementById('recipes-scroll-left');
+    const rRight = document.getElementById('recipes-scroll-right');
+    if (rLeft) {
+      rLeft.onclick = () => {
+        sound.playClick();
+        container.scrollBy({ left: -360, behavior: 'smooth' });
+      };
+    }
+    if (rRight) {
+      rRight.onclick = () => {
+        sound.playClick();
+        container.scrollBy({ left: 360, behavior: 'smooth' });
+      };
+    }
   }
 
   // ========================================================
@@ -2334,7 +2385,7 @@ class FusionApp {
   }
 
   // ========================================================
-  // ADMIN MODAL & CONTROLS (SECURE & NO PASSWORD REVEALED)
+  // ADMIN MODAL & CONTROLS
   // ========================================================
   openAdminModal() {
     sound.playClick();
@@ -2499,20 +2550,20 @@ class FusionApp {
     document.getElementById('admin-modal')?.addEventListener('click', (e) => {
       if (e.target.id === 'admin-modal') this.closeAdminModal();
     });
-
-    document.getElementById('explore-games-cta')?.addEventListener('click', () => {
-      sound.playClick();
-      document.getElementById('game-arena-section')?.scrollIntoView({ behavior: 'smooth' });
-    });
-    document.getElementById('view-recipes-cta')?.addEventListener('click', () => {
-      sound.playClick();
-      document.getElementById('kitchen-lab-section')?.scrollIntoView({ behavior: 'smooth' });
-    });
   }
 }
 
 // Launch on DOM Ready
 window.addEventListener('DOMContentLoaded', () => {
-  const app = new FusionApp();
-  app.init();
+  try {
+    const app = new FusionApp();
+    app.init();
+  } catch (err) {
+    console.error('Fatal FusionApp init error:', err);
+    const d = document.createElement('div');
+    d.id = 'fatal-init-error';
+    d.style.cssText = 'background:red;color:white;padding:20px;font-size:18px;position:fixed;top:0;left:0;right:0;z-index:999999;';
+    d.innerText = 'INIT ERROR: ' + err.message + '\n' + err.stack;
+    document.body.appendChild(d);
+  }
 });

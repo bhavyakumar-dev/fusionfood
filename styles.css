@@ -160,7 +160,7 @@ button {
 }
 
 /* ========================================================
-   STICKY FLOATING HEADER & DYNAMIC SLIDING NAV BAR
+   STICKY FLOATING HEADER & INSTANT TAB SWITCHER
    ======================================================== */
 .site-header {
   position: sticky;
@@ -197,6 +197,7 @@ button {
   align-items: center;
   gap: 0.75rem;
   text-decoration: none;
+  cursor: pointer;
 }
 
 .brand-icon {
@@ -231,7 +232,7 @@ button {
   color: var(--primary);
 }
 
-/* Sliding Pill Navigation Container */
+/* Tab Navigation Buttons */
 .site-nav {
   display: flex;
   align-items: center;
@@ -244,10 +245,10 @@ button {
 }
 
 .nav-link {
-  font-size: 0.88rem;
-  font-weight: 700;
+  font-size: 0.92rem;
+  font-weight: 800;
   color: var(--text-muted);
-  padding: 0.45rem 1.05rem;
+  padding: 0.5rem 1.15rem;
   border-radius: var(--radius-full);
   display: flex;
   align-items: center;
@@ -256,17 +257,17 @@ button {
   z-index: 2;
   transition: color 0.25s ease, background-color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
   white-space: nowrap;
+  cursor: pointer;
 }
 
 .nav-link:hover {
   color: var(--primary);
 }
 
-/* Active Highlight Box for current section (Smoothly updates as you scroll) */
 .nav-link.active {
   color: #FFFFFF !important;
   background: linear-gradient(135deg, var(--primary), #E66548) !important;
-  box-shadow: 0 3px 12px var(--primary-glow);
+  box-shadow: 0 4px 14px var(--primary-glow);
   transform: scale(1.03);
 }
 
@@ -325,228 +326,258 @@ button {
 }
 
 /* ========================================================
-   HERO SECTION - WARM COOKBOOK COVER
+   TAB PANE ARCHITECTURE (ZERO ENDLESS VERTICAL SCROLLING)
    ======================================================== */
-.hero-section {
-  padding: 3.5rem 0 2rem;
-  position: relative;
+.main-tab-pane {
+  display: none;
 }
 
-.hero-grid {
-  display: grid;
-  grid-template-columns: 1.2fr 0.9fr;
-  align-items: center;
-  gap: 3rem;
-}
-
-.hero-badge-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  background-color: var(--secondary-light);
-  border: 1.5px solid rgba(224, 138, 30, 0.35);
-  color: var(--secondary);
-  font-weight: 800;
-  font-size: 0.85rem;
-  padding: 0.4rem 1rem;
-  border-radius: var(--radius-full);
-  margin-bottom: 1.25rem;
-  box-shadow: 0 2px 8px var(--secondary-glow);
-}
-
-.hero-title {
-  font-size: 3rem;
-  line-height: 1.15;
-  margin-bottom: 1.25rem;
-  letter-spacing: -0.025em;
-}
-
-.hero-title .highlight {
-  color: var(--primary);
-  position: relative;
-  display: inline-block;
-}
-
-.hero-title .highlight::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: 6px;
-  width: 100%;
-  height: 10px;
-  background-color: rgba(224, 138, 30, 0.28);
-  z-index: -1;
-  border-radius: 6px;
-}
-
-.hero-lead {
-  font-size: 1.15rem;
-  color: var(--text-muted);
-  margin-bottom: 2rem;
-  max-width: 600px;
-  line-height: 1.65;
-}
-
-.hero-cta-group {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.75rem;
-}
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.55rem;
-  padding: 0.8rem 1.65rem;
-  font-size: 0.98rem;
-  font-weight: 800;
-  border-radius: var(--radius-md);
-  box-shadow: 0 4px 14px rgba(0,0,0,0.06);
-  transition: var(--bounce);
-}
-
-.btn-primary {
-  background: linear-gradient(135deg, var(--primary), #E66548);
-  color: white;
-  border: none;
-  box-shadow: 0 6px 18px var(--primary-glow);
-}
-
-.btn-primary:hover {
-  transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 8px 24px var(--primary-glow);
-}
-
-.btn-secondary {
-  background-color: var(--bg-card);
-  color: var(--text-main);
-  border: 2px solid var(--border-color);
-}
-
-.btn-secondary:hover {
-  border-color: var(--primary);
-  color: var(--primary);
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-warm);
-}
-
-/* Hero Illustrated Card */
-.hero-cookbook-card {
-  background: var(--bg-card);
-  border: 2.5px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  padding: 1.75rem;
-  box-shadow: var(--shadow-hover);
-  position: relative;
-  transform: rotate(1deg);
-  transition: var(--bounce);
-}
-
-.hero-cookbook-card:hover {
-  transform: rotate(0deg) scale(1.02);
-}
-
-.hero-cookbook-tape {
-  position: absolute;
-  top: -14px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 140px;
-  height: 28px;
-  background: rgba(224, 138, 30, 0.45);
-  backdrop-filter: blur(4px);
-  border-left: 2px dashed rgba(255,255,255,0.7);
-  border-right: 2px dashed rgba(255,255,255,0.7);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-}
-
-.dish-spotlight-inner {
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
-}
-
-.dish-spotlight-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.veg-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  background-color: var(--tag-veg-bg);
-  color: var(--tag-veg-text);
-  border: 1.5px solid var(--tag-veg-border);
-  font-weight: 800;
-  font-size: 0.78rem;
-  padding: 0.25rem 0.7rem;
-  border-radius: var(--radius-full);
-}
-
-.veg-icon-dot {
-  width: 11px;
-  height: 11px;
-  border: 2px solid #2E7D32;
-  border-radius: 3px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.veg-icon-dot::after {
-  content: "";
-  width: 5px;
-  height: 5px;
-  background-color: #2E7D32;
-  border-radius: 50%;
-}
-
-/* Statistics Mini-Pill Bar */
-.hero-stats-row {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0.75rem;
-  margin-top: 1.5rem;
-}
-
-.hero-stat-pill {
-  background: var(--bg-card);
-  border: 1.5px solid var(--border-color);
-  border-radius: var(--radius-md);
-  padding: 0.65rem 0.85rem;
-  text-align: center;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-}
-
-.hero-stat-pill strong {
+.main-tab-pane.active {
   display: block;
-  font-size: 1.15rem;
-  color: var(--primary);
-  font-family: var(--font-serif);
+  animation: tabFadeIn 0.32s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.hero-stat-pill span {
-  font-size: 0.72rem;
-  color: var(--text-muted);
-  font-weight: 700;
-  text-transform: uppercase;
+@keyframes tabFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Games Welcome Banner */
+.games-welcome-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.banner-quick-chips {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
 }
 
 /* ========================================================
-   GLOBAL PROGRESS STRIP & CHEF PASSPORT HUD
+   HORIZONTAL SCROLLABLE GAME SELECTOR CAROUSEL
    ======================================================== */
+.games-scroll-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+.games-scroll-track {
+  display: flex;
+  gap: 1.25rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding: 0.65rem 0.35rem 1.15rem;
+  width: 100%;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) transparent;
+  -webkit-overflow-scrolling: touch;
+}
+
+.games-scroll-track::-webkit-scrollbar {
+  height: 6px;
+}
+.games-scroll-track::-webkit-scrollbar-track {
+  background: transparent;
+}
+.games-scroll-track::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 10px;
+}
+
+.game-card-tab {
+  flex: 0 0 250px;
+  min-width: 250px;
+  scroll-snap-align: start;
+  background: var(--bg-card);
+  border: 2.5px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.35rem;
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+  transition: var(--bounce);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: var(--shadow-warm);
+  cursor: pointer;
+}
+
+.game-card-tab:hover {
+  transform: translateY(-5px);
+  border-color: var(--primary);
+  box-shadow: var(--shadow-hover);
+}
+
+.game-card-tab.active {
+  border-color: var(--primary);
+  background: linear-gradient(180deg, var(--primary-light) 0%, var(--bg-card) 100%);
+  box-shadow: 0 8px 24px var(--primary-glow);
+  transform: translateY(-4px);
+}
+
+.game-card-tab.active::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--secondary), var(--primary));
+}
+
+.game-tab-icon {
+  font-size: 2.25rem;
+  margin-bottom: 0.75rem;
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.game-card-tab:hover .game-tab-icon {
+  transform: scale(1.15) rotate(4deg);
+}
+
+.game-card-tab h3 {
+  font-size: 1.2rem;
+  margin-bottom: 0.25rem;
+}
+
+.game-card-tab p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 0.85rem;
+  line-height: 1.45;
+}
+
+.game-card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--primary);
+  border-top: 1px dashed var(--border-dashed);
+  padding-top: 0.65rem;
+}
+
+.scroll-arrow-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
+  color: var(--text-main);
+  font-size: 1.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-warm);
+  cursor: pointer;
+  z-index: 5;
+  flex-shrink: 0;
+  transition: var(--bounce);
+}
+
+.scroll-arrow-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  transform: scale(1.12);
+  box-shadow: var(--shadow-hover);
+}
+
+.active-live-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--primary);
+  font-weight: 800;
+}
+
+.live-beacon {
+  width: 8px;
+  height: 8px;
+  background-color: var(--primary);
+  border-radius: 50%;
+  animation: pulseBeacon 1.4s infinite;
+}
+
+@keyframes pulseBeacon {
+  0% { transform: scale(0.9); opacity: 1; }
+  50% { transform: scale(1.5); opacity: 0.4; }
+  100% { transform: scale(0.9); opacity: 1; }
+}
+
+/* ========================================================
+   KITCHEN LAB RECIPES CAROUSEL
+   ======================================================== */
+.view-mode-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.cuisine-filter-chips {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.35rem;
+}
+
+.scroll-controls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.recipes-scroll-track {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding: 0.65rem 0.35rem 1.5rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) transparent;
+  -webkit-overflow-scrolling: touch;
+}
+
+.recipes-scroll-track::-webkit-scrollbar {
+  height: 6px;
+}
+.recipes-scroll-track::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 10px;
+}
+
+.recipes-scroll-track .cookbook-recipe-card {
+  flex: 0 0 350px;
+  min-width: 350px;
+  scroll-snap-align: start;
+}
+
+/* Global Progress Strip */
 .progress-strip-card {
   background: var(--bg-card);
   border: 2px solid var(--border-color);
   border-radius: var(--radius-lg);
-  padding: 1.25rem 1.65rem;
-  margin-top: 1.5rem;
-  margin-bottom: 2.5rem;
+  padding: 1.15rem 1.5rem;
+  margin-bottom: 1.75rem;
   box-shadow: var(--shadow-warm);
   position: relative;
   overflow: hidden;
@@ -570,8 +601,8 @@ button {
 }
 
 .chef-avatar-box {
-  width: 58px;
-  height: 58px;
+  width: 56px;
+  height: 56px;
   border-radius: var(--radius-md);
   background: linear-gradient(135deg, var(--secondary-light), var(--primary-light));
   border: 2px solid var(--border-color);
@@ -639,22 +670,15 @@ button {
   align-items: flex-end;
 }
 
-/* ========================================================
-   GAME SWITCHER TABS - TACTILE ARCADE CARDS
-   ======================================================== */
-.game-switch-section {
-  padding: 1.5rem 0;
+/* Section Head */
+.section-head {
+  text-align: center;
   margin-bottom: 2rem;
 }
 
-.section-head {
-  text-align: center;
-  margin-bottom: 2.25rem;
-}
-
 .section-head h2 {
-  font-size: 2.45rem;
-  margin-bottom: 0.5rem;
+  font-size: 2.35rem;
+  margin-bottom: 0.45rem;
   letter-spacing: -0.02em;
 }
 
@@ -665,105 +689,46 @@ button {
   font-size: 1.05rem;
 }
 
-.games-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-  gap: 1.25rem;
-}
-
-.game-card-tab {
-  background: var(--bg-card);
-  border: 2.5px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  padding: 1.4rem;
-  text-align: left;
-  position: relative;
-  overflow: hidden;
-  transition: var(--bounce);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  box-shadow: var(--shadow-warm);
-  cursor: pointer;
-}
-
-.game-card-tab:hover {
-  transform: translateY(-6px);
-  border-color: var(--primary);
-  box-shadow: var(--shadow-hover);
-}
-
-.game-card-tab.active {
-  border-color: var(--primary);
-  background: linear-gradient(180deg, var(--primary-light) 0%, var(--bg-card) 100%);
-  box-shadow: 0 8px 24px var(--primary-glow);
-  transform: translateY(-4px);
-}
-
-.game-card-tab.active::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, var(--secondary), var(--primary));
-}
-
-.game-tab-icon {
-  font-size: 2.25rem;
-  margin-bottom: 0.85rem;
-  display: inline-block;
-  transition: transform 0.3s ease;
-}
-
-.game-card-tab:hover .game-tab-icon {
-  transform: scale(1.15) rotate(4deg);
-}
-
-.game-card-tab h3 {
-  font-size: 1.22rem;
-  margin-bottom: 0.35rem;
-}
-
-.game-card-tab p {
-  font-size: 0.86rem;
-  color: var(--text-muted);
-  margin-bottom: 1rem;
-  line-height: 1.45;
-}
-
-.game-card-meta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 0.78rem;
-  font-weight: 800;
-  color: var(--primary);
-  border-top: 1px dashed var(--border-dashed);
-  padding-top: 0.75rem;
-}
-
-.active-live-indicator {
+/* Badges */
+.veg-badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  color: var(--primary);
+  gap: 0.4rem;
+  background-color: var(--tag-veg-bg);
+  color: var(--tag-veg-text);
+  border: 1.5px solid var(--tag-veg-border);
   font-weight: 800;
+  font-size: 0.78rem;
+  padding: 0.25rem 0.7rem;
+  border-radius: var(--radius-full);
 }
 
-.live-beacon {
-  width: 8px;
-  height: 8px;
-  background-color: var(--primary);
+.veg-icon-dot {
+  width: 11px;
+  height: 11px;
+  border: 2px solid #2E7D32;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.veg-icon-dot::after {
+  content: "";
+  width: 5px;
+  height: 5px;
+  background-color: #2E7D32;
   border-radius: 50%;
-  animation: pulseBeacon 1.4s infinite;
 }
 
-@keyframes pulseBeacon {
-  0% { transform: scale(0.9); opacity: 1; }
-  50% { transform: scale(1.5); opacity: 0.4; }
-  100% { transform: scale(0.9); opacity: 1; }
+.pill-badge {
+  font-size: 0.82rem;
+  font-weight: 800;
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--radius-full);
+  background: var(--bg-parchment);
+  color: var(--text-muted);
+  border: 1.5px solid var(--border-color);
 }
 
 .game-disabled-overlay {
@@ -789,16 +754,14 @@ button {
   background: rgba(30, 24, 21, 0.92);
 }
 
-/* ========================================================
-   MAIN INTERACTIVE PLAY ARENA
-   ======================================================== */
+/* Main Interactive Play Arena */
 .play-arena {
   background: var(--bg-card);
   border: 2.5px solid var(--border-color);
   border-radius: var(--radius-lg);
   padding: 2.5rem;
   box-shadow: var(--shadow-hover);
-  margin-bottom: 3.5rem;
+  margin-bottom: 2.5rem;
   position: relative;
   min-height: 520px;
 }
@@ -825,16 +788,6 @@ button {
 .arena-badges {
   display: flex;
   gap: 0.6rem;
-}
-
-.pill-badge {
-  font-size: 0.82rem;
-  font-weight: 800;
-  padding: 0.3rem 0.75rem;
-  border-radius: var(--radius-full);
-  background: var(--bg-parchment);
-  color: var(--text-muted);
-  border: 1.5px solid var(--border-color);
 }
 
 /* ========================================================
@@ -957,7 +910,6 @@ button {
   font-size: 2rem;
 }
 
-/* Chef's Cauldron / Prep Board */
 .prep-board {
   background: var(--bg-card-subtle);
   border: 2px solid var(--border-color);
@@ -1371,18 +1323,8 @@ button {
 }
 
 /* ========================================================
-   KITCHEN LAB RECIPE REPLICATOR
+   KITCHEN LAB RECIPE CARDS
    ======================================================== */
-.kitchen-lab-section {
-  padding: 3.5rem 0;
-}
-
-.recipe-cards-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
-  gap: 1.75rem;
-}
-
 .cookbook-recipe-card {
   background: var(--bg-card);
   border: 2px solid var(--border-color);
@@ -1425,12 +1367,8 @@ button {
 }
 
 /* ========================================================
-   FAMILY LEADERBOARD & XP RANK SYSTEM
+   FAMILY LEADERBOARD
    ======================================================== */
-.leaderboard-section {
-  padding: 3.5rem 0;
-}
-
 .scoreboard-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1474,7 +1412,7 @@ button {
 }
 
 /* ========================================================
-   ADMIN MODAL - SECURE & NO PASSWORD DISPLAYED
+   ADMIN MODAL
    ======================================================== */
 .modal-overlay {
   position: fixed;
@@ -1621,9 +1559,7 @@ input:checked + .slider:before {
   transform: translateX(22px);
 }
 
-/* ========================================================
-   FLOATING TOAST NOTIFICATIONS
-   ======================================================== */
+/* Toast */
 .toast-container {
   position: fixed;
   bottom: 2rem;
@@ -1668,22 +1604,19 @@ input:checked + .slider:before {
 .site-footer {
   border-top: 2px solid var(--border-color);
   background-color: var(--bg-parchment);
-  padding: 3.5rem 0 2.5rem;
-  margin-top: 5rem;
+  padding: 3rem 0 2rem;
+  margin-top: 4rem;
 }
 
 .footer-grid {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr;
   gap: 2.5rem;
-  margin-bottom: 2.5rem;
+  margin-bottom: 2rem;
 }
 
 @media (max-width: 768px) {
   .footer-grid {
-    grid-template-columns: 1fr;
-  }
-  .hero-grid {
     grid-template-columns: 1fr;
   }
   .header-inner {
@@ -1695,11 +1628,18 @@ input:checked + .slider:before {
     width: 100%;
     justify-content: center;
   }
+  .games-scroll-track {
+    gap: 0.85rem;
+  }
+  .game-card-tab {
+    flex: 0 0 220px;
+    min-width: 220px;
+  }
 }
 
 .footer-bottom {
   border-top: 1px solid var(--border-color);
-  padding-top: 1.75rem;
+  padding-top: 1.5rem;
   display: flex;
   align-items: center;
   justify-content: space-between;

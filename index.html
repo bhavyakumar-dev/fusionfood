@@ -10,10 +10,10 @@
 </head>
 <body>
 
-  <!-- Sticky Floating Header with Dynamic Active Section Pill -->
+  <!-- Sticky Floating Header with Instant Tab Navigation -->
   <header class="site-header">
     <div class="header-inner">
-      <a href="#" class="brand-logo">
+      <a href="javascript:void(0)" class="brand-logo" id="logo-home-link">
         <div class="brand-icon">🥘</div>
         <div class="brand-text">
           <h1>Fusion Food Lab</h1>
@@ -21,17 +21,17 @@
         </div>
       </a>
 
-      <!-- Dynamic Sliding Navigation Bar -->
+      <!-- Main View Tabs (Instant Tab Switcher - No Endless Scrolling) -->
       <nav class="site-nav" id="main-nav-bar" aria-label="Main Navigation">
-        <a href="#game-arena-section" class="nav-link active" data-nav-target="game-arena-section">
+        <button class="nav-link active" data-tab-target="games" id="tab-btn-games">
           <span>🎮</span> <span>Games Hub</span>
-        </a>
-        <a href="#kitchen-lab-section" class="nav-link" data-nav-target="kitchen-lab-section">
+        </button>
+        <button class="nav-link" data-tab-target="kitchen" id="tab-btn-kitchen">
           <span>📖</span> <span>Kitchen Lab</span>
-        </a>
-        <a href="#leaderboard-section" class="nav-link" data-nav-target="leaderboard-section">
+        </button>
+        <button class="nav-link" data-tab-target="leaderboard" id="tab-btn-leaderboard">
           <span>🏆</span> <span>Leaderboard</span>
-        </a>
+        </button>
       </nav>
 
       <div class="header-actions">
@@ -51,7 +51,7 @@
           🌙
         </button>
 
-        <!-- Admin Mode Lock (Secret PIN protected, never shown publicly) -->
+        <!-- Admin Mode Lock (Secret PIN protected) -->
         <button id="admin-modal-open-btn" class="icon-btn" title="Admin Game Controls" style="border-color:var(--secondary); color:var(--secondary);">
           🔒
         </button>
@@ -60,108 +60,58 @@
   </header>
 
   <main>
-    <!-- Hero Section -->
-    <section class="hero-section" id="hero-section">
-      <div class="container hero-grid">
-        <div class="hero-content">
-          <div class="hero-badge-tag">
-            <span>✨ 100% Pure Vegetarian Fusion Recipes & Science</span>
-          </div>
-          <h2 class="hero-title">
-            Where Global Flavors Meet the <span class="highlight">Indian Spice Box</span>!
-          </h2>
-          <p class="hero-lead">
-            Cook, play, and uncover the delicious food chemistry behind Japanese Nikkei, Tex-Mex, and Indo-Italian fusion dishes. Designed for kids (ages 10–16) and parents to explore together!
-          </p>
-
-          <div class="hero-cta-group">
-            <button class="btn btn-primary" id="explore-games-cta">
-              <span>🎮 Play Interactive Games</span>
-            </button>
-            <button class="btn btn-secondary" id="view-recipes-cta">
-              <span>📖 Replicate at Home in India</span>
-            </button>
-          </div>
-
-          <!-- Quick Statistics Bar -->
-          <div class="hero-stats-row">
-            <div class="hero-stat-pill">
-              <strong>8 Dishes</strong>
-              <span>Global Fusions</span>
-            </div>
-            <div class="hero-stat-pill">
-              <strong>100% Veg</strong>
-              <span>Desi Bazaar Subs</span>
-            </div>
-            <div class="hero-stat-pill">
-              <strong>5 Games</strong>
-              <span>Arcade Learning</span>
-            </div>
-            <div class="hero-stat-pill">
-              <strong>6 Tiers</strong>
-              <span>Chef Rank Ladder</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Illustrated Cookbook Card -->
-        <div class="hero-cookbook-card">
-          <div class="hero-cookbook-tape"></div>
-          <div class="dish-spotlight-inner">
-            <div class="dish-spotlight-header">
-              <span class="veg-badge"><span class="veg-icon-dot"></span> Vegetarian Adaptation</span>
-              <span class="pill-badge" style="color:var(--primary); font-weight:800;">Featured Dish</span>
-            </div>
-
-            <div style="font-size:3rem; margin:0.35rem 0;">🍄🍋</div>
-            <h3 style="font-size:1.6rem;">Nikkei Mushroom Ceviche</h3>
-            <p style="font-size:0.92rem; color:var(--text-muted); line-height:1.5;">
-              Japanese sashimi artistry meets Peruvian citrus "Leche de Tigre", replicated using tender King Oyster mushrooms and roasted salted chana!
-            </p>
-
-            <div style="background:var(--bg-parchment); border-radius:var(--radius-md); padding:1rem; margin-top:0.65rem; font-size:0.88rem; border:1.5px solid var(--border-color);">
-              <span style="font-weight:800; color:var(--secondary);">🔬 Food Chemistry Secret:</span>
-              <span>Citric acid denatures proteins and firms mushroom texture without any cooking heat!</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Global Progress & Chef XP Strip -->
-    <div class="container">
+    <!-- Master Chef Progress & XP HUD (Always available across all tabs) -->
+    <div class="container" style="padding-top: 1.25rem;">
       <div id="progress-strip-container" class="progress-strip-card">
-        <!-- Rendered dynamically by app.js / bundle.js -->
+        <!-- Rendered dynamically by bundle.js -->
       </div>
     </div>
 
-    <!-- Game Showcase & Switcher Tabs -->
-    <section class="game-switch-section" id="game-arena-section">
+    <!-- ========================================================
+         TAB PANE 1: GAMES HUB (Horizontal Scroll Selector + Arena)
+         ======================================================== -->
+    <div class="main-tab-pane active" id="pane-games">
       <div class="container">
-        <div class="section-head">
-          <span class="handwritten">Pick Your Culinary Quest</span>
-          <h2>Toggleable Family Games Hub</h2>
-          <p>
-            Choose any interactive challenge below. All games can be toggled by the Admin to customize household playtime.
-          </p>
+        <!-- Compact Games Header -->
+        <div class="games-welcome-banner">
+          <div>
+            <span class="handwritten">Pick Your Culinary Quest</span>
+            <h2 style="font-size: 2.15rem; margin-bottom: 0.25rem;">Interactive Games Hub</h2>
+            <p style="color:var(--text-muted); font-size: 0.95rem;">
+              Choose any interactive challenge below. All games can be toggled in Admin Mode.
+            </p>
+          </div>
+          <div class="banner-quick-chips">
+            <span class="veg-badge"><span class="veg-icon-dot"></span> 100% Pure Veg</span>
+            <span class="pill-badge" style="color:var(--primary); font-weight:800;">5 Arcade Labs</span>
+            <span class="pill-badge" style="color:var(--secondary); font-weight:800;">Earn XP</span>
+          </div>
         </div>
 
-        <!-- Dynamic Game Tabs (Build-a-dish, Pronunciation, Trivia, India Map, Science Wheel) -->
-        <div class="games-grid" id="games-grid-tabs">
-          <!-- Rendered dynamically by bundle.js -->
+        <!-- Horizontal Scrollable Game Selector Track with Left/Right Arrows -->
+        <div class="games-scroll-container">
+          <button class="scroll-arrow-btn scroll-left" id="games-scroll-left" title="Scroll Left">‹</button>
+          
+          <div class="games-scroll-track" id="games-grid-tabs">
+            <!-- Rendered dynamically as a single horizontal scroll row (No awkward wrapping!) -->
+          </div>
+
+          <button class="scroll-arrow-btn scroll-right" id="games-scroll-right" title="Scroll Right">›</button>
         </div>
 
-        <!-- Main Interactive Game Arena -->
-        <div class="play-arena" id="play-arena-container" style="margin-top:2.25rem;">
+        <!-- Main Interactive Game Arena (Right in view without scrolling down) -->
+        <div class="play-arena" id="play-arena-container">
           <!-- Active Game Rendered dynamically by bundle.js -->
         </div>
       </div>
-    </section>
+    </div>
 
-    <!-- Kitchen Lab: Replicate in India -->
-    <section class="kitchen-lab-section" id="kitchen-lab-section">
+    <!-- ========================================================
+         TAB PANE 2: KITCHEN LAB (Replicate in India Recipes)
+         ======================================================== -->
+    <div class="main-tab-pane" id="pane-kitchen">
       <div class="container">
-        <div class="section-head">
+        <div class="section-head" style="margin-bottom:1.5rem;">
           <span class="handwritten">From Global Menu to Desi Rasoi</span>
           <h2>Kitchen Lab: Replicate in India</h2>
           <p>
@@ -169,16 +119,35 @@
           </p>
         </div>
 
-        <div class="recipe-cards-grid" id="kitchen-lab-recipes">
+        <!-- Recipe Carousel Navigation Controls -->
+        <div class="view-mode-bar">
+          <div class="cuisine-filter-chips" id="cuisine-filter-chips">
+            <button class="recipe-chip active" data-filter="all">All Dishes (8)</button>
+            <button class="recipe-chip" data-filter="Japanese-Peruvian">Japanese-Peruvian</button>
+            <button class="recipe-chip" data-filter="Tex-Mex">Tex-Mex</button>
+            <button class="recipe-chip" data-filter="Ital-Indian">Ital-Indian</button>
+            <button class="recipe-chip" data-filter="Indo-French">Indo-French</button>
+            <button class="recipe-chip" data-filter="Indo-Japanese">Indo-Japanese</button>
+          </div>
+          <div class="scroll-controls">
+            <button class="scroll-arrow-btn" id="recipes-scroll-left" title="Scroll Recipes Left">‹</button>
+            <button class="scroll-arrow-btn" id="recipes-scroll-right" title="Scroll Recipes Right">›</button>
+          </div>
+        </div>
+
+        <!-- Horizontal Scroll Track for Recipe Cards -->
+        <div class="recipes-scroll-track" id="kitchen-lab-recipes">
           <!-- Rendered dynamically by bundle.js -->
         </div>
       </div>
-    </section>
+    </div>
 
-    <!-- Family Leaderboard & XP Rank System -->
-    <section class="leaderboard-section" id="leaderboard-section">
+    <!-- ========================================================
+         TAB PANE 3: LEADERBOARD & CHEF RANKS
+         ======================================================== -->
+    <div class="main-tab-pane" id="pane-leaderboard">
       <div class="container">
-        <div class="section-head">
+        <div class="section-head" style="margin-bottom:1.75rem;">
           <span class="handwritten">The Hall of Culinary Fame</span>
           <h2>Chef Rank Ladder & Family Leaderboard</h2>
           <p>
@@ -214,7 +183,7 @@
           </div>
         </div>
       </div>
-    </section>
+    </div>
   </main>
 
   <!-- Admin Settings Modal (Secure PIN authenticated, no password revealed) -->
@@ -253,13 +222,11 @@
         </div>
 
         <div>
-          <h4 style="font-size:1.05rem; margin-bottom:0.85rem;">Interactive Games</h4>
+          <h4 style="font-size:1.05rem; margin-bottom:0.85rem;">Navigation Views</h4>
           <ul style="list-style:none; font-size:0.88rem; display:flex; flex-direction:column; gap:0.5rem;">
-            <li>🥘 Build-a-Dish (Pantry Rush)</li>
-            <li>🗣️ Pronunciation Challenge</li>
-            <li>🧠 Family Trivia Quiz</li>
-            <li>🗺️ India Availability Map</li>
-            <li>🎡 Science Spin the Wheel</li>
+            <li><a href="javascript:void(0)" class="footer-nav-link" data-tab="games">🎮 Games Hub (5 Arcade Labs)</a></li>
+            <li><a href="javascript:void(0)" class="footer-nav-link" data-tab="kitchen">📖 Kitchen Lab (Recipes & Substitutes)</a></li>
+            <li><a href="javascript:void(0)" class="footer-nav-link" data-tab="leaderboard">🏆 Family Leaderboard & Ranks</a></li>
           </ul>
         </div>
 
