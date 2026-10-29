@@ -2814,18 +2814,16 @@ class FusionApp {
     dialog.innerHTML = `
       <!-- Header -->
       <div class="recipe-popout-header">
-        <div style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
-          <div>
-            <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.25rem;">
-              <span class="veg-badge"><span class="veg-icon-dot"></span> 100% Pure Veg</span>
-              <span class="pill-badge">${dish.origin}</span>
-              <span style="font-size:0.82rem; color:var(--text-muted);">Availability: <strong>${dish.availability}</strong></span>
-            </div>
-            <h2 id="popout-recipe-title" style="font-size:1.65rem; margin-bottom:0.15rem;">${dish.name}</h2>
-            <div style="display:flex; align-items:center; gap:0.6rem;">
-              <span style="font-size:0.88rem; color:var(--text-muted);">Phonetic: <em>${dish.phonetic}</em></span>
-              <button class="icon-btn" id="popout-pronounce-btn" title="Listen to Pronunciation" style="width:28px; height:28px; font-size:0.85rem;">🗣️</button>
-            </div>
+        <div class="recipe-popout-title-wrap">
+          <div class="recipe-popout-meta-row">
+            <span class="veg-badge"><span class="veg-icon-dot"></span> 100% Pure Veg</span>
+            <span class="pill-badge">${dish.origin}</span>
+            <span style="font-size:0.8rem; color:var(--text-muted);">Availability: <strong>${dish.availability}</strong></span>
+          </div>
+          <h2 id="popout-recipe-title">${dish.name}</h2>
+          <div class="recipe-popout-phonetic-row">
+            <span style="font-size:0.84rem; color:var(--text-muted);">Phonetic: <em>${dish.phonetic}</em></span>
+            <button class="icon-btn" id="popout-pronounce-btn" title="Listen to Pronunciation" style="width:28px; height:28px; font-size:0.85rem;">🗣️</button>
           </div>
         </div>
 
@@ -2852,24 +2850,26 @@ class FusionApp {
             <p style="font-size:0.84rem; color:var(--text-muted); margin-bottom:0.85rem;">
               Exact swaps found in everyday Indian local sabzi mandis, dairies, and grocers:
             </p>
-            <table class="substitutes-table" style="font-size:0.86rem;">
-              <thead>
-                <tr>
-                  <th>Global Ingredient</th>
-                  <th>Desi Replacement</th>
-                  <th>Culinary Science Reason</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${dish.indianSubstitutes.map(s => `
+            <div class="table-responsive-wrapper">
+              <table class="substitutes-table" style="font-size:0.86rem;">
+                <thead>
                   <tr>
-                    <td>${s.original}</td>
-                    <td><strong style="color:var(--accent-green);">${s.substitute}</strong></td>
-                    <td style="font-size:0.8rem; color:var(--text-muted);">${s.why}</td>
+                    <th>Global Ingredient</th>
+                    <th>Desi Replacement</th>
+                    <th>Culinary Science Reason</th>
                   </tr>
-                `).join('')}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  ${dish.indianSubstitutes.map(s => `
+                    <tr>
+                      <td><strong>${s.original}</strong></td>
+                      <td><strong style="color:var(--accent-green);">${s.substitute}</strong></td>
+                      <td style="font-size:0.82rem; color:var(--text-muted);">${s.why}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
           </div>
 
           <!-- Step-by-Step Interactive Cooking Procedure -->
@@ -2891,11 +2891,11 @@ class FusionApp {
                 return `
                   <div class="recipe-step-card ${isDone ? 'completed' : ''}" id="step-card-${s.step}">
                     <div class="step-header-row">
-                      <div style="display:flex; align-items:center; gap:0.6rem;">
+                      <div class="step-title-wrap">
                         <span class="step-num-pill">Step ${s.step}</span>
                         <strong style="font-size:1.02rem;">${s.title}</strong>
                       </div>
-                      <div style="display:flex; align-items:center; gap:0.5rem;">
+                      <div class="step-header-actions">
                         ${s.kidSafe 
                           ? '<span class="pill-badge" style="background:var(--tag-veg-bg); color:var(--accent-green); border-color:var(--tag-veg-border); font-size:0.75rem;">👶 Kid-Friendly</span>'
                           : '<span class="pill-badge" style="background:#fff1f2; color:#e11d48; border-color:#fecdd3; font-size:0.75rem;">🔥 Parent Assistance</span>'
