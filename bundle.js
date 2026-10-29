@@ -1245,8 +1245,8 @@ class FusionApp {
     if (profilePill) {
       profilePill.innerHTML = `
         <span class="profile-avatar">${profile.avatar}</span>
-        <span>${profile.name}</span>
-        <span class="pill-badge" style="background:var(--primary-light); color:var(--primary); font-size:0.75rem;">${rank.title}</span>
+        <span class="profile-name">${profile.name}</span>
+        <span class="pill-badge profile-rank-badge">${rank.title}</span>
       `;
     }
 
