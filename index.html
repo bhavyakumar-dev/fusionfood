@@ -38,10 +38,10 @@
       </nav>
 
       <div class="header-actions">
-        <!-- Switchable Profile Pill (Kid Chef vs Parent Sous-Chef) -->
-        <button id="profile-switch-btn" class="profile-pill" title="Click to Switch Player (Kid Chef / Parent Sous-Chef)">
-          <span class="profile-avatar">🧒</span>
-          <span>Kid Chef</span>
+        <!-- Chef Profile Pill (Click to Change Name, Role & Rank) -->
+        <button id="profile-switch-btn" class="profile-pill" title="Click to Edit Profile & Rank">
+          <span class="profile-avatar">🎒</span>
+          <span>Maya</span>
         </button>
 
         <!-- Sound Toggle -->
@@ -182,9 +182,15 @@
                 🗑️ Clear All Website Data
               </button>
             </div>
-            <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:1.5rem;">
-              Switch between Kid and Parent profiles to maintain separate scores and daily streaks:
+            <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:1rem;">
+              Filter personal bests and arcade high scores across challenges:
             </p>
+            <div class="leaderboard-filter-tabs" id="leaderboard-filter-tabs" style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:1.25rem;">
+              <button class="recipe-chip active" data-lb-filter="all">🏆 Overall Leaderboard</button>
+              <button class="recipe-chip" data-lb-filter="hotPotato">🥔 Hot Potato Rush</button>
+              <button class="recipe-chip" data-lb-filter="buildDish">🥘 Build-a-Dish</button>
+              <button class="recipe-chip" data-lb-filter="trivia">🧠 Family Trivia</button>
+            </div>
             <div id="family-roster-display">
               <!-- Rendered dynamically by bundle.js -->
             </div>
@@ -205,6 +211,21 @@
       </div>
       <div id="admin-modal-body">
         <!-- Rendered dynamically by bundle.js with secure PIN form -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile Onboarding & Edit Modal -->
+  <div class="modal-overlay" id="profile-modal" role="dialog" aria-modal="true" aria-labelledby="profile-modal-title">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="profile-modal-title" style="display:flex; align-items:center; gap:0.5rem;">
+          <span>👨‍🍳 Chef Profile & Rank Setup</span>
+        </h3>
+        <button class="modal-close-btn" id="close-profile-modal-btn" aria-label="Close Profile Modal">✕</button>
+      </div>
+      <div id="profile-modal-body">
+        <!-- Rendered dynamically by bundle.js -->
       </div>
     </div>
   </div>

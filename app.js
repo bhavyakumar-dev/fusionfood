@@ -720,14 +720,20 @@ const INDIA_METROS_DATA = [
   }
 ];
 
-const CHEF_RANKS = [
-  { level: 1, title: 'Kitchen Apprentice', minXP: 0, maxXP: 250, badge: '🌱', perks: 'Mastering kitchen knife safety and basic spices.' },
-  { level: 2, title: 'Spice Explorer', minXP: 251, maxXP: 600, badge: '🌶️', perks: 'Unlocked Indian bazaar spice substitution secrets.' },
-  { level: 3, title: 'Street Food Alchemist', minXP: 601, maxXP: 1100, badge: '🌮', perks: 'Mastered fusion tacos, quesadillas, and quick naanzas.' },
-  { level: 4, title: 'Fusion Sous Chef', minXP: 1101, maxXP: 1700, badge: '👨‍🍳', perks: 'Conquered food science emulsions and acid curing.' },
-  { level: 5, title: 'Executive Fusion Master', minXP: 1701, maxXP: 2500, badge: '⭐', perks: 'Fluent in Nikkei ceviches, tiraditos, and ramen broths.' },
-  { level: 6, title: 'Michelin Star Sorcerer', minXP: 2501, maxXP: 99999, badge: '🏆', perks: 'Ultimate family fusion legend! Zero culinary secrets left.' }
+const STUDENT_RANKS = [
+  { level: 1, title: 'Junior Taster', minXP: 0, maxXP: 300, badge: '🌱', perks: 'Mastering kitchen knife safety and basic spices.' },
+  { level: 2, title: 'Spice Explorer', minXP: 301, maxXP: 800, badge: '🌶️', perks: 'Unlocked Indian bazaar spice substitution secrets.' },
+  { level: 3, title: 'Flavour Alchemist', minXP: 801, maxXP: 99999, badge: '✨', perks: 'Mastered global fusion seasonings and balanced creations.' }
 ];
+
+const PARENT_RANKS = [
+  { level: 1, title: 'Sous-Chef Guide', minXP: 0, maxXP: 450, badge: '👨‍🍳', perks: 'Leading culinary adventures with safe technique.' },
+  { level: 2, title: 'Recipe Master', minXP: 451, maxXP: 1200, badge: '🥘', perks: 'Mastering food science emulsions and acid curing.' },
+  { level: 3, title: 'Executive Fusion Chef', minXP: 1201, maxXP: 99999, badge: '⭐', perks: 'Ultimate family fusion maestro! Zero culinary secrets left.' }
+];
+
+const CHEF_RANKS = STUDENT_RANKS; // Fallback alias
+
 
 // ==========================================
 // 2. WEB AUDIO API SYNTHESIZER
@@ -1200,22 +1206,29 @@ class FusionDatabase {
 const DEFAULT_STATE = {
   currentProfile: 'kid',
   currentTab: 'games', // 'games', 'kitchen', 'leaderboard'
+  onboarded: false,
+  hpMode: 'native', // 'native' or 'itch'
+  leaderboardFilter: 'all', // 'all', 'hotPotato', 'buildDish', 'trivia'
   profiles: {
     kid: {
-      name: 'Kid Chef Maya',
-      avatar: '🧒',
+      name: 'Maya',
+      role: 'student', // 'student' or 'parent'
+      rankLevel: 1,
+      avatar: '🎒',
       xp: 270,
       streak: 3,
-      bests: { trivia: 8, buildDish: 4, pronunciation: 5, scienceSpins: 6 },
-      unlockedBadges: ['🌱 Kitchen Apprentice', '🍄 Shroom Alchemist', '🥘 Dish Master']
+      bests: { hotPotato: 10, trivia: 8, buildDish: 4, pronunciation: 5, scienceSpins: 6 },
+      unlockedBadges: ['🌱 Junior Taster', '🍄 Shroom Alchemist', '🥘 Dish Master']
     },
     parent: {
-      name: 'Parent Sous-Chef',
+      name: 'Chef Priya',
+      role: 'parent',
+      rankLevel: 1,
       avatar: '👨‍🍳',
       xp: 450,
       streak: 5,
-      bests: { trivia: 9, buildDish: 6, pronunciation: 7, scienceSpins: 8 },
-      unlockedBadges: ['🌶️ Spice Explorer', '🔥 Tandoor Wizard', '🎌🇵🇪 Nikkei Explorer']
+      bests: { hotPotato: 20, trivia: 9, buildDish: 6, pronunciation: 7, scienceSpins: 8 },
+      unlockedBadges: ['👨‍🍳 Sous-Chef Guide', '🔥 Tandoor Wizard', '🎌🇵🇪 Nikkei Explorer']
     }
   },
   gameToggles: {
@@ -1243,7 +1256,7 @@ class FusionApp {
     this.currentTriviaIndex = 0;
     this.triviaScore = 0;
     this.triviaTimer = null;
-    this.triviaTimeLeft = 20;
+    this.triviaTimeLeft = 45;
     this.isSpinning = false;
     this.selectedDishIndex = 0;
     this.selectedMetro = INDIA_METROS_DATA[0];
@@ -1292,16 +1305,21 @@ class FusionApp {
           Object.entries(this.state.profiles).forEach(([id, prof]) => {
             this.db.set(DB_CONFIG.STORE_PROFILES, { id, ...prof, updatedAt: new Date().toISOString() });
           });
-          const leaderboardEntries = Object.entries(this.state.profiles).map(([id, prof]) => ({
-            id,
-            name: prof.name,
-            avatar: prof.avatar,
-            xp: prof.xp,
-            streak: prof.streak,
-            rank: this.getCurrentRank(prof.xp).title,
-            level: this.getCurrentRank(prof.xp).level,
-            updatedAt: new Date().toISOString()
-          }));
+          const leaderboardEntries = Object.entries(this.state.profiles).map(([id, prof]) => {
+            const r = this.getCurrentRank(prof.xp, prof.role);
+            return {
+              id,
+              name: prof.name,
+              role: prof.role,
+              avatar: prof.avatar,
+              xp: prof.xp,
+              streak: prof.streak,
+              bests: prof.bests || {},
+              rank: r.title,
+              level: r.level,
+              updatedAt: new Date().toISOString()
+            };
+          });
           leaderboardEntries.forEach(entry => {
             this.db.set(DB_CONFIG.STORE_LEADERBOARD, entry);
           });
@@ -1335,14 +1353,15 @@ class FusionApp {
 
     // 3. Reset in-memory state to clean pristine defaults
     this.state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+    this.state.onboarded = false;
     this.state.profiles.kid.xp = 0;
     this.state.profiles.parent.xp = 0;
     this.state.profiles.kid.streak = 1;
     this.state.profiles.parent.streak = 1;
-    this.state.profiles.kid.bests = { trivia: 0, buildDish: 0, pronunciation: 0, scienceSpins: 0 };
-    this.state.profiles.parent.bests = { trivia: 0, buildDish: 0, pronunciation: 0, scienceSpins: 0 };
-    this.state.profiles.kid.unlockedBadges = ['🌱 Kitchen Apprentice'];
-    this.state.profiles.parent.unlockedBadges = ['🌱 Kitchen Apprentice'];
+    this.state.profiles.kid.bests = { hotPotato: 0, trivia: 0, buildDish: 0, pronunciation: 0, scienceSpins: 0 };
+    this.state.profiles.parent.bests = { hotPotato: 0, trivia: 0, buildDish: 0, pronunciation: 0, scienceSpins: 0 };
+    this.state.profiles.kid.unlockedBadges = ['🌱 Junior Taster'];
+    this.state.profiles.parent.unlockedBadges = ['👨‍🍳 Sous-Chef Guide'];
     this.state.completedCityQuests = [];
     this.state.recipeCompletedSteps = {};
 
@@ -1373,6 +1392,13 @@ class FusionApp {
     this.renderLeaderboard();
     this.bindEvents();
     this.initWheel();
+
+    // Auto-prompt onboarding modal on first session if not onboarded
+    if (!this.state.onboarded) {
+      setTimeout(() => {
+        this.openProfileModal();
+      }, 400);
+    }
   }
 
   // ========================================================
@@ -1437,19 +1463,184 @@ class FusionApp {
   }
 
   getActiveProfile() {
-    return this.state.profiles[this.state.currentProfile];
+    return this.state.profiles[this.state.currentProfile] || this.state.profiles.kid;
   }
 
-  switchProfile() {
+  getDifficultySettings() {
+    const prof = this.getActiveProfile();
+    const isStudent = prof.role === 'student' || this.state.currentProfile === 'kid';
+    if (isStudent) {
+      return {
+        role: 'student',
+        triviaTimer: 50,
+        hpGravity: 0.22,
+        hpCoalsBoost: -8.5,
+        coalsHeight: 70,
+        impostorCount: 3,
+        badgeText: '🎒 Student Mode (Forgiving Timers & Hints)',
+        badgeClass: 'student-mode-badge'
+      };
+    } else {
+      return {
+        role: 'parent',
+        triviaTimer: 25,
+        hpGravity: 0.32,
+        hpCoalsBoost: -7.0,
+        coalsHeight: 45,
+        impostorCount: 6,
+        badgeText: '👨‍🍳 Parent Mode (Pro Kitchen Challenge)',
+        badgeClass: 'parent-mode-badge'
+      };
+    }
+  }
+
+  getCurrentRank(xp, role = null) {
+    const activeRole = role || this.getActiveProfile().role || (this.state.currentProfile === 'parent' ? 'parent' : 'student');
+    const ranks = activeRole === 'parent' ? PARENT_RANKS : STUDENT_RANKS;
+    for (let i = ranks.length - 1; i >= 0; i--) {
+      if (xp >= ranks[i].minXP) {
+        return ranks[i];
+      }
+    }
+    return ranks[0];
+  }
+
+  openProfileModal() {
     sound.playClick();
-    this.state.currentProfile = this.state.currentProfile === 'kid' ? 'parent' : 'kid';
+    const modal = document.getElementById('profile-modal');
+    if (!modal) return;
+    document.body.classList.add('has-modal-open');
+    modal.classList.add('open');
+    this.renderProfileModalContent();
+  }
+
+  closeProfileModal() {
+    sound.playClick();
+    const modal = document.getElementById('profile-modal');
+    if (!modal) return;
+    modal.classList.remove('open');
+    document.body.classList.remove('has-modal-open');
+  }
+
+  renderProfileModalContent() {
+    const body = document.getElementById('profile-modal-body');
+    if (!body) return;
+    const prof = this.getActiveProfile();
+    const currentRole = prof.role || (this.state.currentProfile === 'parent' ? 'parent' : 'student');
+    const currentName = prof.name || (currentRole === 'parent' ? 'Chef Priya' : 'Maya');
+
+    body.innerHTML = `
+      <div style="margin-bottom:1.25rem;">
+        <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:1rem;">
+          Select your chef role to personalize your family kitchen challenge, timer speeds, and ranks!
+        </p>
+
+        <label style="display:block; font-weight:700; font-size:0.9rem; margin-bottom:0.5rem; color:var(--text-main);">
+          Choose Chef Identity:
+        </label>
+        <div class="profile-role-grid">
+          <div class="profile-role-card ${currentRole === 'student' ? 'selected' : ''}" id="role-select-student">
+            <div style="font-size:2rem; margin-bottom:0.35rem;">🎒</div>
+            <strong style="font-size:1rem; display:block;">Student / Kid Chef</strong>
+            <span style="font-size:0.78rem; color:var(--text-muted);">Forgiving Timers (50s) & Safe Steps</span>
+          </div>
+
+          <div class="profile-role-card ${currentRole === 'parent' ? 'selected' : ''}" id="role-select-parent">
+            <div style="font-size:2rem; margin-bottom:0.35rem;">👨‍🍳</div>
+            <strong style="font-size:1rem; display:block;">Parent / Adult Guide</strong>
+            <span style="font-size:0.78rem; color:var(--text-muted);">Pro Challenge (25s) & Tricky Impostors</span>
+          </div>
+        </div>
+
+        <div class="profile-form-group">
+          <label for="profile-input-name">Your Chef Name:</label>
+          <input type="text" id="profile-input-name" class="profile-form-input" value="${currentName}" placeholder="e.g. Maya or Chef Mom" maxlength="24">
+        </div>
+
+        <div class="profile-form-group">
+          <label for="profile-select-rank">Starting / Current Rank:</label>
+          <select id="profile-select-rank" class="profile-form-select">
+            ${(currentRole === 'parent' ? PARENT_RANKS : STUDENT_RANKS).map(r => `
+              <option value="${r.level}" ${r.level === (prof.rankLevel || 1) ? 'selected' : ''}>
+                ${r.badge} Level ${r.level}: ${r.title} (${r.minXP}+ XP)
+              </option>
+            `).join('')}
+          </select>
+        </div>
+
+        <button class="btn btn-primary" id="save-profile-btn" style="width:100%; padding:0.85rem; font-size:1.05rem; margin-top:0.75rem;">
+          ✨ Let's Cook & Play!
+        </button>
+      </div>
+    `;
+
+    // Role switcher events inside modal
+    let selectedRole = currentRole;
+    const cardStudent = body.querySelector('#role-select-student');
+    const cardParent = body.querySelector('#role-select-parent');
+    const rankSelect = body.querySelector('#profile-select-rank');
+
+    const updateRankDropdown = (role) => {
+      const list = role === 'parent' ? PARENT_RANKS : STUDENT_RANKS;
+      rankSelect.innerHTML = list.map(r => `
+        <option value="${r.level}">
+          ${r.badge} Level ${r.level}: ${r.title} (${r.minXP}+ XP)
+        </option>
+      `).join('');
+    };
+
+    cardStudent?.addEventListener('click', () => {
+      sound.playClick();
+      selectedRole = 'student';
+      cardStudent.classList.add('selected');
+      cardParent.classList.remove('selected');
+      updateRankDropdown('student');
+    });
+
+    cardParent?.addEventListener('click', () => {
+      sound.playClick();
+      selectedRole = 'parent';
+      cardParent.classList.add('selected');
+      cardStudent.classList.remove('selected');
+      updateRankDropdown('parent');
+    });
+
+    body.querySelector('#save-profile-btn')?.addEventListener('click', () => {
+      const nameInput = body.querySelector('#profile-input-name');
+      const name = nameInput ? nameInput.value.trim() : (selectedRole === 'parent' ? 'Chef Priya' : 'Maya');
+      const rankLevel = parseInt(rankSelect ? rankSelect.value : '1', 10);
+      this.saveProfile(name || (selectedRole === 'parent' ? 'Chef Priya' : 'Maya'), selectedRole, rankLevel);
+    });
+  }
+
+  saveProfile(name, role, rankLevel) {
+    sound.playCorrect();
+    const profileKey = role === 'parent' ? 'parent' : 'kid';
+    this.state.currentProfile = profileKey;
+    const ranks = role === 'parent' ? PARENT_RANKS : STUDENT_RANKS;
+    const chosenRank = ranks.find(r => r.level === rankLevel) || ranks[0];
+
+    if (!this.state.profiles[profileKey]) {
+      this.state.profiles[profileKey] = {};
+    }
+    const prof = this.state.profiles[profileKey];
+    prof.name = name;
+    prof.role = role;
+    prof.rankLevel = rankLevel;
+    prof.avatar = role === 'parent' ? '👨‍🍳' : '🎒';
+    if (prof.xp < chosenRank.minXP) {
+      prof.xp = chosenRank.minXP;
+    }
+    this.state.onboarded = true;
+
     this.saveState();
+    this.closeProfileModal();
     this.renderHeader();
     this.renderProgressStrip();
+    this.renderActiveGame();
     this.renderLeaderboard();
     launchConfetti();
-    const p = this.getActiveProfile();
-    showToast(`Switched to ${p.name}!`, 'success');
+    showToast(`Welcome ${name}! (${chosenRank.title})`, 'success');
   }
 
   addXP(amount, badgeToUnlock = null) {
@@ -1461,22 +1652,13 @@ class FusionApp {
       showToast(`Badge Unlocked: ${badgeToUnlock}!`, 'success');
     }
 
-    const currentRank = this.getCurrentRank(profile.xp);
+    const currentRank = this.getCurrentRank(profile.xp, profile.role);
     this.saveState();
     this.renderHeader();
     this.renderProgressStrip();
     this.renderLeaderboard();
     sound.playCorrect();
     return currentRank;
-  }
-
-  getCurrentRank(xp) {
-    for (let i = CHEF_RANKS.length - 1; i >= 0; i--) {
-      if (xp >= CHEF_RANKS[i].minXP) {
-        return CHEF_RANKS[i];
-      }
-    }
-    return CHEF_RANKS[0];
   }
 
   applyTheme(theme) {
@@ -1510,7 +1692,7 @@ class FusionApp {
 
   renderHeader() {
     const profile = this.getActiveProfile();
-    const rank = this.getCurrentRank(profile.xp);
+    const rank = this.getCurrentRank(profile.xp, profile.role);
     
     const profilePill = document.getElementById('profile-switch-btn');
     if (profilePill) {
@@ -1529,8 +1711,9 @@ class FusionApp {
 
   renderProgressStrip() {
     const profile = this.getActiveProfile();
-    const rank = this.getCurrentRank(profile.xp);
-    const nextRank = CHEF_RANKS.find(r => r.level === rank.level + 1) || rank;
+    const rank = this.getCurrentRank(profile.xp, profile.role);
+    const ranks = profile.role === 'parent' ? PARENT_RANKS : STUDENT_RANKS;
+    const nextRank = ranks.find(r => r.level === rank.level + 1) || rank;
     const range = nextRank.minXP - rank.minXP || 1;
     const progress = Math.min(100, Math.max(0, ((profile.xp - rank.minXP) / range) * 100));
 
@@ -1545,7 +1728,7 @@ class FusionApp {
         <div class="progress-info">
           <h4>
             <span>${rank.title}</span>
-            <span style="font-size:0.85rem; font-weight:normal; color:var(--text-muted);">(Level ${rank.level})</span>
+            <span style="font-size:0.85rem; font-weight:normal; color:var(--text-muted);">(Level ${rank.level} • ${profile.role === 'parent' ? 'Parent Guide' : 'Student Chef'})</span>
             <span class="pill-badge" style="margin-left:auto;">${profile.xp} XP</span>
           </h4>
           <div class="progress-bar-track">
@@ -1691,9 +1874,10 @@ class FusionApp {
   // ========================================================
   renderBuildDishGame(arena) {
     const dish = FUSION_DISHES[this.selectedDishIndex];
+    const diff = this.getDifficultySettings();
     const correctItems = dish.pantryItems.filter(i => i.isCorrect);
-    const completedCount = this.buildDishSelectedIngredients.length;
-    const isFinished = completedCount === correctItems.length;
+    const impostors = dish.pantryItems.filter(i => !i.isCorrect).slice(0, diff.impostorCount);
+    const displayPantryItems = [...correctItems, ...impostors];
 
     arena.innerHTML = `
       <div class="arena-header">
@@ -1704,7 +1888,8 @@ class FusionApp {
             <p style="font-size:0.85rem; color:var(--text-muted);">Step-by-step vegetarian assembly & timed pantry rush</p>
           </div>
         </div>
-        <div class="arena-badges">
+        <div class="arena-badges" style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+          <span class="pill-badge ${diff.badgeClass}" style="font-weight:800; border-color:var(--primary); color:var(--primary);">${diff.badgeText}</span>
           <span class="pill-badge" style="color:var(--primary); font-weight:800;">⏱️ Rush Mode</span>
           <span class="veg-badge"><span class="veg-icon-dot"></span> 100% Pure Veg</span>
         </div>
@@ -1729,10 +1914,10 @@ class FusionApp {
                 Collected: ${completedCount} / ${correctItems.length}
               </span>
             </h4>
-            <p>Tap the authentic vegetarian ingredients! Beware of non-veg or clashing impostors.</p>
+            <p>Tap the authentic vegetarian ingredients! Beware of non-veg or clashing impostors (${diff.role === 'student' ? 'Kid-safe simple choices' : 'Pro chef tricky distractors'}).</p>
             
             <div class="pantry-items-grid">
-              ${dish.pantryItems.map((item) => {
+              ${displayPantryItems.map((item) => {
                 const isSelected = this.buildDishSelectedIngredients.includes(item.name);
                 return `
                   <button class="ingredient-btn ${isSelected ? 'selected' : ''}" 
@@ -1761,7 +1946,7 @@ class FusionApp {
                 ${dish.recipeSteps.map((step, sIdx) => {
                   const stepDone = completedCount >= (sIdx + 1) * Math.ceil(correctItems.length / dish.recipeSteps.length);
                   return `
-                    <div class="step-card ${stepDone || isFinished ? 'completed' : ''}">
+                    <div class="step-card ${stepDone || isFinished ? 'completed' : ''}" style="${diff.role === 'student' && step.kidSafe ? 'border-left: 4px solid var(--accent-green);' : ''}">
                       <div class="step-number">${sIdx + 1}</div>
                       <div>
                         <strong>${step.title}</strong>
@@ -2086,6 +2271,7 @@ class FusionApp {
     }
 
     const q = TRIVIA_QUESTIONS[this.currentTriviaIndex];
+    const diff = this.getDifficultySettings();
 
     arena.innerHTML = `
       <div class="arena-header">
@@ -2096,7 +2282,8 @@ class FusionApp {
             <p style="font-size:0.85rem; color:var(--text-muted);">10 Questions with Soft Timer & Collaborative Hints</p>
           </div>
         </div>
-        <div class="arena-badges">
+        <div class="arena-badges" style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+          <span class="pill-badge ${diff.badgeClass}" style="font-weight:800; border-color:var(--primary); color:var(--primary);">${diff.badgeText}</span>
           <span class="pill-badge">Question ${this.currentTriviaIndex + 1} of 10</span>
           <span class="pill-badge" style="color:var(--primary); font-weight:800;">Score: ${this.triviaScore}</span>
         </div>
@@ -2106,7 +2293,7 @@ class FusionApp {
         <div class="trivia-topbar">
           <div class="timer-soft-badge">
             <span>⏳ Soft Timer:</span>
-            <span id="trivia-timer-display">${this.triviaTimeLeft}s</span>
+            <span id="trivia-timer-display">${diff.triviaTimer}s</span>
             <span style="font-size:0.75rem; color:var(--text-muted); font-weight:normal;">(Bonus XP for quick answers!)</span>
           </div>
           <button class="btn btn-secondary" id="toggle-parent-hint-btn" style="padding:0.4rem 0.95rem; font-size:0.85rem;">
@@ -2160,7 +2347,7 @@ class FusionApp {
           sound.playCorrect();
           btn.classList.add('correct');
           this.triviaScore++;
-          const speedBonus = this.triviaTimeLeft > 10 ? 10 : 0;
+          const speedBonus = this.triviaTimeLeft > (diff.triviaTimer / 2) ? 10 : 0;
           this.addXP(25 + speedBonus, q.badge);
 
           feedbackBox.innerHTML = `
@@ -2195,7 +2382,6 @@ class FusionApp {
         document.getElementById('next-trivia-btn')?.addEventListener('click', () => {
           sound.playClick();
           this.currentTriviaIndex++;
-          this.triviaTimeLeft = 20;
           this.renderTriviaGame(arena);
         });
       });
@@ -2204,7 +2390,8 @@ class FusionApp {
 
   startTriviaTimer() {
     clearInterval(this.triviaTimer);
-    this.triviaTimeLeft = 20;
+    const diff = this.getDifficultySettings();
+    this.triviaTimeLeft = diff.triviaTimer;
     const display = document.getElementById('trivia-timer-display');
     this.triviaTimer = setInterval(() => {
       this.triviaTimeLeft--;
@@ -2231,7 +2418,10 @@ class FusionApp {
       this.hotPotatoLoop = null;
     }
 
-    const highScore = localStorage.getItem('fusion_hot_potato_high') || 0;
+    const profile = this.getActiveProfile();
+    const highScore = profile.bests?.hotPotato || localStorage.getItem('fusion_hot_potato_high') || 0;
+    const diff = this.getDifficultySettings();
+    const isItchMode = this.state.hpMode === 'itch';
 
     arena.innerHTML = `
       <div class="arena-header">
@@ -2240,52 +2430,90 @@ class FusionApp {
           <div>
             <h3>Hot Potato Rush</h3>
             <p style="font-size:0.85rem; color:var(--text-muted);">
-              Inspired by PromptPotatoGames: Whack the potato, bounce it into glowing coals to cook it, and serve through the green window once golden!
+              Inspired by PromptPotatoGames: Launch potato towards your tap/click, roast on coals, and fling into the green window once golden!
             </p>
           </div>
         </div>
         <div class="arena-badges" style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+          <span class="pill-badge ${diff.badgeClass}" style="font-weight:800; border-color:var(--primary); color:var(--primary);">${diff.badgeText}</span>
           <span class="pill-badge" style="color:var(--primary); font-weight:800;" id="hp-score-badge">Score: 0</span>
           <span class="pill-badge" id="hp-high-badge">Best: ${highScore}</span>
           <span class="pill-badge" style="color:#F59E0B;" id="hp-heat-badge">Heat: Raw (0%)</span>
         </div>
       </div>
 
-      <div class="hot-potato-arena-wrapper">
-        <div class="hot-potato-canvas-container" id="hp-canvas-container">
-          <canvas id="hot-potato-canvas" width="800" height="460"></canvas>
-          <div class="hot-potato-overlay" id="hp-start-overlay">
-            <div class="hp-overlay-card">
-              <div class="hp-overlay-icon" style="animation:hpTumble 1.8s infinite ease-in-out;">🥔</div>
-              <h3 class="hp-overlay-title">Hot Potato Rush!</h3>
-              <p class="hp-overlay-desc">
-                🔥 <strong>Cook:</strong> Bounce potato on hot tandoor coals at the bottom.<br>
-                💥 <strong>Whack:</strong> Tap, click or press <strong>SPACE</strong> to hit it upward.<br>
-                ✨ <strong>Serve:</strong> Once <strong>Golden Crispy</strong>, fling into the <strong>Green Serving Window</strong> on the right! Don't let it turn to charcoal!
-              </p>
-              <button class="btn btn-primary" id="hp-start-btn" style="padding:0.75rem 2.2rem; font-size:1.05rem;">
-                🎮 Start Cooking!
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Touch Mobile Whack Controls -->
-        <div class="hp-controls-bar">
-          <button class="btn btn-primary hp-action-btn" id="hp-tap-whack-btn">
-            💥 WHACK POTATO (Tap or Space)
-          </button>
-          <div class="hp-status-strip">
-            <div class="hp-meter-outer">
-              <div class="hp-meter-fill" id="hp-meter-fill"></div>
-            </div>
-            <span id="hp-status-text" style="font-size:0.85rem; font-weight:700;">State: Raw</span>
-          </div>
-        </div>
+      <!-- Dual Mode Selector Switch -->
+      <div class="hp-mode-switch-row" style="display:flex; justify-content:center; gap:0.75rem; margin-bottom:1rem; flex-wrap:wrap;">
+        <button class="btn btn-secondary hp-mode-switch-btn ${!isItchMode ? 'active' : ''}" id="hp-mode-native-btn" style="padding:0.45rem 1.15rem; font-size:0.9rem;">
+          🎮 Native Jump Arena
+        </button>
+        <button class="btn btn-secondary hp-mode-switch-btn ${isItchMode ? 'active' : ''}" id="hp-mode-itch-btn" style="padding:0.45rem 1.15rem; font-size:0.9rem;">
+          🌐 Play Itch.io Original
+        </button>
       </div>
+
+      ${isItchMode ? `
+        <div class="hp-itch-frame-container" style="text-align:center; padding:0.5rem; margin-bottom:1.5rem;">
+          <iframe src="https://itch.io/embed-upload/27878028?color=333333" width="100%" height="480" frameborder="0" allowfullscreen="" style="border:none; border-radius:var(--radius-md); max-width:800px; display:block; margin:0 auto; background:#222;">
+            <a href="https://promptpotatogames.itch.io/prompt-potato">Play Hot Potato on itch.io</a>
+          </iframe>
+          <p style="font-size:0.82rem; color:var(--text-muted); margin-top:0.75rem;">
+            Direct web embed of Prompt Potato (itch.io). Switch back to Native Jump Arena for family scoreboard tracking!
+          </p>
+        </div>
+      ` : `
+        <div class="hot-potato-arena-wrapper">
+          <div class="hot-potato-canvas-container" id="hp-canvas-container">
+            <canvas id="hot-potato-canvas" width="800" height="460"></canvas>
+            <div class="hot-potato-overlay" id="hp-start-overlay">
+              <div class="hp-overlay-card">
+                <div class="hp-overlay-icon" style="animation:hpTumble 1.8s infinite ease-in-out;">🥔</div>
+                <h3 class="hp-overlay-title">Hot Potato Rush!</h3>
+                <p class="hp-overlay-desc">
+                  🎯 <strong>Direct Jump:</strong> Tap anywhere on canvas to launch potato directly towards that target!<br>
+                  🔥 <strong>Roast:</strong> Bounce on coals at the bottom (${diff.role === 'student' ? 'Wide Safe Zone' : 'Fast Coals'}).<br>
+                  ✨ <strong>Serve:</strong> Once <strong>Golden Crispy</strong>, fling into the <strong>Green Serving Window</strong> on the right!
+                </p>
+                <button class="btn btn-primary" id="hp-start-btn" style="padding:0.75rem 2.2rem; font-size:1.05rem;">
+                  🎮 Start Cooking!
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Touch Mobile Whack Controls -->
+          <div class="hp-controls-bar">
+            <button class="btn btn-primary hp-action-btn" id="hp-tap-whack-btn">
+              💥 TAP TO LAUNCH (Or Click Anywhere On Canvas)
+            </button>
+            <div class="hp-status-strip">
+              <div class="hp-meter-outer">
+                <div class="hp-meter-fill" id="hp-meter-fill"></div>
+              </div>
+              <span id="hp-status-text" style="font-size:0.85rem; font-weight:700;">State: Raw</span>
+            </div>
+          </div>
+        </div>
+      `}
     `;
 
-    this.initHotPotatoEngine(arena);
+    arena.querySelector('#hp-mode-native-btn')?.addEventListener('click', () => {
+      sound.playClick();
+      this.state.hpMode = 'native';
+      this.saveState();
+      this.renderHotPotatoGame(arena);
+    });
+
+    arena.querySelector('#hp-mode-itch-btn')?.addEventListener('click', () => {
+      sound.playClick();
+      this.state.hpMode = 'itch';
+      this.saveState();
+      this.renderHotPotatoGame(arena);
+    });
+
+    if (!isItchMode) {
+      this.initHotPotatoEngine(arena);
+    }
   }
 
   initHotPotatoEngine(arena) {
@@ -2300,9 +2528,11 @@ class FusionApp {
     const meterFill = arena.querySelector('#hp-meter-fill');
     const statusText = arena.querySelector('#hp-status-text');
 
+    const profile = this.getActiveProfile();
+    const diff = this.getDifficultySettings();
     let isPlaying = false;
     let score = 0;
-    let highScore = parseInt(localStorage.getItem('fusion_hot_potato_high') || '0', 10);
+    let highScore = profile.bests?.hotPotato || parseInt(localStorage.getItem('fusion_hot_potato_high') || '0', 10);
 
     // Physics & potato object
     const potato = {
@@ -2329,8 +2559,8 @@ class FusionApp {
       h: 150
     };
 
-    // Coals zone at the bottom
-    const coalsHeight = 55;
+    // Coals zone at the bottom based on difficulty
+    const coalsHeight = diff.coalsHeight;
 
     const resetPotato = (isNextRound = false) => {
       potato.x = 120 + Math.random() * 80;
@@ -2343,19 +2573,59 @@ class FusionApp {
       potato.served = false;
     };
 
+    const updateLeaderboardScore = (currentScore) => {
+      if (currentScore > highScore) {
+        highScore = currentScore;
+        localStorage.setItem('fusion_hot_potato_high', highScore);
+        if (highBadge) highBadge.innerText = `Best: ${highScore}`;
+      }
+      if (!profile.bests) profile.bests = {};
+      if (currentScore > (profile.bests.hotPotato || 0)) {
+        profile.bests.hotPotato = currentScore;
+        this.saveState();
+      }
+    };
+
+    // Target-directed jump towards click/tap coordinates
+    const launchPotatoTowards = (targetX, targetY) => {
+      if (!isPlaying) return;
+      sound.playWhack();
+
+      // Vector from potato center to clicked point
+      const dx = targetX - potato.x;
+      const dy = targetY - potato.y;
+
+      // Apply directional velocity impulse
+      potato.vx = Math.max(-12, Math.min(12, dx * 0.18));
+      // Give upward lift towards target with vertical boost
+      potato.vy = Math.min(-6, dy * 0.22 - 3.5);
+      potato.rotSpeed = (potato.vx > 0 ? 1 : -1) * 0.15;
+
+      // Tap ripple effect at target coordinates
+      for (let i = 0; i < 12; i++) {
+        particles.push({
+          x: targetX,
+          y: targetY,
+          vx: (Math.random() - 0.5) * 7,
+          vy: (Math.random() - 0.5) * 7,
+          color: Math.random() > 0.4 ? '#00E5FF' : '#FF0080',
+          size: 4 + Math.random() * 4,
+          life: 0.8
+        });
+      }
+    };
+
     const whackPotato = () => {
       if (!isPlaying) return;
       sound.playWhack();
 
-      // Give strong upward and forward impulse
+      // Strong upward and forward impulse
       potato.vy = -9.2 - Math.random() * 2;
       potato.vx += (Math.random() * 3.5 - 1.2);
-      // Keep x velocity reasonable
       if (potato.vx < -6) potato.vx = -6;
       if (potato.vx > 7) potato.vx = 7;
       potato.rotSpeed = (Math.random() - 0.5) * 0.28;
 
-      // Sparkle burst at whack location
       for (let i = 0; i < 8; i++) {
         particles.push({
           x: potato.x,
@@ -2372,11 +2642,7 @@ class FusionApp {
     const gameOver = (reason) => {
       isPlaying = false;
       sound.playWrong();
-      if (score > highScore) {
-        highScore = score;
-        localStorage.setItem('fusion_hot_potato_high', highScore);
-        highBadge.innerText = `Best: ${highScore}`;
-      }
+      updateLeaderboardScore(score);
 
       startOverlay.style.display = 'flex';
       startOverlay.innerHTML = `
@@ -2391,7 +2657,7 @@ class FusionApp {
           <p class="hp-overlay-desc">
             ${reason === 'burnt' 
               ? 'Kept on sizzling coals too long! Serve through the green window when it glows Golden.'
-              : 'Keep the potato airborne by whacking it before it hits the spikes!'}
+              : 'Keep the potato airborne by tapping towards the green window!'}
           </p>
           <button class="btn btn-primary" id="hp-restart-btn" style="padding:0.75rem 2.2rem; font-size:1.05rem;">
             🔄 Play Again
@@ -2413,11 +2679,7 @@ class FusionApp {
       launchConfetti(canvas.getBoundingClientRect().right, canvas.getBoundingClientRect().top + 150);
       score += 10;
       scoreBadge.innerText = `Score: ${score}`;
-      if (score > highScore) {
-        highScore = score;
-        localStorage.setItem('fusion_hot_potato_high', highScore);
-        highBadge.innerText = `Best: ${highScore}`;
-      }
+      updateLeaderboardScore(score);
 
       this.addXP(15, '🥔 Master Potato Roaster');
       showToast(`Served Golden Crispy Fusion Potato! +10 Pts (+15 XP)`, 'success');
@@ -2456,9 +2718,15 @@ class FusionApp {
       e.preventDefault();
     });
 
+    // Pointerdown on Canvas -> Direct jump impulse to click/tap location
     canvas.addEventListener('pointerdown', (e) => {
       e.preventDefault();
-      whackPotato();
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      const clickX = (e.clientX - rect.left) * scaleX;
+      const clickY = (e.clientY - rect.top) * scaleY;
+      launchPotatoTowards(clickX, clickY);
     });
 
     const keyHandler = (e) => {
@@ -2471,8 +2739,8 @@ class FusionApp {
     };
     window.addEventListener('keydown', keyHandler);
 
-    // Physics Engine Loop
-    const gravity = 0.28;
+    // Physics Engine Loop with Adaptive Gravity
+    const gravity = diff.hpGravity;
     const updateLoop = () => {
       if (isPlaying) {
         // Apply Gravity
@@ -2490,23 +2758,18 @@ class FusionApp {
 
         // Right wall bounce or Serve Window check
         if (potato.x + potato.radius >= serveWindow.x) {
-          // Check if in green window range vertically
           if (potato.y >= serveWindow.y && potato.y <= serveWindow.y + serveWindow.h) {
-            // Check cooking stage
             if (potato.cookLevel >= 38 && potato.cookLevel <= 85) {
               serveSuccess();
             } else if (potato.cookLevel < 38) {
-              // Too raw to serve
               potato.x = serveWindow.x - potato.radius;
               potato.vx = -Math.abs(potato.vx) * 0.9;
               sound.playWrong();
               showToast('Potato is still RAW! Cook it on the coals first!', 'info');
             } else {
-              // Burnt
               gameOver('burnt');
             }
           } else {
-            // Hit wall outside window
             potato.x = serveWindow.x - potato.radius;
             potato.vx = -Math.abs(potato.vx) * 0.85;
             sound.playTick();
@@ -2519,12 +2782,12 @@ class FusionApp {
           potato.vy = Math.abs(potato.vy) * 0.7;
         }
 
-        // Bottom Coals Zone
+        // Bottom Coals Zone with Adaptive Height and Boost
         const coalsY = canvas.height - coalsHeight;
         if (potato.y + potato.radius >= coalsY) {
           potato.y = coalsY - potato.radius;
-          potato.vy = -7.2 - Math.random() * 2; // Auto bounce off coals with solid height
-          potato.cookLevel += 14; // Gradual cooking
+          potato.vy = diff.hpCoalsBoost - Math.random() * 2;
+          potato.cookLevel += (diff.role === 'student' ? 12 : 16);
           sound.playSizzle();
 
           // Smoke / ember particles
@@ -2548,24 +2811,27 @@ class FusionApp {
 
         // Update UI meter
         const cookPct = Math.min(100, Math.floor(potato.cookLevel));
-        meterFill.style.width = `${cookPct}%`;
+        if (meterFill) meterFill.style.width = `${cookPct}%`;
 
         let color = '#38BDF8';
         let label = `Raw (${cookPct}%)`;
         if (cookPct >= 38 && cookPct <= 85) {
           color = '#10B981';
           label = `✨ GOLDEN & CRISPY! SERVE NOW! (${cookPct}%)`;
-          meterFill.style.background = 'linear-gradient(90deg, #10B981, #F59E0B)';
+          if (meterFill) meterFill.style.background = 'linear-gradient(90deg, #10B981, #F59E0B)';
         } else if (cookPct > 85) {
           color = '#EF4444';
           label = `⚠️ BURNING! SERVE FAST! (${cookPct}%)`;
-          meterFill.style.background = '#EF4444';
+          if (meterFill) meterFill.style.background = '#EF4444';
         } else {
-          meterFill.style.background = '#38BDF8';
+          if (meterFill) meterFill.style.background = '#38BDF8';
         }
-        statusText.style.color = color;
-        statusText.innerText = `State: ${label}`;
-        arena.querySelector('#hp-heat-badge').innerText = `Heat: ${cookPct}%`;
+        if (statusText) {
+          statusText.style.color = color;
+          statusText.innerText = `State: ${label}`;
+        }
+        const heatBadge = arena.querySelector('#hp-heat-badge');
+        if (heatBadge) heatBadge.innerText = `Heat: ${cookPct}%`;
       }
 
       // DRAW CANVAS
@@ -3576,14 +3842,29 @@ Guidelines:
   // ========================================================
   // FAMILY SCOREBOARD & LEADERBOARD
   // ========================================================
+  // ========================================================
+  // FAMILY SCOREBOARD & LEADERBOARD
+  // ========================================================
   renderLeaderboard() {
     const ladderContainer = document.getElementById('rank-ladder-display');
     const rosterContainer = document.getElementById('family-roster-display');
     const profile = this.getActiveProfile();
-    const currentRank = this.getCurrentRank(profile.xp);
+    const currentRank = this.getCurrentRank(profile.xp, profile.role);
+    const roleRanks = profile.role === 'parent' ? PARENT_RANKS : STUDENT_RANKS;
+    const filter = this.state.leaderboardFilter || 'all';
+
+    // Update active state on filter chips
+    document.querySelectorAll('#leaderboard-filter-tabs .recipe-chip').forEach(btn => {
+      const f = btn.getAttribute('data-lb-filter');
+      if (f === filter) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
 
     if (ladderContainer) {
-      ladderContainer.innerHTML = CHEF_RANKS.map(r => {
+      ladderContainer.innerHTML = roleRanks.map(r => {
         const isCurrent = r.level === currentRank.level;
         const isUnlocked = profile.xp >= r.minXP;
 
@@ -3606,7 +3887,30 @@ Guidelines:
     if (rosterContainer) {
       rosterContainer.innerHTML = Object.entries(this.state.profiles).map(([key, p]) => {
         const isActive = key === this.state.currentProfile;
-        const pRank = this.getCurrentRank(p.xp);
+        const pRank = this.getCurrentRank(p.xp, p.role);
+        const bests = p.bests || {};
+
+        let metricDisplay = `
+          <div style="font-weight:900; color:var(--primary); font-size:1.35rem;">${p.xp} XP</div>
+          <div style="font-size:0.8rem; color:var(--secondary); font-weight:700;">🔥 ${p.streak} Day Streak</div>
+        `;
+
+        if (filter === 'hotPotato') {
+          metricDisplay = `
+            <div style="font-weight:900; color:#10B981; font-size:1.35rem;">🥔 ${bests.hotPotato || 0} Served</div>
+            <div style="font-size:0.78rem; color:var(--text-muted);">Personal Best</div>
+          `;
+        } else if (filter === 'buildDish') {
+          metricDisplay = `
+            <div style="font-weight:900; color:var(--secondary); font-size:1.35rem;">🥘 ${bests.buildDish || 0} Dishes</div>
+            <div style="font-size:0.78rem; color:var(--text-muted);">Completed Dishes</div>
+          `;
+        } else if (filter === 'trivia') {
+          metricDisplay = `
+            <div style="font-weight:900; color:var(--primary); font-size:1.35rem;">🧠 ${bests.trivia || 0}/10 Correct</div>
+            <div style="font-size:0.78rem; color:var(--text-muted);">Trivia Score</div>
+          `;
+        }
 
         return `
           <div style="background:var(--bg-card-subtle); border:${isActive ? '2.5px solid var(--primary)' : '1.5px solid var(--border-color)'}; border-radius:var(--radius-md); padding:1.25rem; margin-bottom:1.15rem; box-shadow:${isActive ? '0 4px 16px var(--primary-glow)' : 'none'};">
@@ -3615,17 +3919,16 @@ Guidelines:
                 <span style="font-size:2.2rem;">${p.avatar}</span>
                 <div>
                   <strong style="font-size:1.05rem;">${p.name}</strong>
-                  <div style="font-size:0.82rem; color:var(--text-muted);">${pRank.title} (Level ${pRank.level})</div>
+                  <div style="font-size:0.82rem; color:var(--text-muted);">${pRank.title} (Level ${pRank.level} • ${p.role === 'parent' ? 'Parent Guide' : 'Student Chef'})</div>
                 </div>
               </div>
               <div style="text-align:right;">
-                <div style="font-weight:900; color:var(--primary); font-size:1.35rem;">${p.xp} XP</div>
-                <div style="font-size:0.8rem; color:var(--secondary); font-weight:700;">🔥 ${p.streak} Day Streak</div>
+                ${metricDisplay}
               </div>
             </div>
 
             <div style="margin-top:0.85rem; border-top:1px dashed var(--border-dashed); padding-top:0.65rem; display:flex; flex-wrap:wrap; gap:0.45rem;">
-              ${p.unlockedBadges.map(b => `
+              ${(p.unlockedBadges || []).map(b => `
                 <span class="pill-badge" style="font-size:0.75rem; background:var(--bg-card);">${b}</span>
               `).join('')}
             </div>
@@ -3830,7 +4133,11 @@ Guidelines:
   bindEvents() {
     document.getElementById('theme-toggle-btn')?.addEventListener('click', () => this.toggleTheme());
     document.getElementById('sound-toggle-btn')?.addEventListener('click', () => this.toggleSound());
-    document.getElementById('profile-switch-btn')?.addEventListener('click', () => this.switchProfile());
+    document.getElementById('profile-switch-btn')?.addEventListener('click', () => this.openProfileModal());
+    document.getElementById('close-profile-modal-btn')?.addEventListener('click', () => this.closeProfileModal());
+    document.getElementById('profile-modal')?.addEventListener('click', (e) => {
+      if (e.target.id === 'profile-modal') this.closeProfileModal();
+    });
     document.getElementById('admin-modal-open-btn')?.addEventListener('click', () => this.openAdminModal());
     document.getElementById('admin-footer-link')?.addEventListener('click', () => this.openAdminModal());
     document.getElementById('close-admin-modal-btn')?.addEventListener('click', () => this.closeAdminModal());
@@ -3845,10 +4152,23 @@ Guidelines:
         await this.clearAllWebsiteData();
       }
     });
+
+    // Leaderboard filter tabs
+    document.querySelectorAll('#leaderboard-filter-tabs .recipe-chip').forEach(btn => {
+      btn.addEventListener('click', () => {
+        sound.playClick();
+        const f = btn.getAttribute('data-lb-filter') || 'all';
+        this.state.leaderboardFilter = f;
+        this.saveState();
+        this.renderLeaderboard();
+      });
+    });
+
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         this.closeAdminModal();
         this.closeRecipePopout();
+        this.closeProfileModal();
       }
     });
   }
