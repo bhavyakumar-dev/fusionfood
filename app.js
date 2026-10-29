@@ -1069,8 +1069,134 @@ function showToast(message, type = 'info') {
 }
 
 // ==========================================
-// 4. MAIN APPLICATION ARCHITECTURE
+// 4. DATABASE LAYER & APPLICATION ARCHITECTURE
 // ==========================================
+const DB_CONFIG = {
+  DB_NAME: 'FusionFoodDB',
+  DB_VERSION: 1,
+  STORE_PROFILES: 'profiles',
+  STORE_LEADERBOARD: 'leaderboard',
+  STORE_APP_STATE: 'app_state'
+};
+
+class FusionDatabase {
+  constructor() {
+    this.db = null;
+    this.isReady = false;
+    this.initPromise = this.open();
+  }
+
+  open() {
+    return new Promise((resolve) => {
+      if (!window.indexedDB) {
+        console.warn('IndexedDB not supported, falling back to LocalStorage');
+        this.isReady = true;
+        resolve(null);
+        return;
+      }
+
+      try {
+        const request = window.indexedDB.open(DB_CONFIG.DB_NAME, DB_CONFIG.DB_VERSION);
+
+        request.onupgradeneeded = (e) => {
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains(DB_CONFIG.STORE_PROFILES)) {
+            db.createObjectStore(DB_CONFIG.STORE_PROFILES, { keyPath: 'id' });
+          }
+          if (!db.objectStoreNames.contains(DB_CONFIG.STORE_LEADERBOARD)) {
+            const store = db.createObjectStore(DB_CONFIG.STORE_LEADERBOARD, { keyPath: 'id' });
+            store.createIndex('xp', 'xp', { unique: false });
+          }
+          if (!db.objectStoreNames.contains(DB_CONFIG.STORE_APP_STATE)) {
+            db.createObjectStore(DB_CONFIG.STORE_APP_STATE, { keyPath: 'key' });
+          }
+        };
+
+        request.onsuccess = (e) => {
+          this.db = e.target.result;
+          this.isReady = true;
+          resolve(this.db);
+        };
+
+        request.onerror = (e) => {
+          console.warn('IndexedDB open error:', e);
+          this.isReady = true;
+          resolve(null);
+        };
+      } catch (err) {
+        console.warn('IndexedDB exception:', err);
+        this.isReady = true;
+        resolve(null);
+      }
+    });
+  }
+
+  async set(storeName, item) {
+    await this.initPromise;
+    if (!this.db) return false;
+    return new Promise((resolve) => {
+      try {
+        const tx = this.db.transaction(storeName, 'readwrite');
+        const store = tx.objectStore(storeName);
+        store.put(item);
+        tx.oncomplete = () => resolve(true);
+        tx.onerror = () => resolve(false);
+      } catch (e) {
+        resolve(false);
+      }
+    });
+  }
+
+  async get(storeName, key) {
+    await this.initPromise;
+    if (!this.db) return null;
+    return new Promise((resolve) => {
+      try {
+        const tx = this.db.transaction(storeName, 'readonly');
+        const store = tx.objectStore(storeName);
+        const req = store.get(key);
+        req.onsuccess = () => resolve(req.result || null);
+        req.onerror = () => resolve(null);
+      } catch (e) {
+        resolve(null);
+      }
+    });
+  }
+
+  async getAll(storeName) {
+    await this.initPromise;
+    if (!this.db) return [];
+    return new Promise((resolve) => {
+      try {
+        const tx = this.db.transaction(storeName, 'readonly');
+        const store = tx.objectStore(storeName);
+        const req = store.getAll();
+        req.onsuccess = () => resolve(req.result || []);
+        req.onerror = () => resolve([]);
+      } catch (e) {
+        resolve([]);
+      }
+    });
+  }
+
+  async clearAll() {
+    await this.initPromise;
+    if (!this.db) return false;
+    return new Promise((resolve) => {
+      try {
+        const tx = this.db.transaction([DB_CONFIG.STORE_PROFILES, DB_CONFIG.STORE_LEADERBOARD, DB_CONFIG.STORE_APP_STATE], 'readwrite');
+        tx.objectStore(DB_CONFIG.STORE_PROFILES).clear();
+        tx.objectStore(DB_CONFIG.STORE_LEADERBOARD).clear();
+        tx.objectStore(DB_CONFIG.STORE_APP_STATE).clear();
+        tx.oncomplete = () => resolve(true);
+        tx.onerror = () => resolve(false);
+      } catch (e) {
+        resolve(false);
+      }
+    });
+  }
+}
+
 const DEFAULT_STATE = {
   currentProfile: 'kid',
   currentTab: 'games', // 'games', 'kitchen', 'leaderboard'
@@ -1109,6 +1235,7 @@ const DEFAULT_STATE = {
 
 class FusionApp {
   constructor() {
+    this.db = new FusionDatabase();
     this.state = this.loadState();
     if (!this.state.completedCityQuests) {
       this.state.completedCityQuests = [];
@@ -1154,8 +1281,85 @@ class FusionApp {
     try {
       localStorage.setItem('fusion_app_state', JSON.stringify(this.state));
     } catch (e) {
-      console.warn('Could not save state:', e);
+      console.warn('Could not save state to localStorage:', e);
     }
+
+    // Persist asynchronously to IndexedDB database
+    if (this.db) {
+      try {
+        this.db.set(DB_CONFIG.STORE_APP_STATE, { key: 'state', value: this.state });
+        if (this.state.profiles) {
+          Object.entries(this.state.profiles).forEach(([id, prof]) => {
+            this.db.set(DB_CONFIG.STORE_PROFILES, { id, ...prof, updatedAt: new Date().toISOString() });
+          });
+          const leaderboardEntries = Object.entries(this.state.profiles).map(([id, prof]) => ({
+            id,
+            name: prof.name,
+            avatar: prof.avatar,
+            xp: prof.xp,
+            streak: prof.streak,
+            rank: this.getCurrentRank(prof.xp).title,
+            level: this.getCurrentRank(prof.xp).level,
+            updatedAt: new Date().toISOString()
+          }));
+          leaderboardEntries.forEach(entry => {
+            this.db.set(DB_CONFIG.STORE_LEADERBOARD, entry);
+          });
+        }
+      } catch (err) {
+        console.warn('Error syncing with IndexedDB:', err);
+      }
+    }
+  }
+
+  async clearAllWebsiteData() {
+    try {
+      // 1. Clear IndexedDB
+      if (this.db) {
+        await this.db.clearAll();
+      }
+    } catch (err) {
+      console.warn('Error clearing IndexedDB:', err);
+    }
+
+    // 2. Clear LocalStorage keys
+    try {
+      localStorage.removeItem('fusion_app_state');
+      localStorage.removeItem('fusion_hot_potato_high');
+      localStorage.removeItem('fusion_muted');
+      localStorage.removeItem('fusion_gemini_api_key');
+      localStorage.clear();
+    } catch (err) {
+      console.warn('Error clearing localStorage:', err);
+    }
+
+    // 3. Reset in-memory state to clean pristine defaults
+    this.state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+    this.state.profiles.kid.xp = 0;
+    this.state.profiles.parent.xp = 0;
+    this.state.profiles.kid.streak = 1;
+    this.state.profiles.parent.streak = 1;
+    this.state.profiles.kid.bests = { trivia: 0, buildDish: 0, pronunciation: 0, scienceSpins: 0 };
+    this.state.profiles.parent.bests = { trivia: 0, buildDish: 0, pronunciation: 0, scienceSpins: 0 };
+    this.state.profiles.kid.unlockedBadges = ['🌱 Kitchen Apprentice'];
+    this.state.profiles.parent.unlockedBadges = ['🌱 Kitchen Apprentice'];
+    this.state.completedCityQuests = [];
+    this.state.recipeCompletedSteps = {};
+
+    // 4. Persist clean state to Database & LocalStorage
+    this.saveState();
+
+    // 5. Re-render all views
+    this.applyTheme(this.state.theme);
+    this.renderHeader();
+    this.renderProgressStrip();
+    this.renderGameTabs();
+    this.renderActiveGame();
+    this.renderKitchenLab(this.state.recipeFilter);
+    this.renderLeaderboard();
+
+    sound.playCorrect();
+    showToast('✨ All website data, XP, and leaderboards cleared!', 'success');
   }
 
   init() {
@@ -3446,8 +3650,11 @@ Guidelines:
             <button class="btn btn-secondary" id="reset-admin-btn" style="color:var(--primary); border-color:var(--primary); padding:0.45rem 0.85rem; font-size:0.82rem;">
               🔄 Reset Admin Defaults
             </button>
-            <button class="btn btn-secondary" id="reset-scores-btn" style="color:#DC2626; border-color:#DC2626; padding:0.45rem 0.85rem; font-size:0.82rem;">
-              ⚠️ Reset All Scores
+            <button class="btn btn-secondary" id="reset-scores-btn" style="color:#F59E0B; border-color:#F59E0B; padding:0.45rem 0.85rem; font-size:0.82rem;">
+              ⚠️ Reset XP & Levels
+            </button>
+            <button class="btn btn-secondary" id="clear-all-data-admin-btn" style="color:#DC2626; border-color:#DC2626; padding:0.45rem 0.85rem; font-size:0.82rem; font-weight:800;">
+              🗑️ Clear All Website Data
             </button>
           </div>
           <button class="btn btn-primary" id="save-admin-settings-btn" style="padding:0.5rem 1.4rem; font-size:0.88rem;">
@@ -3501,6 +3708,14 @@ Guidelines:
         }
       });
 
+      // Clear All Website Data (Database, XP, Leaderboard, Badges, Recipes)
+      document.getElementById('clear-all-data-admin-btn')?.addEventListener('click', async () => {
+        if (confirm('⚠️ PERMANENT ACTION:\n\nDo you want to completely clear all website data, including database records, XP, levels, leaderboards, and progress?')) {
+          await this.clearAllWebsiteData();
+          this.closeAdminModal();
+        }
+      });
+
       // Reset Admin Defaults (PIN and all game toggles)
       document.getElementById('reset-admin-btn')?.addEventListener('click', () => {
         if (confirm('Reset Admin PIN back to default and enable all 5 games?')) {
@@ -3535,6 +3750,11 @@ Guidelines:
     });
     document.getElementById('recipe-popout-modal')?.addEventListener('click', (e) => {
       if (e.target.id === 'recipe-popout-modal') this.closeRecipePopout();
+    });
+    document.getElementById('clear-website-data-btn')?.addEventListener('click', async () => {
+      if (confirm('🗑️ CLEAR ALL WEBSITE DATA:\n\nAre you sure you want to completely clear all user XP, leaderboards, levels, best scores, and website history?')) {
+        await this.clearAllWebsiteData();
+      }
     });
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
