@@ -2052,12 +2052,12 @@ class FusionApp {
           <canvas id="hot-potato-canvas" width="800" height="460"></canvas>
           <div class="hot-potato-overlay" id="hp-start-overlay">
             <div class="hp-overlay-card">
-              <div style="font-size:3.5rem; margin-bottom:0.4rem; animation:hpTumble 1.8s infinite ease-in-out;">🥔</div>
-              <h3 style="font-size:1.75rem; margin-bottom:0.4rem;">Hot Potato Rush!</h3>
-              <p style="color:var(--text-muted); font-size:0.92rem; max-width:440px; margin:0 auto 1.25rem; line-height:1.5;">
-                🔥 <strong>Cook:</strong> Bounce the potato on the hot tandoor coals at the bottom.<br>
-                💥 <strong>Whack:</strong> Click, tap or press <strong>SPACE</strong> to whack the potato upwards.<br>
-                ✨ <strong>Serve:</strong> Once it turns <strong>Golden Crispy</strong>, fling it into the <strong>Green Serving Window</strong> on the right! Don't let it turn to charcoal!
+              <div class="hp-overlay-icon" style="animation:hpTumble 1.8s infinite ease-in-out;">🥔</div>
+              <h3 class="hp-overlay-title">Hot Potato Rush!</h3>
+              <p class="hp-overlay-desc">
+                🔥 <strong>Cook:</strong> Bounce potato on hot tandoor coals at the bottom.<br>
+                💥 <strong>Whack:</strong> Tap, click or press <strong>SPACE</strong> to hit it upward.<br>
+                ✨ <strong>Serve:</strong> Once <strong>Golden Crispy</strong>, fling into the <strong>Green Serving Window</strong> on the right! Don't let it turn to charcoal!
               </p>
               <button class="btn btn-primary" id="hp-start-btn" style="padding:0.75rem 2.2rem; font-size:1.05rem;">
                 🎮 Start Cooking!
@@ -2177,17 +2177,17 @@ class FusionApp {
       startOverlay.style.display = 'flex';
       startOverlay.innerHTML = `
         <div class="hp-overlay-card">
-          <div style="font-size:3.5rem; margin-bottom:0.4rem;">${reason === 'burnt' ? '🔥' : '💥'}</div>
-          <h3 style="font-size:1.7rem; color:#F43F5E; margin-bottom:0.25rem;">
-            ${reason === 'burnt' ? 'Charcoal Alert! Potato Burnt!' : 'Dropped Potato!'}
+          <div class="hp-overlay-icon">${reason === 'burnt' ? '🔥' : '💥'}</div>
+          <h3 class="hp-overlay-title" style="color:#F43F5E;">
+            ${reason === 'burnt' ? 'Charcoal Alert! Burnt!' : 'Dropped Potato!'}
           </h3>
-          <p style="color:var(--text-main); font-size:1.1rem; font-weight:800; margin-bottom:0.5rem;">
-            Final Score: ${score} Potatoes Served
+          <p style="color:var(--text-main); font-size:1.05rem; font-weight:800; margin-bottom:0.35rem;">
+            Score: ${score} Potatoes Served
           </p>
-          <p style="color:var(--text-muted); font-size:0.86rem; margin-bottom:1.25rem;">
+          <p class="hp-overlay-desc">
             ${reason === 'burnt' 
-              ? 'You kept the potato on the sizzling coals too long! Serve it through the green window when it glows Golden.'
-              : 'Keep the potato in the air by whacking it before it hits the side spikes!'}
+              ? 'Kept on sizzling coals too long! Serve through the green window when it glows Golden.'
+              : 'Keep the potato airborne by whacking it before it hits the spikes!'}
           </p>
           <button class="btn btn-primary" id="hp-restart-btn" style="padding:0.75rem 2.2rem; font-size:1.05rem;">
             🔄 Play Again

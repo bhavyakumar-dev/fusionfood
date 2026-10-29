@@ -1433,11 +1433,16 @@ button {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45), 0 0 20px var(--primary-glow);
   background: #080A10;
   touch-action: none;
+  aspect-ratio: 800 / 460;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 #hot-potato-canvas {
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: contain;
   display: block;
   cursor: pointer;
 }
@@ -1445,14 +1450,15 @@ button {
 .hot-potato-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(7, 8, 11, 0.88);
+  background: rgba(7, 8, 11, 0.90);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1.5rem;
+  padding: 1rem;
   z-index: 10;
+  overflow-y: auto;
   animation: tabFadeIn 0.2s ease-out;
 }
 
@@ -1460,11 +1466,58 @@ button {
   background: var(--bg-card);
   border: 2px solid var(--border-color);
   border-radius: var(--radius-lg);
-  padding: 2.2rem;
+  padding: 1.5rem 1.75rem;
   text-align: center;
-  max-width: 520px;
-  width: 100%;
+  max-width: 480px;
+  width: 92%;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+  max-height: 92%;
+  overflow-y: auto;
+}
+
+.hp-overlay-icon {
+  font-size: 2.8rem;
+  margin-bottom: 0.25rem;
+  line-height: 1;
+}
+
+.hp-overlay-title {
+  font-size: 1.45rem;
+  margin-bottom: 0.35rem;
+}
+
+.hp-overlay-desc {
+  color: var(--text-muted);
+  font-size: 0.86rem;
+  max-width: 420px;
+  margin: 0 auto 1.15rem;
+  line-height: 1.45;
+}
+
+@media (max-width: 650px) {
+  .hot-potato-canvas-container {
+    border-radius: var(--radius-md);
+    aspect-ratio: 16 / 11;
+  }
+  .hp-overlay-card {
+    padding: 1.1rem 1.15rem;
+    max-height: 95%;
+  }
+  .hp-overlay-icon {
+    font-size: 2.2rem;
+  }
+  .hp-overlay-title {
+    font-size: 1.2rem;
+  }
+  .hp-overlay-desc {
+    font-size: 0.78rem;
+    margin-bottom: 0.85rem;
+    line-height: 1.35;
+  }
+  #hp-start-btn, #hp-restart-btn {
+    padding: 0.6rem 1.4rem !important;
+    font-size: 0.92rem !important;
+  }
 }
 
 @keyframes hpTumble {
