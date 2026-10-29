@@ -1029,6 +1029,7 @@ const DEFAULT_STATE = {
   adminPin: 'careers2026',
   activeGameTab: 'buildDish',
   recipeFilter: 'all',
+  recipeCompletedSteps: {},
   theme: 'light'
 };
 
@@ -2237,7 +2238,7 @@ class FusionApp {
       : FUSION_DISHES.filter(d => d.origin.toLowerCase().includes(filter.toLowerCase()));
 
     container.innerHTML = filteredDishes.map(dish => `
-      <div class="cookbook-recipe-card">
+      <div class="cookbook-recipe-card" data-dish-id="${dish.id}">
         <div>
           <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.65rem;">
             <span class="veg-badge"><span class="veg-icon-dot"></span> 100% Veg</span>
@@ -2255,43 +2256,37 @@ class FusionApp {
               </tr>
             </thead>
             <tbody>
-              ${dish.indianSubstitutes.map(sub => `
+              ${dish.indianSubstitutes.slice(0, 3).map(sub => `
                 <tr>
                   <td>${sub.original}</td>
                   <td><strong>${sub.substitute}</strong></td>
                 </tr>
               `).join('')}
+              ${dish.indianSubstitutes.length > 3 ? `
+                <tr>
+                  <td colspan="2" style="font-size:0.78rem; color:var(--primary); text-align:center;">
+                    + ${dish.indianSubstitutes.length - 3} more in full recipe guide
+                  </td>
+                </tr>
+              ` : ''}
             </tbody>
           </table>
         </div>
 
         <div style="border-top:1px solid var(--border-color); padding-top:1.15rem; margin-top:1.15rem; display:flex; justify-content:space-between; align-items:center;">
           <span style="font-size:0.78rem; color:var(--text-muted);">Availability: <strong>${dish.availability}</strong></span>
-          <button class="btn btn-secondary copy-ingredients-btn" data-dish-id="${dish.id}" style="padding:0.45rem 0.95rem; font-size:0.82rem;">
-            📋 Copy Shopping List
+          <button class="btn btn-primary open-recipe-popout-btn" data-dish-id="${dish.id}" style="padding:0.45rem 1rem; font-size:0.84rem;">
+            👨‍🍳 Step-by-Step & AI Chef →
           </button>
         </div>
       </div>
     `).join('');
 
-    container.querySelectorAll('.copy-ingredients-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        sound.playClick();
-        const dishId = btn.getAttribute('data-dish-id');
-        const dish = FUSION_DISHES.find(d => d.id === dishId);
-        if (!dish) return;
-
-        const listText = `🛒 SHOPPING LIST for ${dish.name} (Indian Kitchen):\n` +
-          dish.indianSubstitutes.map(s => `- ${s.substitute} (replaces ${s.original})`).join('\n') +
-          `\n\nCookbook guide from Fusion Food Family Lab!`;
-
-        navigator.clipboard.writeText(listText).then(() => {
-          showToast(`Shopping list for ${dish.name} copied!`, 'success');
-          btn.innerText = '✅ Copied!';
-          setTimeout(() => { btn.innerText = '📋 Copy Shopping List'; }, 2000);
-        }).catch(() => {
-          alert(listText);
-        });
+    // Clicking the card or the button pops out the full recipe & AI Chatbot
+    container.querySelectorAll('.cookbook-recipe-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const dishId = card.getAttribute('data-dish-id');
+        this.openRecipePopout(dishId);
       });
     });
 
@@ -2320,6 +2315,496 @@ class FusionApp {
         container.scrollBy({ left: 360, behavior: 'smooth' });
       };
     }
+  }
+
+  // ========================================================
+  // RECIPE POP-OUT MODAL & GEMINI AI SOUS-CHEF
+  // ========================================================
+  getGeminiKey() {
+    return localStorage.getItem('fusion_gemini_api_key') || '';
+  }
+
+  setGeminiKey(key) {
+    if (key && key.trim()) {
+      localStorage.setItem('fusion_gemini_api_key', key.trim());
+    } else {
+      localStorage.removeItem('fusion_gemini_api_key');
+    }
+  }
+
+  openRecipePopout(dishId) {
+    sound.playClick();
+    const dish = FUSION_DISHES.find(d => d.id === dishId);
+    if (!dish) return;
+
+    this.activePopoutDish = dish;
+    const modal = document.getElementById('recipe-popout-modal');
+    const dialog = document.getElementById('recipe-popout-dialog-content');
+    if (!modal || !dialog) return;
+
+    if (!this.state.recipeCompletedSteps) {
+      this.state.recipeCompletedSteps = {};
+    }
+    const completedSteps = this.state.recipeCompletedSteps[dish.id] || [];
+    const totalSteps = dish.recipeSteps.length;
+    const hasApiKey = !!this.getGeminiKey();
+
+    dialog.innerHTML = `
+      <!-- Header -->
+      <div class="recipe-popout-header">
+        <div style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
+          <div>
+            <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.25rem;">
+              <span class="veg-badge"><span class="veg-icon-dot"></span> 100% Pure Veg</span>
+              <span class="pill-badge">${dish.origin}</span>
+              <span style="font-size:0.82rem; color:var(--text-muted);">Availability: <strong>${dish.availability}</strong></span>
+            </div>
+            <h2 id="popout-recipe-title" style="font-size:1.65rem; margin-bottom:0.15rem;">${dish.name}</h2>
+            <div style="display:flex; align-items:center; gap:0.6rem;">
+              <span style="font-size:0.88rem; color:var(--text-muted);">Phonetic: <em>${dish.phonetic}</em></span>
+              <button class="icon-btn" id="popout-pronounce-btn" title="Listen to Pronunciation" style="width:28px; height:28px; font-size:0.85rem;">🗣️</button>
+            </div>
+          </div>
+        </div>
+
+        <button class="modal-close-btn" id="close-recipe-popout-btn" aria-label="Close Recipe Popout">✕</button>
+      </div>
+
+      <!-- Two-Column Grid: Left Steps & Substitutes | Right Gemini AI Chatbot -->
+      <div class="recipe-popout-grid">
+        <!-- Left Column: Detailed Step-by-Step Cooking Guide -->
+        <div class="recipe-steps-column">
+          <!-- Backstory -->
+          <div style="background:var(--bg-card-subtle); border:1.5px solid var(--border-color); border-radius:var(--radius-md); padding:1rem 1.25rem; margin-bottom:1.5rem;">
+            <h4 style="font-size:0.95rem; margin-bottom:0.35rem; color:var(--primary); display:flex; align-items:center; gap:0.4rem;">
+              <span>🌏 The Fusion Heritage</span>
+            </h4>
+            <p style="font-size:0.86rem; color:var(--text-muted); line-height:1.55;">${dish.cultureStory}</p>
+          </div>
+
+          <!-- Substitutes Table -->
+          <div style="margin-bottom:1.75rem;">
+            <h4 style="font-size:1.1rem; margin-bottom:0.65rem; display:flex; align-items:center; gap:0.5rem;">
+              <span>🛒 Indian Bazaar Substitutions & Secrets</span>
+            </h4>
+            <p style="font-size:0.84rem; color:var(--text-muted); margin-bottom:0.85rem;">
+              Exact swaps found in everyday Indian local sabzi mandis, dairies, and grocers:
+            </p>
+            <table class="substitutes-table" style="font-size:0.86rem;">
+              <thead>
+                <tr>
+                  <th>Global Ingredient</th>
+                  <th>Desi Replacement</th>
+                  <th>Culinary Science Reason</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${dish.indianSubstitutes.map(s => `
+                  <tr>
+                    <td>${s.original}</td>
+                    <td><strong style="color:var(--accent-green);">${s.substitute}</strong></td>
+                    <td style="font-size:0.8rem; color:var(--text-muted);">${s.why}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Step-by-Step Interactive Cooking Procedure -->
+          <div style="margin-bottom:1.75rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.85rem; flex-wrap:wrap; gap:0.5rem;">
+              <div>
+                <h4 style="font-size:1.15rem; margin-bottom:0.15rem;">👨‍🍳 Step-by-Step Cooking Procedure</h4>
+                <p style="font-size:0.82rem; color:var(--text-muted);">Check off each step as you and your family prepare the dish!</p>
+              </div>
+              <div style="font-size:0.84rem; font-weight:800; color:var(--primary);" id="step-progress-indicator">
+                ${completedSteps.length} / ${totalSteps} Completed
+              </div>
+            </div>
+
+            <!-- Steps List -->
+            <div id="recipe-steps-list">
+              ${dish.recipeSteps.map((s) => {
+                const isDone = completedSteps.includes(s.step);
+                return `
+                  <div class="recipe-step-card ${isDone ? 'completed' : ''}" id="step-card-${s.step}">
+                    <div class="step-header-row">
+                      <div style="display:flex; align-items:center; gap:0.6rem;">
+                        <span class="step-num-pill">Step ${s.step}</span>
+                        <strong style="font-size:1.02rem;">${s.title}</strong>
+                      </div>
+                      <div style="display:flex; align-items:center; gap:0.5rem;">
+                        ${s.kidSafe 
+                          ? '<span class="pill-badge" style="background:var(--tag-veg-bg); color:var(--accent-green); border-color:var(--tag-veg-border); font-size:0.75rem;">👶 Kid-Friendly</span>'
+                          : '<span class="pill-badge" style="background:#fff1f2; color:#e11d48; border-color:#fecdd3; font-size:0.75rem;">🔥 Parent Assistance</span>'
+                        }
+                        <button class="step-checkbox-btn ${isDone ? 'checked' : ''}" data-step="${s.step}">
+                          ${isDone ? '✅ Done' : '⬜ Mark Done'}
+                        </button>
+                      </div>
+                    </div>
+                    <p style="font-size:0.9rem; color:var(--text-main); line-height:1.6; margin-left:0.25rem;">
+                      ${s.text}
+                    </p>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+
+          <!-- Food Science Note -->
+          <div style="background:linear-gradient(135deg, var(--bg-card-subtle), var(--bg-card)); border:2px dashed var(--border-dashed); border-radius:var(--radius-md); padding:1.25rem; position:relative;">
+            <h4 style="font-size:0.95rem; margin-bottom:0.4rem; color:var(--secondary); display:flex; align-items:center; gap:0.4rem;">
+              <span>🧪 Food Chemistry Secret</span>
+            </h4>
+            <p style="font-size:0.86rem; color:var(--text-muted); line-height:1.55;">
+              ${dish.scienceNote || 'Understanding ingredient interactions allows Indian home cooks to replicate complex international textures without compromising on vegetarian values.'}
+            </p>
+          </div>
+        </div>
+
+        <!-- Right Column: Gemini AI Sous-Chef Chatbot -->
+        <div class="recipe-ai-column">
+          <!-- AI Header Bar -->
+          <div class="ai-header-bar">
+            <div>
+              <div style="display:flex; align-items:center; gap:0.5rem;">
+                <span style="font-size:1.3rem;">✨</span>
+                <strong style="font-size:1.05rem;">Gemini AI Sous-Chef</strong>
+              </div>
+              <span style="font-size:0.78rem; color:var(--text-muted);">Real-time cooking helper for ${dish.name}</span>
+            </div>
+
+            <!-- API Key Toggle Pill -->
+            <button class="api-key-pill ${hasApiKey ? 'active' : ''}" id="toggle-api-key-box-btn">
+              <span>${hasApiKey ? '🔑 API Key Active' : '🔑 Set Gemini API Key'}</span>
+            </button>
+          </div>
+
+          <!-- Collapsible API Key Box -->
+          <div class="api-key-box" id="api-key-config-box" style="display:${hasApiKey ? 'none' : 'flex'};">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-weight:700;">Google Gemini API Key:</span>
+              <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" style="font-size:0.76rem; color:var(--primary); font-weight:700;">
+                Get Free Key ↗
+              </a>
+            </div>
+            <div class="api-key-input-row">
+              <input type="password" id="gemini-api-key-input" class="api-key-input" placeholder="Paste AI Studio API key (AIzaSy...)" value="${this.getGeminiKey()}">
+              <button class="icon-btn" id="show-hide-key-btn" title="Toggle visibility" style="width:34px; height:34px; font-size:0.9rem;">👁️</button>
+              <button class="btn btn-primary" id="save-gemini-key-btn" style="padding:0.35rem 0.85rem; font-size:0.8rem;">Save</button>
+            </div>
+            <span style="font-size:0.72rem; color:var(--text-muted);">
+              Saved locally in your browser. Never shared or sent anywhere except Google's official Gemini endpoint.
+            </span>
+          </div>
+
+          <!-- Chat Messages Container -->
+          <div class="chat-messages-container" id="recipe-chat-messages">
+            <!-- Welcome Bubble -->
+            <div class="chat-bubble ai">
+              <div style="display:flex; align-items:center; gap:0.4rem; margin-bottom:0.25rem; font-weight:800; font-size:0.78rem; color:var(--primary);">
+                <span>👩‍🍳 Sous-Chef Maya</span>
+              </div>
+              Namaste! I'm your AI Sous-Chef for <strong>${dish.name}</strong>. How can I assist your kitchen adventure today?
+              ${!hasApiKey ? '<div style="margin-top:0.4rem; font-size:0.78rem; color:var(--secondary); font-weight:700;">💡 Tip: Enter your Gemini API key above to unlock fully customized, real-time responses!</div>' : ''}
+            </div>
+          </div>
+
+          <!-- Quick Suggestions Chips -->
+          <div class="chat-chip-suggestions" id="chat-chip-suggestions">
+            <button class="chat-chip" data-prompt="How can I make ${dish.name} less spicy and super kid-friendly?">🌶️ Kid-Friendly Spice</button>
+            <button class="chat-chip" data-prompt="What if I don't have the primary desi substitute, what can I use?">🥫 Missing Substitutes</button>
+            <button class="chat-chip" data-prompt="Can I prepare this in advance for a family party?">⏱️ Prep Shortcuts</button>
+            <button class="chat-chip" data-prompt="Explain the food science of ${dish.name} so I can teach my kids!">🧪 Science for Kids</button>
+          </div>
+
+          <!-- Chat Input Bar -->
+          <form class="chat-input-bar" id="recipe-chat-form">
+            <input type="text" id="recipe-chat-input" class="chat-input" placeholder="Ask Sous-Chef anything about this recipe..." autocomplete="off">
+            <button type="submit" class="chat-send-btn" id="recipe-chat-send-btn" title="Send Question">➤</button>
+          </form>
+        </div>
+      </div>
+    `;
+
+    modal.classList.add('open');
+    this.bindRecipePopoutEvents(dish);
+  }
+
+  closeRecipePopout() {
+    sound.playClick();
+    document.getElementById('recipe-popout-modal')?.classList.remove('open');
+  }
+
+  bindRecipePopoutEvents(dish) {
+    const modal = document.getElementById('recipe-popout-modal');
+    const closeBtn = document.getElementById('close-recipe-popout-btn');
+    closeBtn?.addEventListener('click', () => this.closeRecipePopout());
+
+    // Pronunciation audio
+    document.getElementById('popout-pronounce-btn')?.addEventListener('click', () => {
+      sound.playClick();
+      if ('speechSynthesis' in window) {
+        const utter = new SpeechSynthesisUtterance(dish.audioText || dish.name);
+        utter.rate = 0.88;
+        window.speechSynthesis.speak(utter);
+      }
+    });
+
+    // Step checkboxes
+    document.querySelectorAll('#recipe-steps-list .step-checkbox-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const stepNum = parseInt(btn.getAttribute('data-step'), 10);
+        this.toggleStepDone(dish.id, stepNum);
+      });
+    });
+
+    // API Key box toggle
+    const toggleKeyBtn = document.getElementById('toggle-api-key-box-btn');
+    const keyBox = document.getElementById('api-key-config-box');
+    toggleKeyBtn?.addEventListener('click', () => {
+      sound.playClick();
+      keyBox.style.display = keyBox.style.display === 'none' ? 'flex' : 'none';
+    });
+
+    // Show/hide key
+    const keyInput = document.getElementById('gemini-api-key-input');
+    const showHideBtn = document.getElementById('show-hide-key-btn');
+    showHideBtn?.addEventListener('click', () => {
+      if (keyInput.type === 'password') {
+        keyInput.type = 'text';
+        showHideBtn.innerText = '🙈';
+      } else {
+        keyInput.type = 'password';
+        showHideBtn.innerText = '👁️';
+      }
+    });
+
+    // Save key
+    document.getElementById('save-gemini-key-btn')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      const val = keyInput.value.trim();
+      this.setGeminiKey(val);
+      sound.playCorrect();
+      showToast(val ? 'Gemini API key saved!' : 'Gemini API key removed', 'success');
+      keyBox.style.display = 'none';
+      if (toggleKeyBtn) {
+        toggleKeyBtn.className = `api-key-pill ${val ? 'active' : ''}`;
+        toggleKeyBtn.innerHTML = `<span>${val ? '🔑 API Key Active' : '🔑 Set Gemini API Key'}</span>`;
+      }
+    });
+
+    // Suggestion chips
+    document.querySelectorAll('#chat-chip-suggestions .chat-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const p = chip.getAttribute('data-prompt');
+        this.handleChatSubmit(dish, p);
+      });
+    });
+
+    // Chat form submit
+    const chatForm = document.getElementById('recipe-chat-form');
+    const chatInput = document.getElementById('recipe-chat-input');
+    chatForm?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const text = chatInput.value.trim();
+      if (text) {
+        chatInput.value = '';
+        this.handleChatSubmit(dish, text);
+      }
+    });
+  }
+
+  toggleStepDone(dishId, stepNumber) {
+    if (!this.state.recipeCompletedSteps) {
+      this.state.recipeCompletedSteps = {};
+    }
+    if (!this.state.recipeCompletedSteps[dishId]) {
+      this.state.recipeCompletedSteps[dishId] = [];
+    }
+    const list = this.state.recipeCompletedSteps[dishId];
+    const index = list.indexOf(stepNumber);
+    if (index === -1) {
+      list.push(stepNumber);
+      sound.playCorrect();
+      this.addXP(25, 'Recipe Explorer');
+      showToast(`Step ${stepNumber} completed! (+25 XP)`, 'success');
+      launchConfetti();
+    } else {
+      list.splice(index, 1);
+      sound.playClick();
+    }
+    this.saveState();
+
+    // Update UI
+    const card = document.getElementById(`step-card-${stepNumber}`);
+    const btn = card?.querySelector('.step-checkbox-btn');
+    const dish = FUSION_DISHES.find(d => d.id === dishId);
+    if (card && btn && dish) {
+      const isDone = list.includes(stepNumber);
+      card.classList.toggle('completed', isDone);
+      btn.classList.toggle('checked', isDone);
+      btn.innerText = isDone ? '✅ Done' : '⬜ Mark Done';
+
+      const indicator = document.getElementById('step-progress-indicator');
+      if (indicator) {
+        indicator.innerText = `${list.length} / ${dish.recipeSteps.length} Completed`;
+      }
+    }
+  }
+
+  async handleChatSubmit(dish, userPrompt) {
+    if (!userPrompt || !userPrompt.trim()) return;
+    const prompt = userPrompt.trim();
+
+    const messagesContainer = document.getElementById('recipe-chat-messages');
+    if (!messagesContainer) return;
+
+    sound.playClick();
+
+    // Append User Bubble
+    const userBubble = document.createElement('div');
+    userBubble.className = 'chat-bubble user';
+    userBubble.innerText = prompt;
+    messagesContainer.appendChild(userBubble);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+    // Append AI Typing indicator
+    const typingBubble = document.createElement('div');
+    typingBubble.className = 'chat-bubble ai';
+    typingBubble.id = 'ai-typing-indicator';
+    typingBubble.innerHTML = `
+      <div style="display:flex; align-items:center; gap:0.4rem; margin-bottom:0.25rem; font-weight:800; font-size:0.78rem; color:var(--primary);">
+        <span>👩‍🍳 Sous-Chef Maya</span>
+      </div>
+      <div class="typing-dots">
+        <span></span><span></span><span></span>
+      </div>
+    `;
+    messagesContainer.appendChild(typingBubble);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+    const apiKey = this.getGeminiKey();
+
+    if (apiKey) {
+      try {
+        const systemPrompt = `You are Chef Maya, an expert vegetarian AI Sous-Chef for Fusion Food Family Lab. 
+Helping a parent and kid (ages 10-16) cook "${dish.name}" (${dish.origin}).
+Recipe Description: ${dish.description}.
+Key Substitutes: ${dish.indianSubstitutes.map(s => `${s.substitute} replacing ${s.original} (${s.why})`).join('; ')}.
+Recipe Steps: ${dish.recipeSteps.map(s => `Step ${s.step}: ${s.title} - ${s.text}`).join(' | ')}.
+Food Science: ${dish.scienceNote}.
+
+Guidelines:
+1. Strictly 100% pure vegetarian adaptation.
+2. Cheerful, encouraging kitchen advice tailored for families with children.
+3. Recommend everyday Indian bazaar items (paneer, makhanas, chana, hung curd, gondhoraj lime, spices).
+4. Concise and actionable (under 140 words). Use bold text and bullet points.`;
+
+        const fullPrompt = `${systemPrompt}\n\nFamily Question: ${prompt}`;
+
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [
+              {
+                parts: [{ text: fullPrompt }]
+              }
+            ],
+            generationConfig: {
+              temperature: 0.7,
+              maxOutputTokens: 500
+            }
+          })
+        });
+
+        const data = await response.json();
+        typingBubble.remove();
+
+        if (data.candidates && data.candidates[0]?.content?.parts?.[0]?.text) {
+          const aiText = data.candidates[0].content.parts[0].text;
+          this.appendAiMessage(messagesContainer, aiText);
+          sound.playCorrect();
+        } else if (data.error) {
+          const errText = `⚠️ **Gemini API Notice**: ${data.error.message || 'Key verification failed'}. Check the API key pill above!`;
+          this.appendAiMessage(messagesContainer, errText);
+          sound.playWrong();
+        } else {
+          this.appendAiMessage(messagesContainer, `I couldn't quite catch that! Could you ask about ingredients, prep, or cooking tips?`);
+        }
+      } catch (err) {
+        typingBubble.remove();
+        console.error('Gemini API fetch error:', err);
+        const fallbackText = this.getContextualFallback(dish, prompt);
+        this.appendAiMessage(messagesContainer, fallbackText);
+      }
+    } else {
+      // Smart contextual fallback when no API key is set
+      setTimeout(() => {
+        typingBubble.remove();
+        const fallbackText = this.getContextualFallback(dish, prompt);
+        this.appendAiMessage(messagesContainer, fallbackText);
+        sound.playCorrect();
+      }, 550);
+    }
+  }
+
+  appendAiMessage(container, text) {
+    const bubble = document.createElement('div');
+    bubble.className = 'chat-bubble ai';
+
+    let formatted = text
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      .replace(/`([^`]+)`/g, '<code style="background:var(--bg-card-subtle); padding:2px 4px; border-radius:4px; font-size:0.85em;">$1</code>')
+      .replace(/\n\s*-\s+(.*)/g, '<br>• $1')
+      .replace(/\n\s*\*\s+(.*)/g, '<br>• $1')
+      .replace(/\n/g, '<br>');
+
+    bubble.innerHTML = `
+      <div style="display:flex; align-items:center; gap:0.4rem; margin-bottom:0.25rem; font-weight:800; font-size:0.78rem; color:var(--primary);">
+        <span>👩‍🍳 Sous-Chef Maya</span>
+      </div>
+      <div>${formatted}</div>
+    `;
+
+    container.appendChild(bubble);
+    container.scrollTop = container.scrollHeight;
+  }
+
+  getContextualFallback(dish, prompt) {
+    const lower = prompt.toLowerCase();
+    let advice = '';
+
+    if (lower.includes('spice') || lower.includes('kid') || lower.includes('mild')) {
+      advice = `To make **${dish.name}** extra kid-friendly:\n` +
+        `• Halve any fresh green chilies or use sweet yellow bell pepper instead.\n` +
+        `• Add a teaspoon of honey or a dollop of fresh cream / hung curd to balance the spice.\n` +
+        `• Keep raw garnishes like fresh coriander on the side so kids can add their own!`;
+    } else if (lower.includes('substitute') || lower.includes('missing') || lower.includes('paneer') || lower.includes('tofu')) {
+      advice = `Desi kitchen substitutes for **${dish.name}**:\n` +
+        dish.indianSubstitutes.map(s => `• **${s.original}**: Use **${s.substitute}** (${s.why})`).join('\n') +
+        `\n• You can also always use fresh Malai Paneer or poached King Oyster coins as universal protein replacements!`;
+    } else if (lower.includes('prep') || lower.includes('advance') || lower.includes('time') || lower.includes('shortcut')) {
+      advice = `Prep shortcuts for **${dish.name}**:\n` +
+        `• You can prepare any marinades, sauces, or boiled sweet potato purees up to 24 hours in advance.\n` +
+        `• Keep crispy toppings (like roasted chana or makhanas) in an airtight box and sprinkle right before eating.\n` +
+        `• Assemble in shallow bowls so everyone gets an equal share of crunchy and creamy textures!`;
+    } else if (lower.includes('science') || lower.includes('chemistry') || lower.includes('why')) {
+      advice = `Food science secret for **${dish.name}**:\n` +
+        `• ${dish.scienceNote || 'Acid and salt denature plant proteins, locking in moisture and creating a delicate chew similar to cured dishes without requiring heat!'}`;
+    } else {
+      advice = `Great question about **${dish.name}**!\n` +
+        `• Always taste as you go — adjust the lemon/lime juice drop by drop.\n` +
+        `• For best texture, keep all ingredients chilled before assembling.\n` +
+        `• Involve kids in Step 1 (the whisking bath) and Step 4 (garnish crunch plating)!`;
+    }
+
+    advice += `\n\n*💡 Tip: Add your Google Gemini API key using the 🔑 button above to ask custom open-ended questions in real-time!*`;
+    return advice;
   }
 
   // ========================================================
@@ -2549,6 +3034,15 @@ class FusionApp {
     document.getElementById('close-admin-modal-btn')?.addEventListener('click', () => this.closeAdminModal());
     document.getElementById('admin-modal')?.addEventListener('click', (e) => {
       if (e.target.id === 'admin-modal') this.closeAdminModal();
+    });
+    document.getElementById('recipe-popout-modal')?.addEventListener('click', (e) => {
+      if (e.target.id === 'recipe-popout-modal') this.closeRecipePopout();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        this.closeAdminModal();
+        this.closeRecipePopout();
+      }
     });
   }
 }
