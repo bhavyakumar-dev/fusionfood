@@ -25,22 +25,27 @@
   --primary-hover: #0369A1;
   --primary-light: #E0F2FE;
   --primary-glow: rgba(2, 132, 199, 0.32);
+  --primary-text: #0C4A6E;     /* Deep Aegean Blue - 9.46:1 WCAG AAA Pass against white/cards */
+  --text-link: #0C4A6E;        /* 9.46:1 WCAG AAA Pass */
   
   --secondary: #F43F5E;        /* Electric Coral / Rose Accent */
+  --secondary-hover: #E11D48;
   --secondary-light: #FFE4E6;
   --secondary-glow: rgba(244, 63, 94, 0.28);
+  --secondary-text: #881337;   /* Deep Garnet Rose - 9.57:1 WCAG AAA Pass against white/cards */
   
   --accent-green: #059669;     /* Fresh Cardamom & Basil */
   --accent-green-light: #ECFDF5;
+  --accent-green-text: #064E3B;/* 9.72:1 WCAG AAA Pass */
   --accent-blue: #0284C7;
   --accent-purple: #7C3AED;
   
-  --text-main: #0B132B;        /* Deepest slate navy (Maximum contrast against light-blue/white) */
-  --text-muted: #1E293B;       /* Deep slate charcoal (Passes WCAG AAA) */
-  --text-light: #334155;       /* Substantial mid slate for secondary descriptors */
+  --text-main: #0B132B;        /* Deepest slate navy (18.38:1 WCAG AAA against white) */
+  --text-muted: #1E293B;       /* Deep slate charcoal (14.63:1 WCAG AAA) */
+  --text-light: #334155;       /* Substantial mid slate (10.35:1 WCAG AAA) */
   
   --tag-veg-bg: #ECFDF5;
-  --tag-veg-text: #047857;
+  --tag-veg-text: #064E3B;     /* Deep Emerald - 9.72:1 WCAG AAA Pass against white/cards */
   --tag-veg-border: #6EE7B7;
 
   /* Gaming RGB Gradient (Reserved strictly for Master Chef XP Progress & Rewards) */
@@ -93,22 +98,27 @@
   --primary-hover: #7DD3FC;
   --primary-light: #0C2333;
   --primary-glow: rgba(56, 189, 248, 0.42);
+  --primary-text: #38BDF8;     /* 8.57:1 WCAG AAA Pass on Obsidian */
+  --text-link: #38BDF8;        /* 8.57:1 WCAG AAA Pass */
   
   --secondary: #F43F5E;        /* Vivid Neon Coral / Magenta */
+  --secondary-hover: #FB7185;
   --secondary-light: #33111B;
   --secondary-glow: rgba(244, 63, 94, 0.40);
+  --secondary-text: #FDA4AF;   /* Luminous Rose Mist - 9.71:1 WCAG AAA Pass on Obsidian */
   
   --accent-green: #34D399;     /* Luminous Mint Green */
   --accent-green-light: #062818;
+  --accent-green-text: #34D399;/* 9.55:1 WCAG AAA Pass */
   --accent-blue: #38BDF8;
   --accent-purple: #C084FC;
   
-  --text-main: #FFFFFF;        /* Pure Crisp White (>14:1 contrast on Obsidian) */
-  --text-muted: #E2E8F0;       /* Bright Crisp Silver Slate (>9.5:1 contrast) */
-  --text-light: #94A3B8;       /* Legible Mid Slate (>5.5:1 contrast) */
+  --text-main: #FFFFFF;        /* Pure Crisp White (18.36:1 WCAG AAA on Obsidian) */
+  --text-muted: #E2E8F0;       /* Bright Crisp Silver Slate (14.90:1 WCAG AAA) */
+  --text-light: #CBD5E1;       /* Crisp Pale Slate (12.37:1 WCAG AAA Pass) */
   
   --tag-veg-bg: #062615;
-  --tag-veg-text: #4ADE80;
+  --tag-veg-text: #4ADE80;     /* 10.54:1 WCAG AAA Pass */
   --tag-veg-border: #166534;
 
   --theme-gradient: linear-gradient(135deg, #0284C7 0%, #38BDF8 50%, #818CF8 100%);
@@ -140,6 +150,7 @@
 html {
   scroll-behavior: smooth;
   font-size: 16px;
+  scrollbar-gutter: stable;
 }
 
 body {
@@ -147,7 +158,7 @@ body {
   background-color: var(--bg-main);
   color: var(--text-main);
   line-height: 1.6;
-  transition: background-color 0.35s ease, color 0.35s ease;
+  transition: none; /* Synchronous theme switch eliminates mid-interpolation white-on-white text flashes */
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
@@ -176,13 +187,13 @@ h1, h2, h3, h4, .font-serif {
 .handwritten {
   font-family: var(--font-hand);
   font-size: 1.55rem;
-  color: var(--primary);
+  color: var(--primary-text);
   transform: rotate(-2deg);
   display: inline-block;
 }
 
 a {
-  color: var(--primary);
+  color: var(--text-link);
   text-decoration: none;
   transition: var(--transition);
   touch-action: manipulation;
@@ -237,7 +248,7 @@ button {
 
 .btn-secondary:hover {
   border-color: var(--primary);
-  color: var(--primary);
+  color: var(--primary-text);
   transform: translateY(-2px);
   box-shadow: var(--shadow-hover);
 }
@@ -334,7 +345,7 @@ button {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--primary);
+  color: var(--primary-text);
 }
 
 /* Tab Navigation Buttons with RGB Active Glow */
@@ -370,7 +381,7 @@ button {
 }
 
 .nav-link:hover {
-  color: var(--primary);
+  color: var(--primary-text);
 }
 
 .nav-link.active {
@@ -411,7 +422,7 @@ button {
 }
 
 .icon-btn:hover {
-  color: var(--primary);
+  color: var(--primary-text);
   border-color: var(--primary);
   transform: translateY(-2px) scale(1.08);
   box-shadow: 0 4px 12px var(--primary-glow);
@@ -450,7 +461,7 @@ button {
 
 .profile-rank-badge {
   background: var(--primary-light);
-  color: var(--primary);
+  color: var(--primary-text);
   font-size: 0.75rem;
   font-weight: 800;
   padding: 0.2rem 0.6rem;
@@ -636,7 +647,7 @@ button {
   justify-content: space-between;
   font-size: 0.78rem;
   font-weight: 800;
-  color: var(--primary);
+  color: var(--primary-text);
   border-top: 1px dashed var(--border-dashed);
   padding-top: 0.65rem;
 }
@@ -680,7 +691,7 @@ button {
 
 .scroll-arrow-btn:hover {
   border-color: var(--primary);
-  color: var(--primary);
+  color: var(--primary-text);
   transform: scale(1.12);
   box-shadow: var(--shadow-hover);
 }
@@ -689,7 +700,7 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  color: var(--primary);
+  color: var(--primary-text);
   font-weight: 800;
 }
 
@@ -866,7 +877,7 @@ button {
   text-align: right;
   font-weight: 800;
   font-size: 0.95rem;
-  color: var(--secondary);
+  color: var(--secondary-text);
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -1059,6 +1070,38 @@ button {
   font-weight: 800 !important;
 }
 
+/* Ultra-high specificity overrides for cuisine filter and leaderboard chips in dark mode */
+[data-theme="dark"] #cuisine-filter-chips .recipe-chip,
+[data-theme="dark"] .cuisine-filter-chips .recipe-chip,
+[data-theme="dark"] #leaderboard-filter-tabs .recipe-chip {
+  background: #181B26 !important;
+  border-color: #2E344A !important;
+  color: #F8FAFC !important;
+}
+
+[data-theme="dark"] #cuisine-filter-chips .recipe-chip.active,
+[data-theme="dark"] .cuisine-filter-chips .recipe-chip.active,
+[data-theme="dark"] #leaderboard-filter-tabs .recipe-chip.active {
+  background: var(--primary) !important;
+  color: #07080B !important;
+  font-weight: 800 !important;
+  border-color: var(--primary) !important;
+}
+
+/* Landscape mode: prevent nav from blocking game canvas */
+@media (orientation: landscape) and (max-height: 600px) {
+  .site-header {
+    position: relative !important;
+    top: 0 !important;
+  }
+  .mobile-bottom-nav {
+    display: none !important;
+  }
+  body {
+    padding-bottom: 0 !important;
+  }
+}
+
 .cooking-board-layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1242,7 +1285,7 @@ button {
   border-radius: var(--radius-full);
   display: inline-block;
   margin: 0.65rem 0;
-  color: var(--primary);
+  color: var(--primary-text);
   font-weight: 700;
 }
 
@@ -1284,7 +1327,7 @@ button {
 
 .mic-check-btn:hover {
   border-color: var(--secondary);
-  color: var(--secondary);
+  color: var(--secondary-text);
   transform: translateY(-2px);
 }
 
@@ -1311,7 +1354,7 @@ button {
   border-radius: var(--radius-md);
   background: var(--secondary-light);
   border: 2px solid var(--secondary);
-  color: var(--secondary);
+  color: var(--secondary-text);
   font-weight: 800;
   font-size: 1.12rem;
   cursor: pointer;
@@ -1357,7 +1400,7 @@ button {
   align-items: center;
   gap: 0.5rem;
   font-weight: 800;
-  color: var(--secondary);
+  color: var(--secondary-text);
   font-size: 1.05rem;
 }
 
@@ -1373,7 +1416,7 @@ button {
 .question-dish-tag {
   font-size: 0.82rem;
   font-weight: 800;
-  color: var(--primary);
+  color: var(--primary-text);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   margin-bottom: 0.65rem;
@@ -1437,7 +1480,7 @@ button {
 
 .option-btn:hover:not(:disabled) {
   border-color: var(--primary);
-  color: var(--primary);
+  color: var(--primary-text);
   transform: translateY(-3px);
   box-shadow: var(--shadow-hover);
 }
@@ -1878,7 +1921,7 @@ button {
   font-size: 0.98rem;
   font-weight: 800;
   margin-bottom: 0.45rem;
-  color: var(--primary);
+  color: var(--primary-text);
   display: flex;
   align-items: center;
   gap: 0.45rem;
@@ -2059,7 +2102,7 @@ body.has-modal-open .mobile-bottom-nav {
 }
 
 .modal-close-btn:hover {
-  color: var(--primary);
+  color: var(--primary-text);
 }
 
 .pin-input-group {
@@ -2210,13 +2253,14 @@ input:checked + .slider:before {
 /* ========================================================
    CROSS-PLATFORM & MOBILE RESPONSIVE ENGINE (iOS, Android, Tablets, Landscape)
    ======================================================== */
-@media (max-width: 900px), (max-height: 520px) {
+@media (max-width: 1024px), (orientation: landscape) and (max-height: 600px), (max-height: 520px) {
   body {
     padding-bottom: 5.5rem; /* Dedicated clearance for the thumb-friendly bottom nav bar */
   }
 
   .site-header {
-    top: 0.25rem;
+    position: relative !important;
+    top: 0 !important;
     padding: 0 0.5rem;
   }
 
@@ -2587,7 +2631,7 @@ input:checked + .slider:before {
   padding: 1.5rem;
 }
 
-@media (orientation: landscape) and (max-height: 520px) {
+@media (orientation: landscape) and (max-height: 600px) {
   .mobile-bottom-nav {
     display: none !important;
   }
@@ -2841,7 +2885,7 @@ input:checked + .slider:before {
 }
 
 .modal-close-btn:hover {
-  color: var(--primary);
+  color: var(--primary-text);
   border-color: var(--primary);
   transform: scale(1.08);
 }
@@ -2914,6 +2958,10 @@ input:checked + .slider:before {
     height: auto;
     overflow: visible;
   }
+  .recipe-ai-column .api-key-box,
+  #api-key-config-box {
+    display: none;
+  }
   .recipe-step-card {
     padding: 1rem 0.9rem;
     margin-bottom: 1rem;
@@ -2977,7 +3025,7 @@ input:checked + .slider:before {
   padding: 0.25rem 0.75rem;
   border-radius: var(--radius-full);
   background: var(--primary-light);
-  color: var(--primary);
+  color: var(--primary-text);
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
@@ -3148,7 +3196,7 @@ input:checked + .slider:before {
 
 .chat-chip:hover {
   border-color: var(--primary);
-  color: var(--primary);
+  color: var(--primary-text);
   transform: translateY(-2px);
 }
 
@@ -3268,3 +3316,484 @@ input:checked + .slider:before {
   font-family: var(--font-hand);
   font-size: 1.15rem;
 }
+
+/* ========================================================
+   MILESTONE M1: SCROLLTIDE LANDING SHOWCASE & 2.5D DEPTH
+   ======================================================== */
+.scrolltide-hero-showcase {
+  position: relative;
+  padding: 3.5rem 0 2rem;
+  margin-bottom: 1.5rem;
+  perspective: 1200px;
+  overflow: visible;
+}
+
+/* Hide hero showcase cleanly when navigating to Kitchen Lab or Leaderboard tabs */
+main:has(#pane-kitchen.active) .scrolltide-hero-showcase,
+main:has(#pane-leaderboard.active) .scrolltide-hero-showcase {
+  display: none !important;
+}
+
+/* Ambient Glowing Aura Background */
+.scrolltide-aura-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 1000px;
+  height: 480px;
+  background: radial-gradient(circle at 30% 40%, rgba(2, 132, 199, 0.22) 0%, transparent 60%),
+              radial-gradient(circle at 70% 60%, rgba(244, 63, 94, 0.18) 0%, transparent 60%),
+              radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.14) 0%, transparent 70%);
+  filter: blur(50px);
+  pointer-events: none;
+  z-index: 0;
+  animation: scrolltideAuraPulse 7s ease-in-out infinite alternate;
+}
+
+[data-theme="dark"] .scrolltide-aura-glow {
+  background: radial-gradient(circle at 30% 40%, rgba(56, 189, 248, 0.28) 0%, transparent 60%),
+              radial-gradient(circle at 70% 60%, rgba(244, 63, 94, 0.25) 0%, transparent 60%),
+              radial-gradient(circle at 50% 50%, rgba(192, 132, 252, 0.20) 0%, transparent 70%);
+  filter: blur(65px);
+}
+
+@keyframes scrolltideAuraPulse {
+  0% { transform: translate(-50%, -50%) scale(0.92) rotate(0deg); opacity: 0.7; }
+  50% { transform: translate(-50%, -48%) scale(1.08) rotate(3deg); opacity: 1; }
+  100% { transform: translate(-50%, -52%) scale(0.96) rotate(-2deg); opacity: 0.8; }
+}
+
+.scrolltide-hero-inner {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.scrolltide-badge-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+
+.scrolltide-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 1rem;
+  border-radius: var(--radius-full);
+  font-size: 0.84rem;
+  font-weight: 800;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-color);
+  color: var(--primary-text);
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.10);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  will-change: transform;
+}
+
+[data-theme="dark"] .scrolltide-badge {
+  background: var(--bg-card-subtle);
+  border-color: rgba(56, 189, 248, 0.28);
+  color: #38BDF8 !important;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6);
+}
+
+.scrolltide-badge:hover {
+  transform: translateY(-3px) scale(1.05);
+  border-color: var(--primary);
+  box-shadow: 0 6px 20px var(--primary-glow);
+}
+
+.scrolltide-badge.badge-float-1 {
+  animation: badgeFloat1 4.5s ease-in-out infinite alternate;
+}
+.scrolltide-badge.badge-float-2 {
+  animation: badgeFloat2 5.2s ease-in-out infinite alternate 0.4s;
+}
+.scrolltide-badge.badge-float-3 {
+  animation: badgeFloat1 4.8s ease-in-out infinite alternate 0.8s;
+}
+.scrolltide-badge.badge-float-4 {
+  animation: badgeFloat2 5.5s ease-in-out infinite alternate 1.2s;
+}
+
+@keyframes badgeFloat1 {
+  0% { transform: translateY(0px) rotate(0deg); }
+  100% { transform: translateY(-7px) rotate(-1.5deg); }
+}
+
+@keyframes badgeFloat2 {
+  0% { transform: translateY(0px) rotate(0deg); }
+  100% { transform: translateY(-8px) rotate(1.8deg); }
+}
+
+.scrolltide-hero-title {
+  font-size: clamp(2.2rem, 5.2vw, 3.8rem);
+  font-family: var(--font-serif);
+  font-weight: 900;
+  line-height: 1.15;
+  margin-bottom: 1rem;
+  color: var(--text-main);
+  letter-spacing: -0.02em;
+}
+
+.scrolltide-gradient-text {
+  background: linear-gradient(135deg, var(--primary) 0%, #38BDF8 40%, var(--secondary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: inline-block;
+}
+
+.scrolltide-hero-desc {
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  color: var(--text-muted);
+  max-width: 760px;
+  margin: 0 auto 2rem;
+  line-height: 1.65;
+}
+
+/* 2.5D Stats Counters Grid */
+.scrolltide-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+  margin: 2rem 0 2.5rem;
+}
+
+@media (max-width: 860px) {
+  .scrolltide-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 440px) {
+  .scrolltide-stats-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+}
+
+.scrolltide-stat-card {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.4rem 1.1rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-warm);
+  transform-style: preserve-3d;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+[data-theme="dark"] .scrolltide-stat-card {
+  background: var(--bg-card-subtle);
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.65);
+}
+
+.scrolltide-stat-card:hover {
+  transform: translateY(-6px) translateZ(20px) rotateX(2deg);
+  border-color: var(--primary);
+  box-shadow: var(--shadow-hover), 0 0 20px var(--primary-glow);
+}
+
+.scrolltide-stat-icon {
+  font-size: 1.8rem;
+  margin-bottom: 0.45rem;
+  display: inline-block;
+  transform: translateZ(10px);
+}
+
+.scrolltide-stat-num {
+  font-size: clamp(2rem, 3.8vw, 2.75rem);
+  font-family: var(--font-serif);
+  font-weight: 900;
+  color: var(--primary-text);
+  line-height: 1.1;
+  margin-bottom: 0.25rem;
+  display: block;
+  transform: translateZ(15px);
+}
+
+[data-theme="dark"] .scrolltide-stat-num {
+  color: #38BDF8 !important;
+}
+
+.scrolltide-stat-label {
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-main);
+  display: block;
+}
+
+.scrolltide-stat-sub {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.2rem;
+  display: block;
+}
+
+/* 2.5D Feature Preview Cards (Spotlights for Arcade Labs) */
+.scrolltide-preview-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  margin: 1.5rem 0 2rem;
+}
+
+@media (max-width: 860px) {
+  .scrolltide-preview-cards {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+.scrolltide-preview-card {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  text-align: left;
+  position: relative;
+  cursor: pointer;
+  box-shadow: var(--shadow-warm);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+  transform-style: preserve-3d;
+}
+
+[data-theme="dark"] .scrolltide-preview-card {
+  background: var(--bg-card-subtle);
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.65);
+}
+
+.scrolltide-preview-card:hover {
+  transform: translateY(-6px) translateZ(15px);
+  border-color: var(--primary);
+  box-shadow: var(--shadow-hover), 0 0 24px var(--primary-glow);
+}
+
+.scrolltide-preview-tag {
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--primary-text);
+  margin-bottom: 0.4rem;
+  display: inline-block;
+}
+
+[data-theme="dark"] .scrolltide-preview-tag {
+  color: #38BDF8 !important;
+}
+
+.scrolltide-preview-title {
+  font-size: 1.18rem;
+  font-family: var(--font-serif);
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 0.45rem;
+}
+
+.scrolltide-preview-desc {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin-bottom: 0.85rem;
+}
+
+.scrolltide-preview-action {
+  font-size: 0.84rem;
+  font-weight: 800;
+  color: var(--text-link);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: gap 0.2s ease;
+}
+
+.scrolltide-preview-card:hover .scrolltide-preview-action {
+  gap: 0.65rem;
+}
+
+/* ========================================================
+   SCROLL-DRIVEN ANIMATIONS (CSS Timeline + Fallback)
+   ======================================================== */
+@supports (animation-timeline: view()) {
+  .scroll-reveal {
+    animation: scrollReveal linear both;
+    animation-timeline: view();
+    animation-range: entry 10% cover 35%;
+  }
+  .scroll-fade-up {
+    animation: scrollFadeUp linear both;
+    animation-timeline: view();
+    animation-range: entry 5% cover 30%;
+  }
+}
+
+@keyframes scrollReveal {
+  from {
+    opacity: 0.2;
+    transform: translateY(22px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes scrollFadeUp {
+  from {
+    opacity: 0.2;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Fallback for browsers without animation-timeline */
+@supports not (animation-timeline: view()) {
+  .scroll-reveal,
+  .scroll-fade-up {
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+}
+
+/* ========================================================
+   THREE.JS CONTAINERS: LAYOUT CONTAINMENT & ZERO CLS
+   ======================================================== */
+#hp-canvas-container,
+.hot-potato-canvas-container {
+  width: 100%;
+  max-width: 800px;
+  aspect-ratio: 800 / 460;
+  min-height: 280px;
+  position: relative;
+  margin: 0 auto;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
+  contain: layout style paint;
+}
+
+#tandoor-3d-stage,
+.tandoor-3d-stage-container {
+  width: 100%;
+  max-width: 1000px;
+  aspect-ratio: 16 / 7;
+  min-height: 200px;
+  max-height: 340px;
+  margin: 1.25rem auto 1.5rem;
+  border-radius: var(--radius-lg);
+  border: 2px solid var(--border-color);
+  background: radial-gradient(circle at 50% 60%, rgba(245, 158, 11, 0.18) 0%, rgba(220, 38, 38, 0.12) 40%, rgba(14, 16, 23, 0.85) 100%);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35), 0 0 24px rgba(245, 158, 11, 0.2);
+  contain: layout style paint;
+  display: block;
+}
+
+[data-theme="dark"] #tandoor-3d-stage,
+[data-theme="dark"] .tandoor-3d-stage-container {
+  background: radial-gradient(circle at 50% 60%, rgba(245, 158, 11, 0.25) 0%, rgba(220, 38, 38, 0.22) 45%, #07080B 100%);
+  border-color: rgba(245, 158, 11, 0.35);
+  box-shadow: 0 10px 36px rgba(0, 0, 0, 0.75), 0 0 30px rgba(245, 158, 11, 0.28);
+}
+
+#dish-3d-canvas-container,
+.dish-3d-canvas-container {
+  width: 100%;
+  max-width: 420px;
+  aspect-ratio: 1 / 1;
+  min-height: 240px;
+  margin: 0.75rem auto;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border-color);
+  background: var(--bg-card-subtle);
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-warm);
+  contain: layout style paint;
+  display: block;
+}
+
+#molecule-3d-canvas,
+.molecule-3d-canvas {
+  width: 100%;
+  max-width: 360px;
+  aspect-ratio: 1 / 1;
+  min-height: 220px;
+  margin: 0.75rem auto;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border-color);
+  background: var(--bg-card-subtle);
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-warm);
+  contain: layout style paint;
+  display: block;
+}
+
+/* ========================================================
+   MOBILE LANDSCAPE (844x390) NAVIGATION DOCKING FIX
+   ======================================================== */
+@media (orientation: landscape) and (max-height: 520px) {
+  body {
+    padding-bottom: 0 !important;
+  }
+
+  .mobile-bottom-nav {
+    display: none !important;
+  }
+
+  .site-header {
+    top: 0.15rem !important;
+    padding: 0 0.75rem !important;
+  }
+
+  .site-header .site-nav {
+    display: flex !important;
+    gap: 0.35rem !important;
+  }
+
+  .site-header .site-nav .nav-link {
+    padding: 0.25rem 0.65rem !important;
+    font-size: 0.76rem !important;
+    border-radius: var(--radius-full) !important;
+  }
+
+  .scrolltide-hero-showcase {
+    padding: 1.25rem 0 1rem !important;
+  }
+
+  .scrolltide-stats-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+    margin: 1rem 0 !important;
+    gap: 0.65rem !important;
+  }
+
+  .scrolltide-stat-card {
+    padding: 0.75rem 0.5rem !important;
+  }
+
+  .scrolltide-stat-num {
+    font-size: 1.6rem !important;
+  }
+}
+

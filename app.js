@@ -1653,6 +1653,7 @@ class FusionApp {
     }
 
     const currentRank = this.getCurrentRank(profile.xp, profile.role);
+    profile.level = currentRank.level; // Persist level in profile for DB-ranked leaderboard
     this.saveState();
     this.renderHeader();
     this.renderProgressStrip();
@@ -3452,8 +3453,8 @@ class FusionApp {
             </button>
           </div>
 
-          <!-- Collapsible API Key Box -->
-          <div class="api-key-box" id="api-key-config-box" style="display:${hasApiKey ? 'none' : 'flex'};">
+          <!-- Collapsible API Key Box — hidden by default, toggle via button -->
+          <div class="api-key-box" id="api-key-config-box" style="display:none;">
             <div style="display:flex; justify-content:space-between; align-items:center;">
               <span style="font-weight:700;">Google Gemini API Key:</span>
               <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" style="font-size:0.76rem; color:var(--primary); font-weight:700;">
@@ -3885,10 +3886,18 @@ Guidelines:
     }
 
     if (rosterContainer) {
-      rosterContainer.innerHTML = Object.entries(this.state.profiles).map(([key, p]) => {
+      rosterContainer.innerHTML = Object.entries(this.state.profiles)
+        .sort(([,a],[,b]) => {
+          const aRank = this.getCurrentRank(a.xp, a.role);
+          const bRank = this.getCurrentRank(b.xp, b.role);
+          return (bRank.level || 1) - (aRank.level || 1) || b.xp - a.xp;
+        })
+        .map(([key, p], idx) => {
         const isActive = key === this.state.currentProfile;
         const pRank = this.getCurrentRank(p.xp, p.role);
         const bests = p.bests || {};
+        const rankPos = idx + 1;
+        const rankMedal = rankPos === 1 ? '🥇' : rankPos === 2 ? '🥈' : rankPos === 3 ? '🥉' : `#${rankPos}`;
 
         let metricDisplay = `
           <div style="font-weight:900; color:var(--primary); font-size:1.35rem;">${p.xp} XP</div>
@@ -3913,16 +3922,17 @@ Guidelines:
         }
 
         return `
-          <div style="background:var(--bg-card-subtle); border:${isActive ? '2.5px solid var(--primary)' : '1.5px solid var(--border-color)'}; border-radius:var(--radius-md); padding:1.25rem; margin-bottom:1.15rem; box-shadow:${isActive ? '0 4px 16px var(--primary-glow)' : 'none'};">
+          <div style="background:var(--bg-card-subtle); border:${isActive ? '2.5px solid var(--primary)' : '1.5px solid var(--border-color)'}; border-radius:var(--radius-md); padding:1.25rem; margin-bottom:1.15rem; box-shadow:${isActive ? '0 4px 16px var(--primary-glow)' : 'none'}; position:relative;">
+            <div style="position:absolute; top:0.75rem; right:0.85rem; font-size:${rankPos <= 3 ? '1.5rem' : '0.9rem'}; font-weight:800; color:${rankPos <= 3 ? 'inherit' : 'var(--text-muted)'};">${rankMedal}</div>
             <div style="display:flex; justify-content:space-between; align-items:center;">
               <div style="display:flex; align-items:center; gap:0.85rem;">
                 <span style="font-size:2.2rem;">${p.avatar}</span>
                 <div>
                   <strong style="font-size:1.05rem;">${p.name}</strong>
-                  <div style="font-size:0.82rem; color:var(--text-muted);">${pRank.title} (Level ${pRank.level} • ${p.role === 'parent' ? 'Parent Guide' : 'Student Chef'})</div>
+                  <div style="font-size:0.82rem; color:var(--text-muted);">👑 Level ${pRank.level} — ${pRank.title} • ${p.role === 'parent' ? 'Parent Guide' : 'Student Chef'}</div>
                 </div>
               </div>
-              <div style="text-align:right;">
+              <div style="text-align:right; margin-right:2rem;">
                 ${metricDisplay}
               </div>
             </div>
