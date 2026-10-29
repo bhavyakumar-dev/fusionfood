@@ -349,6 +349,10 @@ button {
   gap: 0.25rem;
 }
 
+.mobile-bottom-nav {
+  display: none;
+}
+
 .nav-link {
   font-size: 0.92rem;
   font-weight: 800;
@@ -371,10 +375,17 @@ button {
 
 .nav-link.active {
   color: #FFFFFF !important;
-  background: var(--theme-gradient) !important;
+  background: linear-gradient(135deg, #0284C7 0%, #0369A1 50%, #4F46E5 100%) !important;
   box-shadow: 0 4px 16px var(--primary-glow);
   transform: scale(1.03);
   position: relative;
+  font-weight: 800;
+}
+
+[data-theme="dark"] .nav-link.active {
+  color: #FFFFFF !important;
+  background: linear-gradient(135deg, #0284C7 0%, #0369A1 45%, #6366F1 100%) !important;
+  box-shadow: 0 4px 20px rgba(2, 132, 199, 0.45);
 }
 
 /* Header Action Controls */
@@ -562,9 +573,9 @@ button {
 }
 
 .game-card-tab.active {
-  border-color: transparent !important;
-  background: var(--bg-card);
-  box-shadow: 0 10px 30px -4px rgba(0, 0, 0, 0.45), 0 0 18px var(--primary-glow);
+  border: 2.5px solid var(--primary) !important;
+  background: var(--bg-card) !important;
+  box-shadow: 0 12px 30px -4px rgba(2, 132, 199, 0.28), 0 0 18px var(--primary-glow) !important;
   transform: translateY(-5px);
   position: relative;
 }
@@ -572,10 +583,13 @@ button {
 .game-card-tab.active::before {
   content: "";
   position: absolute;
-  inset: -2.5px;
-  border-radius: calc(var(--radius-lg) + 2px);
-  background: var(--theme-gradient);
-  z-index: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4.5px;
+  background: var(--theme-gradient-h);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  z-index: 2;
 }
 
 .game-card-tab > * {
@@ -597,6 +611,8 @@ button {
 .game-card-tab h3 {
   font-size: 1.2rem;
   margin-bottom: 0.25rem;
+  color: var(--text-main);
+  font-weight: 800;
 }
 
 .game-card-tab p {
@@ -604,6 +620,14 @@ button {
   color: var(--text-muted);
   margin-bottom: 0.85rem;
   line-height: 1.45;
+}
+
+.game-card-tab.active h3 {
+  color: var(--text-main) !important;
+}
+
+.game-card-tab.active p {
+  color: var(--text-muted) !important;
 }
 
 .game-card-meta {
@@ -615,6 +639,25 @@ button {
   color: var(--primary);
   border-top: 1px dashed var(--border-dashed);
   padding-top: 0.65rem;
+}
+
+.game-card-tab.active .game-card-meta {
+  color: var(--primary) !important;
+}
+
+[data-theme="dark"] .game-card-tab h3,
+[data-theme="dark"] .game-card-tab.active h3 {
+  color: #FFFFFF !important;
+}
+
+[data-theme="dark"] .game-card-tab p,
+[data-theme="dark"] .game-card-tab.active p {
+  color: #E2E8F0 !important;
+}
+
+[data-theme="dark"] .game-card-tab .game-card-meta,
+[data-theme="dark"] .game-card-tab.active .game-card-meta {
+  color: #38BDF8 !important;
 }
 
 .scroll-arrow-btn {
@@ -983,17 +1026,37 @@ button {
   border-radius: var(--radius-full);
   border: 1.5px solid var(--border-color);
   background: var(--bg-card-subtle);
+  color: var(--text-main);
   font-size: 0.88rem;
   font-weight: 700;
   white-space: nowrap;
   box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+  cursor: pointer;
+  transition: var(--bounce);
+}
+
+.recipe-chip:hover {
+  border-color: var(--primary);
+  transform: translateY(-2px);
 }
 
 .recipe-chip.active {
   background: var(--primary);
-  color: white;
+  color: #FFFFFF !important;
   border-color: var(--primary);
   box-shadow: 0 4px 14px var(--primary-glow);
+}
+
+[data-theme="dark"] .recipe-chip {
+  background: #181B26;
+  border-color: #2E344A;
+  color: #E2E8F0;
+}
+
+[data-theme="dark"] .recipe-chip.active {
+  background: var(--primary) !important;
+  color: #07080B !important;
+  font-weight: 800;
 }
 
 .cooking-board-layout {
@@ -1717,7 +1780,7 @@ button {
 }
 
 .substitutes-table th, .substitutes-table td {
-  padding: 0.6rem 0.75rem;
+  padding: 0.7rem 0.85rem;
   text-align: left;
   border-bottom: 1px solid var(--border-color);
 }
@@ -1726,19 +1789,21 @@ button {
   color: var(--text-main);
   font-weight: 800;
   letter-spacing: 0.02em;
+  background: var(--bg-card-subtle);
 }
 
 .substitutes-table td {
-  color: var(--text-muted);
+  color: var(--text-main);
 }
 
 .substitutes-table td strong {
-  color: var(--accent-green);
-  font-weight: 700;
+  color: #047857;
+  font-weight: 800;
 }
 
 [data-theme="dark"] .substitutes-table th {
   color: #FFFFFF !important;
+  background: #181B26 !important;
 }
 
 [data-theme="dark"] .substitutes-table td {
@@ -1747,6 +1812,146 @@ button {
 
 [data-theme="dark"] .substitutes-table td strong {
   color: #4ADE80 !important;
+}
+
+.substitutes-table .sub-col-reason {
+  font-size: 0.84rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+[data-theme="dark"] .substitutes-table .sub-col-reason {
+  color: #E2E8F0 !important;
+}
+
+/* Recipe Semantic Badges */
+.badge-kid-safe {
+  font-size: 0.76rem;
+  font-weight: 800;
+  padding: 0.25rem 0.7rem;
+  border-radius: var(--radius-full);
+  background: var(--tag-veg-bg);
+  color: #047857;
+  border: 1px solid var(--tag-veg-border);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  white-space: nowrap;
+}
+
+[data-theme="dark"] .badge-kid-safe {
+  background: rgba(34, 197, 94, 0.16) !important;
+  color: #4ADE80 !important;
+  border-color: rgba(74, 222, 128, 0.35) !important;
+}
+
+.badge-parent-assist {
+  font-size: 0.76rem;
+  font-weight: 800;
+  padding: 0.25rem 0.7rem;
+  border-radius: var(--radius-full);
+  background: #FFF1F2;
+  color: #BE123C;
+  border: 1px solid #FECDD3;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  white-space: nowrap;
+}
+
+[data-theme="dark"] .badge-parent-assist {
+  background: rgba(225, 29, 72, 0.16) !important;
+  color: #FB7185 !important;
+  border-color: rgba(251, 113, 133, 0.35) !important;
+}
+
+/* Recipe Content Boxes with Contrast Guarantee */
+.recipe-heritage-box {
+  background: var(--bg-card-subtle);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.15rem 1.35rem;
+  margin-bottom: 1.5rem;
+}
+
+.recipe-heritage-title {
+  font-size: 0.98rem;
+  font-weight: 800;
+  margin-bottom: 0.45rem;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+[data-theme="dark"] .recipe-heritage-title {
+  color: #38BDF8 !important;
+}
+
+.recipe-heritage-text {
+  font-size: 0.88rem;
+  color: var(--text-main);
+  line-height: 1.6;
+}
+
+.recipe-substitutes-title {
+  font-size: 1.12rem;
+  font-weight: 800;
+  margin-bottom: 0.45rem;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.recipe-substitutes-intro {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 0.85rem;
+  line-height: 1.45;
+}
+
+[data-theme="dark"] .recipe-substitutes-intro {
+  color: #CBD5E1 !important;
+}
+
+.recipe-chemistry-card {
+  background: var(--bg-card-subtle);
+  border: 2px dashed var(--border-dashed);
+  border-radius: var(--radius-md);
+  padding: 1.25rem 1.4rem;
+  margin-top: 1.5rem;
+}
+
+.recipe-chemistry-title {
+  font-size: 0.98rem;
+  font-weight: 800;
+  margin-bottom: 0.45rem;
+  color: var(--secondary);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+[data-theme="dark"] .recipe-chemistry-title {
+  color: #FB7185 !important;
+}
+
+.recipe-chemistry-text {
+  font-size: 0.88rem;
+  color: var(--text-main);
+  line-height: 1.6;
+}
+
+.ai-header-subtitle {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  display: block;
+  margin-top: 2px;
+}
+
+[data-theme="dark"] .ai-header-subtitle {
+  color: #E2E8F0 !important;
 }
 
 /* ========================================================
@@ -2013,23 +2218,27 @@ input:checked + .slider:before {
 
   /* Compact Single-Row Mobile & Landscape Header (Never wraps or covers content!) */
   .header-inner {
-    padding: 0.45rem 0.85rem;
-    gap: 0.5rem;
+    padding: 0.35rem 0.55rem;
+    gap: 0.35rem;
     flex-wrap: nowrap !important;
     justify-content: space-between;
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-full);
+  }
+
+  .brand-logo {
+    gap: 0.4rem;
   }
 
   .brand-icon {
-    width: 36px;
-    height: 36px;
-    font-size: 1.25rem;
-    border-radius: 10px;
+    width: 32px;
+    height: 32px;
+    font-size: 1.1rem;
+    border-radius: 8px;
     flex-shrink: 0;
   }
 
   .brand-text h1 {
-    font-size: 1.05rem;
+    font-size: 0.95rem;
     white-space: nowrap;
   }
 
@@ -2038,31 +2247,40 @@ input:checked + .slider:before {
   }
 
   .header-actions {
-    gap: 0.35rem;
+    gap: 0.25rem;
     flex-shrink: 0;
   }
 
   .profile-pill {
-    padding: 0.25rem 0.55rem;
-    font-size: 0.76rem;
-    gap: 0.35rem;
+    padding: 0.2rem 0.45rem;
+    font-size: 0.72rem;
+    gap: 0.25rem;
+  }
+
+  .profile-pill .profile-rank-badge {
+    display: none !important;
   }
 
   .profile-pill span:not(.profile-avatar) {
-    max-width: 68px;
+    max-width: 58px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
   .icon-btn {
-    width: 34px;
-    height: 34px;
-    font-size: 0.92rem;
+    width: 30px;
+    height: 30px;
+    font-size: 0.85rem;
+  }
+
+  /* Hide Desktop Header Tabs on Mobile/Compact Views */
+  .site-header .site-nav {
+    display: none !important;
   }
 
   /* Floating Bottom Navigation Bar for Mobile & Landscape (Thumb-Friendly, Zero Content Overlap) */
-  .site-nav {
+  .mobile-bottom-nav {
     position: fixed !important;
     bottom: 0.75rem !important;
     left: 50% !important;
@@ -2082,7 +2300,7 @@ input:checked + .slider:before {
     gap: 0.3rem !important;
   }
 
-  [data-theme="dark"] .site-nav {
+  [data-theme="dark"] .mobile-bottom-nav {
     background: rgba(14, 16, 23, 0.96) !important;
     box-shadow: 0 12px 36px rgba(0, 0, 0, 0.85), 0 0 20px rgba(56, 189, 248, 0.25) !important;
     border-color: rgba(36, 40, 56, 0.95) !important;
@@ -2261,6 +2479,171 @@ input:checked + .slider:before {
     padding: 0.85rem 1.85rem;
     font-size: 1rem;
   }
+
+  /* Hot Potato Mobile Responsive Optimizations */
+  .hot-potato-arena-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .hot-potato-canvas-container {
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    overflow: hidden;
+    border-radius: var(--radius-md);
+    position: relative;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    touch-action: none;
+  }
+
+  #hot-potato-canvas {
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 800 / 460;
+    display: block;
+  }
+
+  .hp-controls-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    width: 100%;
+  }
+
+  .hp-action-btn {
+    width: 100% !important;
+    padding: 1rem !important;
+    font-size: 1.15rem !important;
+    font-weight: 900 !important;
+    border-radius: var(--radius-md) !important;
+    letter-spacing: 0.02em;
+    touch-action: manipulation;
+  }
+
+  .hp-status-strip {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .hp-meter-outer {
+    width: 100%;
+    height: 14px;
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+  }
+
+  .hp-meter-fill {
+    height: 100%;
+    width: 0%;
+    transition: width 0.1s linear, background 0.2s ease;
+  }
+}
+
+/* Hot Potato Game Desktop Defaults */
+.hot-potato-arena-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.hot-potato-canvas-container {
+  width: 100%;
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
+  background: #080A10;
+}
+
+#hot-potato-canvas {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 800 / 460;
+  display: block;
+}
+
+.hot-potato-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(8, 10, 16, 0.88);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  padding: 1.5rem;
+}
+
+.hp-overlay-card {
+  text-align: center;
+  max-width: 480px;
+  background: var(--bg-card);
+  padding: 2rem;
+  border-radius: var(--radius-lg);
+  border: 2px solid var(--border-color);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+.hp-overlay-icon {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+}
+
+.hp-overlay-title {
+  font-size: 1.55rem;
+  margin-bottom: 0.75rem;
+  color: var(--text-main);
+}
+
+.hp-overlay-desc {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.hp-controls-bar {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.hp-action-btn {
+  font-size: 1rem;
+  font-weight: 800;
+  padding: 0.75rem 1.75rem;
+}
+
+.hp-status-strip {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.hp-meter-outer {
+  flex: 1;
+  height: 16px;
+  background: rgba(0, 0, 0, 0.12);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  border: 1.5px solid var(--border-color);
+}
+
+.hp-meter-fill {
+  height: 100%;
+  width: 0%;
+  background: #38BDF8;
+  transition: width 0.1s linear, background 0.2s ease;
 }
 
 .footer-bottom {

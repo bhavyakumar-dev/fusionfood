@@ -1379,7 +1379,7 @@ class FusionApp {
   // INSTANT TAB SWITCHER (NO ENDLESS VERTICAL SCROLLING)
   // ========================================================
   initMainTabs() {
-    const tabButtons = document.querySelectorAll('.site-nav .nav-link[data-tab-target]');
+    const tabButtons = document.querySelectorAll('.site-nav .nav-link[data-tab-target], .mobile-bottom-nav .nav-link[data-tab-target]');
     
     tabButtons.forEach(btn => {
       btn.addEventListener('click', (e) => {
@@ -1413,8 +1413,8 @@ class FusionApp {
     this.state.currentTab = tabId;
     this.saveState();
 
-    // Update Nav Buttons
-    document.querySelectorAll('.site-nav .nav-link').forEach(btn => {
+    // Update Nav Buttons across both site-nav and mobile-bottom-nav
+    document.querySelectorAll('.site-nav .nav-link, .mobile-bottom-nav .nav-link').forEach(btn => {
       if (btn.getAttribute('data-tab-target') === tabId) {
         btn.classList.add('active');
       } else {
@@ -2448,9 +2448,16 @@ class FusionApp {
       isPlaying = true;
     });
 
-    whackBtn?.addEventListener('click', whackPotato);
+    whackBtn?.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      whackPotato();
+    });
+    whackBtn?.addEventListener('click', (e) => {
+      e.preventDefault();
+    });
 
     canvas.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
       whackPotato();
     });
 
@@ -2516,16 +2523,16 @@ class FusionApp {
         const coalsY = canvas.height - coalsHeight;
         if (potato.y + potato.radius >= coalsY) {
           potato.y = coalsY - potato.radius;
-          potato.vy = -6.5 - Math.random() * 2; // Auto bounce off coals
-          potato.cookLevel += 18; // Cooking!
+          potato.vy = -7.2 - Math.random() * 2; // Auto bounce off coals with solid height
+          potato.cookLevel += 14; // Gradual cooking
           sound.playSizzle();
 
           // Smoke / ember particles
-          for (let i = 0; i < 10; i++) {
+          for (let i = 0; i < 12; i++) {
             particles.push({
               x: potato.x + (Math.random() - 0.5) * 20,
               y: coalsY,
-              vx: (Math.random() - 0.5) * 3,
+              vx: (Math.random() - 0.5) * 4,
               vy: -2 - Math.random() * 3,
               color: Math.random() > 0.5 ? '#FF4500' : '#FFD700',
               size: 3 + Math.random() * 4,
@@ -2995,7 +3002,7 @@ class FusionApp {
   }
 
   // ========================================================
-  // RECIPE POP-OUT MODAL & GEMINI AI SOUS-CHEF
+  // RECIPE POP-OUT MODAL & GEMINI / WORKERS AI SOUS-CHEF
   // ========================================================
   getGeminiKey() {
     return localStorage.getItem('fusion_gemini_api_key') || '';
@@ -3006,6 +3013,27 @@ class FusionApp {
       localStorage.setItem('fusion_gemini_api_key', key.trim());
     } else {
       localStorage.removeItem('fusion_gemini_api_key');
+    }
+  }
+
+  getWorkersAiKey() {
+    return localStorage.getItem('fusion_workers_ai_token') || '';
+  }
+
+  getWorkersAiAccount() {
+    return localStorage.getItem('fusion_workers_ai_account') || '';
+  }
+
+  setWorkersAiConfig(token, accountId) {
+    if (token && token.trim()) {
+      localStorage.setItem('fusion_workers_ai_token', token.trim());
+    } else {
+      localStorage.removeItem('fusion_workers_ai_token');
+    }
+    if (accountId && accountId.trim()) {
+      localStorage.setItem('fusion_workers_ai_account', accountId.trim());
+    } else {
+      localStorage.removeItem('fusion_workers_ai_account');
     }
   }
 
@@ -3154,7 +3182,7 @@ class FusionApp {
 
             <!-- API Key Toggle Pill -->
             <button class="api-key-pill ${hasApiKey ? 'active' : ''}" id="toggle-api-key-box-btn">
-              <span>${hasApiKey ? '🔑 API Key Active' : '🔑 Set Gemini API Key'}</span>
+              <span>${hasApiKey ? '⚡ AI Key Active' : '⚙️ Setup AI Engine'}</span>
             </button>
           </div>
 
@@ -3171,8 +3199,20 @@ class FusionApp {
               <button class="icon-btn" id="show-hide-key-btn" title="Toggle visibility" style="width:34px; height:34px; font-size:0.9rem;">👁️</button>
               <button class="btn btn-primary" id="save-gemini-key-btn" style="padding:0.35rem 0.85rem; font-size:0.8rem;">Save</button>
             </div>
-            <span style="font-size:0.72rem; color:var(--text-muted);">
-              Saved locally in your browser. Never shared or sent anywhere except Google's official Gemini endpoint.
+            <div style="margin-top:0.6rem; border-top:1px dashed var(--border-color); padding-top:0.6rem;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem;">
+                <span style="font-weight:700; font-size:0.82rem;">⚡ Or Cloudflare Workers AI:</span>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:0.4rem;">
+                <input type="password" id="workers-ai-token-input" class="api-key-input" placeholder="Cloudflare API Token with Workers AI Read" value="${this.getWorkersAiKey()}">
+                <div style="display:flex; gap:0.4rem;">
+                  <input type="text" id="workers-ai-account-input" class="api-key-input" placeholder="Cloudflare Account ID" value="${this.getWorkersAiAccount()}">
+                  <button class="btn btn-primary" id="save-workers-ai-btn" style="padding:0.35rem 0.85rem; font-size:0.8rem;">Save</button>
+                </div>
+              </div>
+            </div>
+            <span style="font-size:0.72rem; color:var(--text-muted); margin-top:0.25rem;">
+              Keys are securely stored only inside your browser. Offline responses work instantly without keys!
             </span>
           </div>
 
@@ -3259,7 +3299,7 @@ class FusionApp {
       }
     });
 
-    // Save key
+    // Save Gemini key
     document.getElementById('save-gemini-key-btn')?.addEventListener('click', (e) => {
       e.preventDefault();
       const val = keyInput.value.trim();
@@ -3268,8 +3308,23 @@ class FusionApp {
       showToast(val ? 'Gemini API key saved!' : 'Gemini API key removed', 'success');
       keyBox.style.display = 'none';
       if (toggleKeyBtn) {
-        toggleKeyBtn.className = `api-key-pill ${val ? 'active' : ''}`;
-        toggleKeyBtn.innerHTML = `<span>${val ? '🔑 API Key Active' : '🔑 Set Gemini API Key'}</span>`;
+        toggleKeyBtn.className = `api-key-pill ${val || this.getWorkersAiKey() ? 'active' : ''}`;
+        toggleKeyBtn.innerHTML = `<span>${val || this.getWorkersAiKey() ? '⚡ AI Key Active' : '⚙️ Setup AI Engine'}</span>`;
+      }
+    });
+
+    // Save Workers AI config
+    document.getElementById('save-workers-ai-btn')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      const token = document.getElementById('workers-ai-token-input')?.value.trim();
+      const accountId = document.getElementById('workers-ai-account-input')?.value.trim();
+      this.setWorkersAiConfig(token, accountId);
+      sound.playCorrect();
+      showToast(token ? 'Cloudflare Workers AI configured!' : 'Workers AI config removed', 'success');
+      keyBox.style.display = 'none';
+      if (toggleKeyBtn) {
+        toggleKeyBtn.className = `api-key-pill ${token || this.getGeminiKey() ? 'active' : ''}`;
+        toggleKeyBtn.innerHTML = `<span>${token || this.getGeminiKey() ? '⚡ AI Key Active' : '⚙️ Setup AI Engine'}</span>`;
       }
     });
 
@@ -3364,10 +3419,10 @@ class FusionApp {
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
     const apiKey = this.getGeminiKey();
+    const workersKey = this.getWorkersAiKey();
+    const workersAccount = this.getWorkersAiAccount();
 
-    if (apiKey) {
-      try {
-        const systemPrompt = `You are Chef Maya, an expert vegetarian AI Sous-Chef for Fusion Food Family Lab. 
+    const systemPrompt = `You are Chef Maya, an expert vegetarian AI Sous-Chef for Fusion Food Family Lab. 
 Helping a parent and kid (ages 10-16) cook "${dish.name}" (${dish.origin}).
 Recipe Description: ${dish.description}.
 Key Substitutes: ${dish.indianSubstitutes.map(s => `${s.substitute} replacing ${s.original} (${s.why})`).join('; ')}.
@@ -3380,6 +3435,36 @@ Guidelines:
 3. Recommend everyday Indian bazaar items (paneer, makhanas, chana, hung curd, gondhoraj lime, spices).
 4. Concise and actionable (under 140 words). Use bold text and bullet points.`;
 
+    // 1. Try Workers AI first if configured
+    if (workersKey && workersAccount) {
+      try {
+        const fullPrompt = `<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n${systemPrompt}<|eot_id|><|start_header_id|>user<|end_header_id|>\n${prompt}<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n`;
+        const res = await fetch(`https://api.cloudflare.com/client/v4/accounts/${workersAccount}/ai/run/@cf/meta/llama-3-8b-instruct`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${workersKey}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ prompt: fullPrompt, max_tokens: 450 })
+        });
+        const wData = await res.json();
+        typingBubble.remove();
+        if (wData.result && (wData.result.response || wData.result.text)) {
+          const aiText = wData.result.response || wData.result.text;
+          this.appendAiMessage(messagesContainer, aiText + '\n\n*(⚡ Generated via Cloudflare Workers AI)*');
+          sound.playCorrect();
+          return;
+        } else if (wData.errors && wData.errors.length) {
+          console.warn('Workers AI returned errors:', wData.errors);
+        }
+      } catch (wErr) {
+        console.warn('Workers AI connection attempt error:', wErr);
+      }
+    }
+
+    // 2. Try Gemini API
+    if (apiKey) {
+      try {
         const fullPrompt = `${systemPrompt}\n\nFamily Question: ${prompt}`;
 
         const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
@@ -3405,18 +3490,22 @@ Guidelines:
           const aiText = data.candidates[0].content.parts[0].text;
           this.appendAiMessage(messagesContainer, aiText);
           sound.playCorrect();
+          return;
         } else if (data.error) {
           const errText = `⚠️ **Gemini API Notice**: ${data.error.message || 'Key verification failed'}. Check the API key pill above!`;
           this.appendAiMessage(messagesContainer, errText);
           sound.playWrong();
+          return;
         } else {
           this.appendAiMessage(messagesContainer, `I couldn't quite catch that! Could you ask about ingredients, prep, or cooking tips?`);
+          return;
         }
       } catch (err) {
         typingBubble.remove();
         console.error('Gemini API fetch error:', err);
         const fallbackText = this.getContextualFallback(dish, prompt);
         this.appendAiMessage(messagesContainer, fallbackText);
+        return;
       }
     } else {
       // Smart contextual fallback when no API key is set
