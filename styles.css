@@ -1999,9 +1999,9 @@ input:checked + .slider:before {
 }
 
 /* ========================================================
-   CROSS-PLATFORM & MOBILE RESPONSIVE ENGINE (iOS, Android, Tablets)
+   CROSS-PLATFORM & MOBILE RESPONSIVE ENGINE (iOS, Android, Tablets, Landscape)
    ======================================================== */
-@media (max-width: 768px) {
+@media (max-width: 900px), (max-height: 520px) {
   body {
     padding-bottom: 5.5rem; /* Dedicated clearance for the thumb-friendly bottom nav bar */
   }
@@ -2011,7 +2011,7 @@ input:checked + .slider:before {
     padding: 0 0.5rem;
   }
 
-  /* Compact Single-Row Mobile Header (Never wraps or covers content!) */
+  /* Compact Single-Row Mobile & Landscape Header (Never wraps or covers content!) */
   .header-inner {
     padding: 0.45rem 0.85rem;
     gap: 0.5rem;
@@ -2025,18 +2025,21 @@ input:checked + .slider:before {
     height: 36px;
     font-size: 1.25rem;
     border-radius: 10px;
+    flex-shrink: 0;
   }
 
   .brand-text h1 {
     font-size: 1.05rem;
+    white-space: nowrap;
   }
 
   .brand-text span {
-    display: none; /* Hide subtitle on mobile to preserve single-line elegance */
+    display: none !important; /* Hide subtitle on mobile/landscape to preserve single-line elegance */
   }
 
   .header-actions {
     gap: 0.35rem;
+    flex-shrink: 0;
   }
 
   .profile-pill {
@@ -2058,31 +2061,31 @@ input:checked + .slider:before {
     font-size: 0.92rem;
   }
 
-  /* Floating Bottom Navigation Bar for Mobile (Thumb-Friendly, Zero Content Overlap) */
+  /* Floating Bottom Navigation Bar for Mobile & Landscape (Thumb-Friendly, Zero Content Overlap) */
   .site-nav {
-    position: fixed;
-    bottom: 0.75rem;
-    left: 50%;
-    transform: translateX(-50%);
-    width: calc(100% - 1.2rem);
-    max-width: 440px;
-    z-index: 99999;
-    background: rgba(240, 247, 255, 0.95);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 2px solid var(--border-color);
-    border-radius: var(--radius-full);
-    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.22), 0 0 16px var(--primary-glow);
-    padding: 0.35rem;
-    display: flex;
-    justify-content: space-around;
-    gap: 0.3rem;
+    position: fixed !important;
+    bottom: 0.75rem !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: calc(100% - 1.2rem) !important;
+    max-width: 440px !important;
+    z-index: 99999 !important;
+    background: rgba(240, 247, 255, 0.95) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border: 2px solid var(--border-color) !important;
+    border-radius: var(--radius-full) !important;
+    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.22), 0 0 16px var(--primary-glow) !important;
+    padding: 0.35rem !important;
+    display: flex !important;
+    justify-content: space-around !important;
+    gap: 0.3rem !important;
   }
 
   [data-theme="dark"] .site-nav {
-    background: rgba(14, 16, 23, 0.96);
-    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.85), 0 0 20px rgba(56, 189, 248, 0.25);
-    border-color: rgba(36, 40, 56, 0.95);
+    background: rgba(14, 16, 23, 0.96) !important;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.85), 0 0 20px rgba(56, 189, 248, 0.25) !important;
+    border-color: rgba(36, 40, 56, 0.95) !important;
   }
 
   .nav-link {
