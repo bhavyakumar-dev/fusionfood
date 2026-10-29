@@ -1,0 +1,1708 @@
+/* ========================================================
+   Fusion Food Family Lab - Premium Illustrated Cookbook Theme
+   Supports: Light (Parchment & Terracotta) / Dark (Espresso & Saffron)
+   ======================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;0,800;0,900;1,600;1,700&display=swap');
+
+:root {
+  /* Warm Illustrated Cookbook - Light Mode */
+  --bg-main: #FDFBF7;
+  --bg-parchment: #F6F0E6;
+  --bg-card: #FFFFFF;
+  --bg-card-subtle: #FAF6ED;
+  --border-color: #E6DCB8;
+  --border-dashed: #D8C7A0;
+  --border-gold: #D4AF37;
+  
+  --shadow-warm: 0 4px 20px -2px rgba(133, 77, 14, 0.08), 0 2px 6px -1px rgba(133, 77, 14, 0.04);
+  --shadow-hover: 0 14px 34px -4px rgba(133, 77, 14, 0.18), 0 4px 12px -2px rgba(133, 77, 14, 0.08);
+  --shadow-glow: 0 0 24px rgba(217, 83, 56, 0.22);
+  
+  --primary: #D95338;          /* Terracotta Saffron */
+  --primary-hover: #BF3F26;
+  --primary-light: #FDEEE9;
+  --primary-glow: rgba(217, 83, 56, 0.25);
+  
+  --secondary: #E08A1E;        /* Golden Turmeric */
+  --secondary-light: #FEF6E9;
+  --secondary-glow: rgba(224, 138, 30, 0.25);
+  
+  --accent-green: #208759;     /* Cardamom & Fresh Herbs */
+  --accent-green-light: #EBF7F1;
+  --accent-blue: #2563EB;
+  --accent-purple: #7C3AED;
+  
+  --text-main: #2D241E;        /* Roasted Espresso Charcoal */
+  --text-muted: #6B5E55;
+  --text-light: #9B8D83;
+  
+  --tag-veg-bg: #E8F5E9;
+  --tag-veg-text: #1B5E20;
+  --tag-veg-border: #81C784;
+
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-hand: 'Caveat', cursive;
+  
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-full: 9999px;
+  
+  --transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  --bounce: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+[data-theme="dark"] {
+  /* Warm Illustrated Cookbook - Dark Mode (Cast Iron & Saffron Glow) */
+  --bg-main: #14100E;
+  --bg-parchment: #1E1815;
+  --bg-card: #251E1A;
+  --bg-card-subtle: #2C241F;
+  --border-color: #3D322B;
+  --border-dashed: #52443B;
+  --border-gold: #F59E0B;
+  
+  --shadow-warm: 0 4px 28px -2px rgba(0, 0, 0, 0.5);
+  --shadow-hover: 0 16px 40px -4px rgba(0, 0, 0, 0.7);
+  --shadow-glow: 0 0 30px rgba(240, 106, 79, 0.3);
+  
+  --primary: #F06A4F;
+  --primary-hover: #FF7F66;
+  --primary-light: #3D2620;
+  --primary-glow: rgba(240, 106, 79, 0.35);
+  
+  --secondary: #F5A623;
+  --secondary-light: #3E3019;
+  --secondary-glow: rgba(245, 166, 35, 0.35);
+  
+  --accent-green: #34D399;
+  --accent-green-light: #132E22;
+  --accent-blue: #60A5FA;
+  --accent-purple: #A78BFA;
+  
+  --text-main: #FBF8F5;
+  --text-muted: #C4B8AF;
+  --text-light: #8E8279;
+  
+  --tag-veg-bg: #112B18;
+  --tag-veg-text: #86EFAC;
+  --tag-veg-border: #166534;
+}
+
+/* Base Reset & Core Styles */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  line-height: 1.6;
+  transition: background-color 0.35s ease, color 0.35s ease;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+  background-image: 
+    radial-gradient(var(--border-color) 1.2px, transparent 1.2px),
+    radial-gradient(circle at 10% 20%, rgba(224, 138, 30, 0.04) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(217, 83, 56, 0.04) 0%, transparent 40%);
+  background-size: 32px 32px, 100% 100%, 100% 100%;
+}
+
+/* Typography */
+h1, h2, h3, h4, .font-serif {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1.25;
+}
+
+.handwritten {
+  font-family: var(--font-hand);
+  font-size: 1.55rem;
+  color: var(--primary);
+  transform: rotate(-2deg);
+  display: inline-block;
+}
+
+a {
+  color: var(--primary);
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+button {
+  font-family: var(--font-sans);
+  cursor: pointer;
+  border: none;
+  outline: none;
+  background: transparent;
+  transition: var(--transition);
+}
+
+/* Container */
+.container {
+  width: 100%;
+  max-width: 1260px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* ========================================================
+   STICKY FLOATING HEADER & DYNAMIC SLIDING NAV BAR
+   ======================================================== */
+.site-header {
+  position: sticky;
+  top: 0.75rem;
+  z-index: 999;
+  margin: 0 auto;
+  max-width: 1260px;
+  padding: 0 1rem;
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background-color: rgba(253, 251, 247, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-full);
+  padding: 0.55rem 1.25rem;
+  box-shadow: 0 8px 24px -4px rgba(133, 77, 14, 0.08), 0 2px 6px -1px rgba(0,0,0,0.03);
+  transition: var(--transition);
+}
+
+[data-theme="dark"] .header-inner {
+  background-color: rgba(24, 20, 18, 0.88);
+  box-shadow: 0 8px 30px -4px rgba(0, 0, 0, 0.6);
+  border-color: rgba(61, 50, 43, 0.85);
+}
+
+.brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+}
+
+.brand-icon {
+  width: 42px;
+  height: 42px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.5rem;
+  box-shadow: 0 4px 14px var(--primary-glow);
+  transition: transform 0.3s ease;
+}
+
+.brand-logo:hover .brand-icon {
+  transform: rotate(-6deg) scale(1.06);
+}
+
+.brand-text h1 {
+  font-size: 1.28rem;
+  margin-bottom: -2px;
+  letter-spacing: -0.02em;
+}
+
+.brand-text span {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--primary);
+}
+
+/* Sliding Pill Navigation Container */
+.site-nav {
+  display: flex;
+  align-items: center;
+  background: var(--bg-card-subtle);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-full);
+  padding: 0.25rem;
+  position: relative;
+  gap: 0.25rem;
+}
+
+.nav-link {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  padding: 0.45rem 1.05rem;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  position: relative;
+  z-index: 2;
+  transition: color 0.25s ease, background-color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+  white-space: nowrap;
+}
+
+.nav-link:hover {
+  color: var(--primary);
+}
+
+/* Active Highlight Box for current section (Smoothly updates as you scroll) */
+.nav-link.active {
+  color: #FFFFFF !important;
+  background: linear-gradient(135deg, var(--primary), #E66548) !important;
+  box-shadow: 0 3px 12px var(--primary-glow);
+  transform: scale(1.03);
+}
+
+/* Header Action Controls */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-card);
+  border: 1.5px solid var(--border-color);
+  color: var(--text-muted);
+  font-size: 1.05rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  transition: var(--bounce);
+}
+
+.icon-btn:hover {
+  color: var(--primary);
+  border-color: var(--primary);
+  transform: translateY(-2px) scale(1.08);
+  box-shadow: 0 4px 12px var(--primary-glow);
+}
+
+.profile-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.85rem;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-full);
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  transition: var(--bounce);
+}
+
+.profile-pill:hover {
+  border-color: var(--secondary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px var(--secondary-glow);
+}
+
+.profile-avatar {
+  font-size: 1.25rem;
+}
+
+/* ========================================================
+   HERO SECTION - WARM COOKBOOK COVER
+   ======================================================== */
+.hero-section {
+  padding: 3.5rem 0 2rem;
+  position: relative;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.9fr;
+  align-items: center;
+  gap: 3rem;
+}
+
+.hero-badge-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--secondary-light);
+  border: 1.5px solid rgba(224, 138, 30, 0.35);
+  color: var(--secondary);
+  font-weight: 800;
+  font-size: 0.85rem;
+  padding: 0.4rem 1rem;
+  border-radius: var(--radius-full);
+  margin-bottom: 1.25rem;
+  box-shadow: 0 2px 8px var(--secondary-glow);
+}
+
+.hero-title {
+  font-size: 3rem;
+  line-height: 1.15;
+  margin-bottom: 1.25rem;
+  letter-spacing: -0.025em;
+}
+
+.hero-title .highlight {
+  color: var(--primary);
+  position: relative;
+  display: inline-block;
+}
+
+.hero-title .highlight::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 6px;
+  width: 100%;
+  height: 10px;
+  background-color: rgba(224, 138, 30, 0.28);
+  z-index: -1;
+  border-radius: 6px;
+}
+
+.hero-lead {
+  font-size: 1.15rem;
+  color: var(--text-muted);
+  margin-bottom: 2rem;
+  max-width: 600px;
+  line-height: 1.65;
+}
+
+.hero-cta-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  padding: 0.8rem 1.65rem;
+  font-size: 0.98rem;
+  font-weight: 800;
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+  transition: var(--bounce);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary), #E66548);
+  color: white;
+  border: none;
+  box-shadow: 0 6px 18px var(--primary-glow);
+}
+
+.btn-primary:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 24px var(--primary-glow);
+}
+
+.btn-secondary {
+  background-color: var(--bg-card);
+  color: var(--text-main);
+  border: 2px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-warm);
+}
+
+/* Hero Illustrated Card */
+.hero-cookbook-card {
+  background: var(--bg-card);
+  border: 2.5px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem;
+  box-shadow: var(--shadow-hover);
+  position: relative;
+  transform: rotate(1deg);
+  transition: var(--bounce);
+}
+
+.hero-cookbook-card:hover {
+  transform: rotate(0deg) scale(1.02);
+}
+
+.hero-cookbook-tape {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 140px;
+  height: 28px;
+  background: rgba(224, 138, 30, 0.45);
+  backdrop-filter: blur(4px);
+  border-left: 2px dashed rgba(255,255,255,0.7);
+  border-right: 2px dashed rgba(255,255,255,0.7);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+}
+
+.dish-spotlight-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.dish-spotlight-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.veg-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background-color: var(--tag-veg-bg);
+  color: var(--tag-veg-text);
+  border: 1.5px solid var(--tag-veg-border);
+  font-weight: 800;
+  font-size: 0.78rem;
+  padding: 0.25rem 0.7rem;
+  border-radius: var(--radius-full);
+}
+
+.veg-icon-dot {
+  width: 11px;
+  height: 11px;
+  border: 2px solid #2E7D32;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.veg-icon-dot::after {
+  content: "";
+  width: 5px;
+  height: 5px;
+  background-color: #2E7D32;
+  border-radius: 50%;
+}
+
+/* Statistics Mini-Pill Bar */
+.hero-stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.hero-stat-pill {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 0.65rem 0.85rem;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+
+.hero-stat-pill strong {
+  display: block;
+  font-size: 1.15rem;
+  color: var(--primary);
+  font-family: var(--font-serif);
+}
+
+.hero-stat-pill span {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+/* ========================================================
+   GLOBAL PROGRESS STRIP & CHEF PASSPORT HUD
+   ======================================================== */
+.progress-strip-card {
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1.65rem;
+  margin-top: 1.5rem;
+  margin-bottom: 2.5rem;
+  box-shadow: var(--shadow-warm);
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-strip-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--secondary), var(--primary));
+}
+
+.progress-strip-inner {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.chef-avatar-box {
+  width: 58px;
+  height: 58px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--secondary-light), var(--primary-light));
+  border: 2px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  transition: transform 0.3s ease;
+}
+
+.chef-avatar-box:hover {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.progress-info h4 {
+  font-size: 1.15rem;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.progress-bar-track {
+  width: 100%;
+  height: 12px;
+  background-color: var(--bg-parchment);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-top: 0.45rem;
+  border: 1px solid var(--border-color);
+  position: relative;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--secondary), var(--primary));
+  border-radius: var(--radius-full);
+  transition: width 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+}
+
+.progress-bar-fill::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  animation: shimmerBar 2.2s infinite;
+}
+
+@keyframes shimmerBar {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.streak-counter {
+  text-align: right;
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: var(--secondary);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+/* ========================================================
+   GAME SWITCHER TABS - TACTILE ARCADE CARDS
+   ======================================================== */
+.game-switch-section {
+  padding: 1.5rem 0;
+  margin-bottom: 2rem;
+}
+
+.section-head {
+  text-align: center;
+  margin-bottom: 2.25rem;
+}
+
+.section-head h2 {
+  font-size: 2.45rem;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
+}
+
+.section-head p {
+  color: var(--text-muted);
+  max-width: 650px;
+  margin: 0 auto;
+  font-size: 1.05rem;
+}
+
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 1.25rem;
+}
+
+.game-card-tab {
+  background: var(--bg-card);
+  border: 2.5px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.4rem;
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+  transition: var(--bounce);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: var(--shadow-warm);
+  cursor: pointer;
+}
+
+.game-card-tab:hover {
+  transform: translateY(-6px);
+  border-color: var(--primary);
+  box-shadow: var(--shadow-hover);
+}
+
+.game-card-tab.active {
+  border-color: var(--primary);
+  background: linear-gradient(180deg, var(--primary-light) 0%, var(--bg-card) 100%);
+  box-shadow: 0 8px 24px var(--primary-glow);
+  transform: translateY(-4px);
+}
+
+.game-card-tab.active::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--secondary), var(--primary));
+}
+
+.game-tab-icon {
+  font-size: 2.25rem;
+  margin-bottom: 0.85rem;
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.game-card-tab:hover .game-tab-icon {
+  transform: scale(1.15) rotate(4deg);
+}
+
+.game-card-tab h3 {
+  font-size: 1.22rem;
+  margin-bottom: 0.35rem;
+}
+
+.game-card-tab p {
+  font-size: 0.86rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+  line-height: 1.45;
+}
+
+.game-card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--primary);
+  border-top: 1px dashed var(--border-dashed);
+  padding-top: 0.75rem;
+}
+
+.active-live-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--primary);
+  font-weight: 800;
+}
+
+.live-beacon {
+  width: 8px;
+  height: 8px;
+  background-color: var(--primary);
+  border-radius: 50%;
+  animation: pulseBeacon 1.4s infinite;
+}
+
+@keyframes pulseBeacon {
+  0% { transform: scale(0.9); opacity: 1; }
+  50% { transform: scale(1.5); opacity: 0.4; }
+  100% { transform: scale(0.9); opacity: 1; }
+}
+
+.game-disabled-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(246, 240, 230, 0.92);
+  backdrop-filter: blur(4px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-weight: 800;
+  font-size: 0.9rem;
+  z-index: 10;
+  gap: 0.35rem;
+}
+
+[data-theme="dark"] .game-disabled-overlay {
+  background: rgba(30, 24, 21, 0.92);
+}
+
+/* ========================================================
+   MAIN INTERACTIVE PLAY ARENA
+   ======================================================== */
+.play-arena {
+  background: var(--bg-card);
+  border: 2.5px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem;
+  box-shadow: var(--shadow-hover);
+  margin-bottom: 3.5rem;
+  position: relative;
+  min-height: 520px;
+}
+
+.arena-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px dashed var(--border-dashed);
+  padding-bottom: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.arena-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.arena-icon {
+  font-size: 2.4rem;
+}
+
+.arena-badges {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.pill-badge {
+  font-size: 0.82rem;
+  font-weight: 800;
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--radius-full);
+  background: var(--bg-parchment);
+  color: var(--text-muted);
+  border: 1.5px solid var(--border-color);
+}
+
+/* ========================================================
+   GAME 1: BUILD-A-DISH
+   ======================================================== */
+.build-dish-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.recipe-selector-row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  overflow-x: auto;
+  padding-bottom: 0.65rem;
+}
+
+.recipe-chip {
+  padding: 0.55rem 1.15rem;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--border-color);
+  background: var(--bg-card-subtle);
+  font-size: 0.88rem;
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+}
+
+.recipe-chip.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+  box-shadow: 0 4px 14px var(--primary-glow);
+}
+
+.cooking-board-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.25rem;
+}
+
+@media (max-width: 900px) {
+  .cooking-board-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.pantry-shelf {
+  background: var(--bg-parchment);
+  border: 2px dashed var(--border-dashed);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+}
+
+.pantry-shelf h4 {
+  font-size: 1.18rem;
+  margin-bottom: 0.35rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pantry-shelf p {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  margin-bottom: 1.25rem;
+}
+
+.pantry-items-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 0.85rem;
+}
+
+.ingredient-btn {
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 0.95rem 0.6rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.4rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.04);
+  transition: var(--bounce);
+}
+
+.ingredient-btn:hover:not(:disabled) {
+  border-color: var(--secondary);
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 6px 14px var(--secondary-glow);
+}
+
+.ingredient-btn.selected {
+  border-color: var(--accent-green);
+  background: var(--accent-green-light);
+  color: var(--accent-green);
+  opacity: 0.65;
+  transform: none;
+}
+
+.ingredient-btn.wrong-shake {
+  animation: shake 0.4s ease-in-out;
+  border-color: #DC2626 !important;
+  background: #FEF2F2 !important;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-8px); }
+  75% { transform: translateX(8px); }
+}
+
+.ingredient-btn .ing-emoji {
+  font-size: 2rem;
+}
+
+/* Chef's Cauldron / Prep Board */
+.prep-board {
+  background: var(--bg-card-subtle);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.steps-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin: 1.25rem 0;
+}
+
+.step-card {
+  padding: 0.85rem 1.15rem;
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-color);
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  font-size: 0.88rem;
+  transition: var(--transition);
+}
+
+.step-card.completed {
+  border-color: var(--accent-green);
+  background: var(--accent-green-light);
+  box-shadow: 0 2px 10px rgba(32, 135, 89, 0.12);
+}
+
+.step-number {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--border-color);
+  color: var(--text-main);
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  flex-shrink: 0;
+}
+
+.step-card.completed .step-number {
+  background: var(--accent-green);
+  color: white;
+}
+
+/* ========================================================
+   GAME 2: PRONUNCIATION CHALLENGE
+   ======================================================== */
+.pronounce-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 820px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.dish-pronounce-card {
+  background: var(--bg-parchment);
+  border: 2.5px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 2.25rem 1.75rem;
+  box-shadow: var(--shadow-warm);
+}
+
+.ipa-badge {
+  font-family: monospace;
+  font-size: 1.35rem;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-color);
+  padding: 0.45rem 1.25rem;
+  border-radius: var(--radius-full);
+  display: inline-block;
+  margin: 0.65rem 0;
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.audio-listen-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.25rem;
+  margin: 1.5rem 0;
+}
+
+.listen-btn {
+  background: linear-gradient(135deg, var(--primary), #E66548);
+  color: white;
+  padding: 0.75rem 1.65rem;
+  border-radius: var(--radius-full);
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  box-shadow: 0 4px 16px var(--primary-glow);
+}
+
+.listen-btn:hover {
+  transform: translateY(-2px) scale(1.04);
+}
+
+.mic-check-btn {
+  background: var(--bg-card);
+  color: var(--text-main);
+  border: 2px solid var(--border-color);
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-full);
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.mic-check-btn:hover {
+  border-color: var(--secondary);
+  color: var(--secondary);
+  transform: translateY(-2px);
+}
+
+.syllable-builder-box {
+  margin-top: 1.5rem;
+  text-align: left;
+}
+
+.syllable-drop-target {
+  min-height: 72px;
+  background: var(--bg-card);
+  border: 2.5px dashed var(--border-dashed);
+  border-radius: var(--radius-md);
+  padding: 0.85rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 1.5rem;
+}
+
+.syllable-chip {
+  padding: 0.6rem 1.25rem;
+  border-radius: var(--radius-md);
+  background: var(--secondary-light);
+  border: 2px solid var(--secondary);
+  color: var(--secondary);
+  font-weight: 800;
+  font-size: 1.12rem;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+
+.syllable-chip:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px var(--secondary-glow);
+}
+
+.syllable-pool {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+/* ========================================================
+   GAME 3: FAMILY TAG-TEAM TRIVIA
+   ======================================================== */
+.trivia-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  max-width: 840px;
+  margin: 0 auto;
+}
+
+.trivia-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-card-subtle);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 0.85rem 1.5rem;
+}
+
+.timer-soft-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 800;
+  color: var(--secondary);
+  font-size: 1.05rem;
+}
+
+.question-box {
+  background: var(--bg-parchment);
+  border: 2.5px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 2.25rem;
+  position: relative;
+  box-shadow: var(--shadow-warm);
+}
+
+.question-dish-tag {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.65rem;
+}
+
+.question-box h3 {
+  font-size: 1.45rem;
+  margin-bottom: 1.5rem;
+}
+
+.options-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 650px) {
+  .options-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.option-btn {
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.15rem 1.25rem;
+  text-align: left;
+  font-size: 0.95rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+}
+
+.option-btn:hover:not(:disabled) {
+  border-color: var(--primary);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
+}
+
+.option-btn.correct {
+  border-color: var(--accent-green) !important;
+  background: var(--accent-green-light) !important;
+  color: var(--accent-green) !important;
+}
+
+.option-btn.wrong {
+  border-color: #DC2626 !important;
+  background: #FEF2F2 !important;
+  color: #DC2626 !important;
+}
+
+.parent-hint-box {
+  margin-top: 1.5rem;
+  padding: 1.2rem;
+  background: var(--secondary-light);
+  border-left: 5px solid var(--secondary);
+  border-radius: var(--radius-sm);
+  font-size: 0.95rem;
+  box-shadow: 0 2px 8px var(--secondary-glow);
+}
+
+/* ========================================================
+   GAME 4: INDIA AVAILABILITY MAP & CITY QUEST
+   ======================================================== */
+.map-quest-layout {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 2.25rem;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .map-quest-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.india-svg-card {
+  background: var(--bg-parchment);
+  border: 2.5px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem;
+  text-align: center;
+  position: relative;
+  box-shadow: var(--shadow-warm);
+}
+
+.svg-map-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.svg-map-wrapper svg {
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 6px 14px rgba(0,0,0,0.08));
+}
+
+.metro-pin {
+  cursor: pointer;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.metro-pin:hover, .metro-pin.selected {
+  transform: scale(1.4);
+}
+
+.metro-details-card {
+  background: var(--bg-card-subtle);
+  border: 2.5px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  box-shadow: var(--shadow-warm);
+}
+
+/* ========================================================
+   GAME 5: SPIN THE WHEEL & CULINARY FOOD SCIENCE
+   ======================================================== */
+.wheel-science-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  gap: 2.75rem;
+  align-items: center;
+}
+
+@media (max-width: 900px) {
+  .wheel-science-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.wheel-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.wheel-outer {
+  position: relative;
+  width: 320px;
+  height: 320px;
+}
+
+.wheel-pointer {
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  border-top: 26px solid var(--primary);
+  z-index: 10;
+  filter: drop-shadow(0 3px 5px rgba(0,0,0,0.35));
+}
+
+#science-wheel-canvas {
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  box-shadow: 0 10px 36px rgba(0,0,0,0.2), 0 0 0 10px var(--bg-card);
+  transition: transform 3.8s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+}
+
+.spin-trigger-btn {
+  background: linear-gradient(135deg, var(--secondary), #EA580C);
+  color: white;
+  padding: 1rem 2.4rem;
+  font-size: 1.15rem;
+  font-weight: 800;
+  border-radius: var(--radius-full);
+  box-shadow: 0 6px 20px rgba(234, 88, 12, 0.4);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  transition: var(--bounce);
+}
+
+.spin-trigger-btn:hover:not(:disabled) {
+  transform: translateY(-3px) scale(1.04);
+}
+
+.science-explainer-card {
+  background: var(--bg-parchment);
+  border: 2.5px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  box-shadow: var(--shadow-warm);
+}
+
+/* ========================================================
+   KITCHEN LAB RECIPE REPLICATOR
+   ======================================================== */
+.kitchen-lab-section {
+  padding: 3.5rem 0;
+}
+
+.recipe-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+  gap: 1.75rem;
+}
+
+.cookbook-recipe-card {
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  box-shadow: var(--shadow-warm);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: var(--bounce);
+  position: relative;
+}
+
+.cookbook-recipe-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--secondary);
+  box-shadow: var(--shadow-hover);
+}
+
+.substitutes-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.25rem 0;
+  font-size: 0.88rem;
+}
+
+.substitutes-table th, .substitutes-table td {
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.substitutes-table th {
+  color: var(--text-muted);
+  font-weight: 800;
+}
+
+.substitutes-table td strong {
+  color: var(--accent-green);
+}
+
+/* ========================================================
+   FAMILY LEADERBOARD & XP RANK SYSTEM
+   ======================================================== */
+.leaderboard-section {
+  padding: 3.5rem 0;
+}
+
+.scoreboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.25rem;
+}
+
+@media (max-width: 800px) {
+  .scoreboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.rank-ladder-card, .family-roster-card {
+  background: var(--bg-card);
+  border: 2.5px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  box-shadow: var(--shadow-warm);
+}
+
+.rank-tier-item {
+  display: flex;
+  align-items: center;
+  gap: 1.15rem;
+  padding: 0.85rem 1.15rem;
+  border-radius: var(--radius-md);
+  margin-bottom: 0.65rem;
+  border: 1.5px solid transparent;
+  transition: var(--transition);
+}
+
+.rank-tier-item.current-tier {
+  background: var(--primary-light);
+  border-color: var(--primary);
+  font-weight: 800;
+  box-shadow: 0 4px 14px var(--primary-glow);
+}
+
+.rank-tier-item.locked {
+  opacity: 0.5;
+}
+
+/* ========================================================
+   ADMIN MODAL - SECURE & NO PASSWORD DISPLAYED
+   ======================================================== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  padding: 1.5rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.modal-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-dialog {
+  background: var(--bg-card);
+  border: 2.5px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 500px;
+  padding: 2.25rem;
+  box-shadow: 0 24px 48px rgba(0,0,0,0.35);
+  position: relative;
+  transform: translateY(20px);
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-overlay.open .modal-dialog {
+  transform: translateY(0);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.modal-close-btn {
+  font-size: 1.6rem;
+  color: var(--text-muted);
+}
+
+.modal-close-btn:hover {
+  color: var(--primary);
+}
+
+.pin-input-group {
+  display: flex;
+  gap: 0.65rem;
+  margin: 1.5rem 0;
+}
+
+.pin-input {
+  flex: 1;
+  padding: 0.85rem 1.15rem;
+  font-size: 1.15rem;
+  letter-spacing: 0.2em;
+  background: var(--bg-parchment);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
+  color: var(--text-main);
+  text-align: center;
+}
+
+.pin-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-glow);
+}
+
+.admin-toggles-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.95rem;
+  margin: 1.75rem 0;
+}
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: var(--bg-parchment);
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+/* Switch UI */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 26px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--border-dashed);
+  transition: .3s;
+  border-radius: 26px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .3s;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+input:checked + .slider {
+  background-color: var(--accent-green);
+}
+
+input:checked + .slider:before {
+  transform: translateX(22px);
+}
+
+/* ========================================================
+   FLOATING TOAST NOTIFICATIONS
+   ======================================================== */
+.toast-container {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 999999;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  pointer-events: none;
+}
+
+.toast {
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
+  padding: 0.85rem 1.4rem;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-hover);
+  font-size: 0.92rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  pointer-events: auto;
+  transform: translateY(20px);
+  opacity: 0;
+  animation: toastIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes toastIn {
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.toast-success {
+  border-color: var(--accent-green);
+  color: var(--accent-green);
+}
+
+/* Footer */
+.site-footer {
+  border-top: 2px solid var(--border-color);
+  background-color: var(--bg-parchment);
+  padding: 3.5rem 0 2.5rem;
+  margin-top: 5rem;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 2.5rem;
+  margin-bottom: 2.5rem;
+}
+
+@media (max-width: 768px) {
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
+  .hero-grid {
+    grid-template-columns: 1fr;
+  }
+  .header-inner {
+    flex-wrap: wrap;
+    border-radius: var(--radius-lg);
+  }
+  .site-nav {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+.footer-bottom {
+  border-top: 1px solid var(--border-color);
+  padding-top: 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
