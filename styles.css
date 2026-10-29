@@ -1047,8 +1047,23 @@ button {
   gap: 0.4rem;
   font-size: 0.82rem;
   font-weight: 700;
+  color: var(--text-main);
   box-shadow: 0 3px 8px rgba(0,0,0,0.04);
   transition: var(--bounce);
+}
+
+.ingredient-btn * {
+  color: inherit;
+}
+
+[data-theme="dark"] .ingredient-btn {
+  background: var(--bg-card-subtle, #181B26);
+  border-color: rgba(255, 255, 255, 0.16);
+  color: #FFFFFF !important;
+}
+
+[data-theme="dark"] .ingredient-btn * {
+  color: #FFFFFF !important;
 }
 
 .ingredient-btn:hover:not(:disabled) {
@@ -1326,28 +1341,65 @@ button {
   text-align: left;
   font-size: 0.95rem;
   font-weight: 700;
+  color: var(--text-main);
   display: flex;
   align-items: center;
   gap: 0.85rem;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+  cursor: pointer;
+  transition: var(--bounce);
+}
+
+.option-btn * {
+  color: inherit;
+}
+
+/* Crisp Pure White Text for Options in Dark Mode */
+[data-theme="dark"] .option-btn,
+[data-theme="dark"] .science-q-btn {
+  background: var(--bg-card-subtle, #181B26);
+  border-color: rgba(255, 255, 255, 0.16);
+  color: #FFFFFF !important;
+}
+
+[data-theme="dark"] .option-btn *,
+[data-theme="dark"] .science-q-btn * {
+  color: #FFFFFF !important;
+}
+
+[data-theme="dark"] .option-btn span:first-child {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.22) !important;
 }
 
 .option-btn:hover:not(:disabled) {
   border-color: var(--primary);
+  color: var(--primary);
   transform: translateY(-3px);
   box-shadow: var(--shadow-hover);
 }
 
-.option-btn.correct {
-  border-color: var(--accent-green) !important;
-  background: var(--accent-green-light) !important;
-  color: var(--accent-green) !important;
+[data-theme="dark"] .option-btn:hover:not(:disabled) {
+  border-color: var(--primary);
+  color: #FFFFFF !important;
+  background: rgba(56, 189, 248, 0.16);
+  box-shadow: 0 0 16px var(--primary-glow);
 }
 
-.option-btn.wrong {
-  border-color: #DC2626 !important;
-  background: #FEF2F2 !important;
-  color: #DC2626 !important;
+.option-btn.correct,
+[data-theme="dark"] .option-btn.correct,
+[data-theme="dark"] .option-btn.correct * {
+  border-color: var(--accent-green) !important;
+  background: rgba(52, 211, 153, 0.22) !important;
+  color: #34D399 !important;
+}
+
+.option-btn.wrong,
+[data-theme="dark"] .option-btn.wrong,
+[data-theme="dark"] .option-btn.wrong * {
+  border-color: #F43F5E !important;
+  background: rgba(244, 63, 94, 0.22) !important;
+  color: #FB7185 !important;
 }
 
 .parent-hint-box {
