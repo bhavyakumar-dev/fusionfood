@@ -2291,6 +2291,16 @@ input:checked + .slider:before {
   grid-template-columns: 1.25fr 0.95fr;
   flex: 1;
   overflow: hidden;
+  height: calc(100% - 75px);
+  min-height: 0;
+}
+
+.recipe-steps-column {
+  padding: 1.75rem 2rem;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  border-right: 1.5px solid var(--border-color);
+  height: 100%;
 }
 
 @media (max-width: 920px) {
@@ -2309,6 +2319,7 @@ input:checked + .slider:before {
   }
   .recipe-popout-grid {
     grid-template-columns: 1fr;
+    height: auto;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
   }
@@ -2317,6 +2328,11 @@ input:checked + .slider:before {
     border-right: none;
     border-bottom: 2px solid var(--border-color);
     overflow-y: visible;
+    height: auto;
+  }
+  .recipe-ai-column {
+    min-height: 480px;
+    height: auto;
   }
 }
 
