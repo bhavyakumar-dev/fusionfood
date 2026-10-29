@@ -3,7 +3,7 @@
    Supports: Light (Parchment & Terracotta) / Dark (Espresso & Saffron)
    ======================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;0,800;0,900;1,600;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;0,9..144,800;0,9..144,900;1,9..144,600&family=Kalam:wght@400;700&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Rozha+One&display=swap');
 
 :root {
   /* ========================================================
@@ -35,9 +35,9 @@
   --accent-blue: #0284C7;
   --accent-purple: #7C3AED;
   
-  --text-main: #0F172A;        /* Deep Midnight Slate (Ultra-sharp readability) */
-  --text-muted: #334155;       /* Slate Grey */
-  --text-light: #64748B;
+  --text-main: #0B132B;        /* Deepest slate navy (Maximum contrast against light-blue/white) */
+  --text-muted: #1E293B;       /* Deep slate charcoal (Passes WCAG AAA) */
+  --text-light: #334155;       /* Substantial mid slate for secondary descriptors */
   
   --tag-veg-bg: #ECFDF5;
   --tag-veg-text: #047857;
@@ -59,9 +59,9 @@
   --theme-gradient-h: linear-gradient(90deg, var(--primary), var(--secondary));
   --theme-glow: 0 4px 20px var(--primary-glow);
 
-  --font-serif: 'Playfair Display', Georgia, serif;
-  --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-hand: 'Caveat', cursive;
+  --font-serif: 'Fraunces', 'Rozha One', 'Playfair Display', Georgia, serif;
+  --font-sans: 'Plus Jakarta Sans', 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-hand: 'Kalam', 'Caveat', cursive;
   
   --radius-xs: 6px;
   --radius-sm: 10px;
@@ -103,9 +103,9 @@
   --accent-blue: #38BDF8;
   --accent-purple: #C084FC;
   
-  --text-main: #F8FAFC;        /* Crisp Bright White */
-  --text-muted: #94A3B8;       /* Silver Slate */
-  --text-light: #64748B;
+  --text-main: #FFFFFF;        /* Pure Crisp White (>14:1 contrast on Obsidian) */
+  --text-muted: #E2E8F0;       /* Bright Crisp Silver Slate (>9.5:1 contrast) */
+  --text-light: #94A3B8;       /* Legible Mid Slate (>5.5:1 contrast) */
   
   --tag-veg-bg: #062615;
   --tag-veg-text: #4ADE80;
@@ -1658,12 +1658,30 @@ button {
 }
 
 .substitutes-table th {
-  color: var(--text-muted);
+  color: var(--text-main);
   font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.substitutes-table td {
+  color: var(--text-muted);
 }
 
 .substitutes-table td strong {
   color: var(--accent-green);
+  font-weight: 700;
+}
+
+[data-theme="dark"] .substitutes-table th {
+  color: #FFFFFF !important;
+}
+
+[data-theme="dark"] .substitutes-table td {
+  color: #F1F5F9 !important;
+}
+
+[data-theme="dark"] .substitutes-table td strong {
+  color: #4ADE80 !important;
 }
 
 /* ========================================================
@@ -2542,4 +2560,51 @@ input:checked + .slider:before {
 @keyframes typingBounce {
   0%, 100% { transform: translateY(0); opacity: 0.4; }
   50% { transform: translateY(-5px); opacity: 1; }
+}
+
+/* ========================================================
+   GLOBAL HIGH-CONTRAST & TYPOGRAPHY ENHANCEMENTS
+   ======================================================== */
+[data-theme="dark"] .pill-badge {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.22);
+  color: #FFFFFF !important;
+}
+
+[data-theme="dark"] .chat-chip {
+  color: #FFFFFF !important;
+  background: #181D2A;
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+[data-theme="dark"] .chat-chip:hover {
+  background: var(--primary);
+  color: #07080B !important;
+}
+
+[data-theme="dark"] .tutorial-step-card {
+  background: #151926;
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+[data-theme="dark"] .tutorial-step-card p {
+  color: #CBD5E1 !important;
+}
+
+[data-theme="dark"] .step-card,
+[data-theme="dark"] .recipe-step-card {
+  background: #141724;
+  border-color: #2D3348;
+}
+
+[data-theme="dark"] .step-card p,
+[data-theme="dark"] .recipe-step-card p {
+  color: #E2E8F0 !important;
+}
+
+[data-theme="dark"] .pro-tip-note,
+[data-theme="dark"] .recipe-pro-tip {
+  color: #FDE047 !important;
+  font-family: var(--font-hand);
+  font-size: 1.15rem;
 }
