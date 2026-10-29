@@ -1191,7 +1191,7 @@ class FusionApp {
     const themeBtn = document.getElementById('theme-toggle-btn');
     if (themeBtn) {
       themeBtn.innerHTML = theme === 'dark' ? '☀️' : '🌙';
-      themeBtn.setAttribute('title', theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode');
+      themeBtn.setAttribute('title', theme === 'dark' ? 'Switch to Light-Blue Mode' : 'Switch to Obsidian Black Mode');
     }
     this.saveState();
   }
@@ -1200,7 +1200,7 @@ class FusionApp {
     sound.playClick();
     const nextTheme = this.state.theme === 'dark' ? 'light' : 'dark';
     this.applyTheme(nextTheme);
-    showToast(nextTheme === 'dark' ? 'Dark Mode Activated 🌙' : 'Light Mode Activated ☀️', 'info');
+    showToast(nextTheme === 'dark' ? 'Obsidian Black Theme Activated 🌙' : 'Light-Blue Theme Activated ☀️', 'info');
   }
 
   toggleSound() {

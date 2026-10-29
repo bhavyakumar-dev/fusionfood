@@ -6,40 +6,56 @@
 @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;0,800;0,900;1,600;1,700&display=swap');
 
 :root {
-  /* Warm Illustrated Cookbook - Light Mode */
-  --bg-main: #FDFBF7;
-  --bg-parchment: #F6F0E6;
-  --bg-card: #FFFFFF;
-  --bg-card-subtle: #FAF6ED;
-  --border-color: #E6DCB8;
-  --border-dashed: #D8C7A0;
-  --border-gold: #D4AF37;
+  /* ========================================================
+     CRISP SKY / OCEANIC LIGHT-BLUE THEME (LIGHT MODE)
+     ======================================================== */
+  --bg-main: #F0F7FF;           /* Refreshing ice sky-blue canvas */
+  --bg-parchment: #E0F0FE;      /* Soft light-blue section backdrops */
+  --bg-card: #FFFFFF;           /* Crisp pristine white card surfaces */
+  --bg-card-subtle: #F4F9FE;    /* Elevated subtle light-blue section */
+  --border-color: #C5E0F8;      /* Clean soft powder-blue border */
+  --border-dashed: #9EC7EE;     /* Dashed light-blue */
+  --border-gold: #D97706;       /* Warm amber contrast */
   
-  --shadow-warm: 0 4px 20px -2px rgba(133, 77, 14, 0.08), 0 2px 6px -1px rgba(133, 77, 14, 0.04);
-  --shadow-hover: 0 14px 34px -4px rgba(133, 77, 14, 0.18), 0 4px 12px -2px rgba(133, 77, 14, 0.08);
-  --shadow-glow: 0 0 24px rgba(217, 83, 56, 0.22);
+  --shadow-warm: 0 4px 20px -2px rgba(2, 132, 199, 0.08), 0 2px 6px -1px rgba(2, 132, 199, 0.04);
+  --shadow-hover: 0 14px 34px -4px rgba(2, 132, 199, 0.20), 0 4px 12px -2px rgba(2, 132, 199, 0.10);
+  --shadow-glow: 0 0 26px rgba(2, 132, 199, 0.28);
   
-  --primary: #D95338;          /* Terracotta Saffron */
-  --primary-hover: #BF3F26;
-  --primary-light: #FDEEE9;
-  --primary-glow: rgba(217, 83, 56, 0.25);
+  --primary: #0284C7;          /* Radiant Pacific Blue */
+  --primary-hover: #0369A1;
+  --primary-light: #E0F2FE;
+  --primary-glow: rgba(2, 132, 199, 0.32);
   
-  --secondary: #E08A1E;        /* Golden Turmeric */
-  --secondary-light: #FEF6E9;
-  --secondary-glow: rgba(224, 138, 30, 0.25);
+  --secondary: #F43F5E;        /* Electric Coral / Rose Accent */
+  --secondary-light: #FFE4E6;
+  --secondary-glow: rgba(244, 63, 94, 0.28);
   
-  --accent-green: #208759;     /* Cardamom & Fresh Herbs */
-  --accent-green-light: #EBF7F1;
-  --accent-blue: #2563EB;
+  --accent-green: #059669;     /* Fresh Cardamom & Basil */
+  --accent-green-light: #ECFDF5;
+  --accent-blue: #0284C7;
   --accent-purple: #7C3AED;
   
-  --text-main: #2D241E;        /* Roasted Espresso Charcoal */
-  --text-muted: #6B5E55;
-  --text-light: #9B8D83;
+  --text-main: #0F172A;        /* Deep Midnight Slate (Ultra-sharp readability) */
+  --text-muted: #334155;       /* Slate Grey */
+  --text-light: #64748B;
   
-  --tag-veg-bg: #E8F5E9;
-  --tag-veg-text: #1B5E20;
-  --tag-veg-border: #81C784;
+  --tag-veg-bg: #ECFDF5;
+  --tag-veg-text: #047857;
+  --tag-veg-border: #6EE7B7;
+
+  /* RGB Lighting Engine Variables */
+  --rgb-gradient: linear-gradient(
+    90deg,
+    #ff0055 0%,
+    #ff6600 16%,
+    #ffea00 33%,
+    #00ff66 50%,
+    #00e5ff 66%,
+    #7928ca 83%,
+    #ff00cc 92%,
+    #ff0055 100%
+  );
+  --rgb-ambient-glow: 0 0 24px rgba(0, 229, 255, 0.35), 0 0 44px rgba(255, 0, 85, 0.20);
 
   --font-serif: 'Playfair Display', Georgia, serif;
   --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -56,40 +72,91 @@
 }
 
 [data-theme="dark"] {
-  /* Warm Illustrated Cookbook - Dark Mode (Cast Iron & Saffron Glow) */
-  --bg-main: #14100E;
-  --bg-parchment: #1E1815;
-  --bg-card: #251E1A;
-  --bg-card-subtle: #2C241F;
-  --border-color: #3D322B;
-  --border-dashed: #52443B;
+  /* ========================================================
+     SLEEK OBSIDIAN BLACKISH THEME (DARK MODE)
+     ======================================================== */
+  --bg-main: #07080B;          /* Pitch Obsidian Black Canvas */
+  --bg-parchment: #0E1017;     /* Deep Midnight Charcoal Layer */
+  --bg-card: #12141D;          /* Sleek Pitch Black Card */
+  --bg-card-subtle: #181B26;   /* Elevated Charcoal Card */
+  --border-color: #242838;     /* Clean Obsidian Border */
+  --border-dashed: #353B52;
   --border-gold: #F59E0B;
   
-  --shadow-warm: 0 4px 28px -2px rgba(0, 0, 0, 0.5);
-  --shadow-hover: 0 16px 40px -4px rgba(0, 0, 0, 0.7);
-  --shadow-glow: 0 0 30px rgba(240, 106, 79, 0.3);
+  --shadow-warm: 0 4px 28px -2px rgba(0, 0, 0, 0.75);
+  --shadow-hover: 0 16px 44px -4px rgba(0, 0, 0, 0.90);
+  --shadow-glow: 0 0 32px rgba(56, 189, 248, 0.35);
   
-  --primary: #F06A4F;
-  --primary-hover: #FF7F66;
-  --primary-light: #3D2620;
-  --primary-glow: rgba(240, 106, 79, 0.35);
+  --primary: #38BDF8;          /* Electric Sky / Cyan Neon */
+  --primary-hover: #7DD3FC;
+  --primary-light: #0C2333;
+  --primary-glow: rgba(56, 189, 248, 0.42);
   
-  --secondary: #F5A623;
-  --secondary-light: #3E3019;
-  --secondary-glow: rgba(245, 166, 35, 0.35);
+  --secondary: #F43F5E;        /* Vivid Neon Coral / Magenta */
+  --secondary-light: #33111B;
+  --secondary-glow: rgba(244, 63, 94, 0.40);
   
-  --accent-green: #34D399;
-  --accent-green-light: #132E22;
-  --accent-blue: #60A5FA;
-  --accent-purple: #A78BFA;
+  --accent-green: #34D399;     /* Luminous Mint Green */
+  --accent-green-light: #062818;
+  --accent-blue: #38BDF8;
+  --accent-purple: #C084FC;
   
-  --text-main: #FBF8F5;
-  --text-muted: #C4B8AF;
-  --text-light: #8E8279;
+  --text-main: #F8FAFC;        /* Crisp Bright White */
+  --text-muted: #94A3B8;       /* Silver Slate */
+  --text-light: #64748B;
   
-  --tag-veg-bg: #112B18;
-  --tag-veg-text: #86EFAC;
+  --tag-veg-bg: #062615;
+  --tag-veg-text: #4ADE80;
   --tag-veg-border: #166534;
+}
+
+/* ========================================================
+   RGB LIGHTING EFFECT KEYFRAMES
+   ======================================================== */
+@keyframes rgbFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes rgbPulseShadow {
+  0% {
+    box-shadow: 0 6px 24px rgba(255, 0, 85, 0.35), 0 0 36px rgba(0, 229, 255, 0.22);
+  }
+  33% {
+    box-shadow: 0 6px 24px rgba(0, 255, 102, 0.35), 0 0 36px rgba(255, 234, 0, 0.22);
+  }
+  66% {
+    box-shadow: 0 6px 24px rgba(0, 229, 255, 0.35), 0 0 36px rgba(121, 40, 202, 0.22);
+  }
+  100% {
+    box-shadow: 0 6px 24px rgba(255, 0, 85, 0.35), 0 0 36px rgba(0, 229, 255, 0.22);
+  }
+}
+
+@keyframes rgbBeaconPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 229, 255, 0.75);
+    background-color: #00E5FF;
+  }
+  33% {
+    background-color: #FF0055;
+    box-shadow: 0 0 0 7px rgba(255, 0, 85, 0);
+  }
+  66% {
+    background-color: #00FF66;
+    box-shadow: 0 0 0 7px rgba(0, 255, 102, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 229, 255, 0);
+    background-color: #00E5FF;
+  }
 }
 
 /* Base Reset & Core Styles */
@@ -115,9 +182,16 @@ body {
   overflow-x: hidden;
   background-image: 
     radial-gradient(var(--border-color) 1.2px, transparent 1.2px),
-    radial-gradient(circle at 10% 20%, rgba(224, 138, 30, 0.04) 0%, transparent 40%),
-    radial-gradient(circle at 90% 80%, rgba(217, 83, 56, 0.04) 0%, transparent 40%);
+    radial-gradient(circle at 10% 20%, rgba(2, 132, 199, 0.05) 0%, transparent 45%),
+    radial-gradient(circle at 90% 80%, rgba(244, 63, 94, 0.04) 0%, transparent 45%);
   background-size: 32px 32px, 100% 100%, 100% 100%;
+}
+
+[data-theme="dark"] body {
+  background-image: 
+    radial-gradient(var(--border-color) 1.1px, transparent 1.1px),
+    radial-gradient(circle at 15% 25%, rgba(56, 189, 248, 0.07) 0%, transparent 50%),
+    radial-gradient(circle at 85% 75%, rgba(244, 63, 94, 0.06) 0%, transparent 50%);
 }
 
 /* Typography */
@@ -151,6 +225,48 @@ button {
   transition: var(--transition);
 }
 
+/* General Button Styles with RGB Hover Aura */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.45rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: var(--bounce);
+  position: relative;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: #FFFFFF !important;
+  box-shadow: 0 4px 14px var(--primary-glow);
+  border: 1px solid transparent;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.5), 0 0 35px rgba(255, 0, 128, 0.35);
+}
+
+.btn-secondary {
+  background: var(--bg-card);
+  color: var(--text-main);
+  border: 1.5px solid var(--border-color);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.btn-secondary:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
 /* Container */
 .container {
   width: 100%;
@@ -176,20 +292,21 @@ button {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  background-color: rgba(253, 251, 247, 0.88);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background-color: rgba(240, 247, 255, 0.92);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
   border: 1.5px solid var(--border-color);
   border-radius: var(--radius-full);
   padding: 0.55rem 1.25rem;
-  box-shadow: 0 8px 24px -4px rgba(133, 77, 14, 0.08), 0 2px 6px -1px rgba(0,0,0,0.03);
+  box-shadow: 0 8px 26px -4px rgba(2, 132, 199, 0.12), 0 2px 6px -1px rgba(0,0,0,0.03);
   transition: var(--transition);
+  position: relative;
 }
 
 [data-theme="dark"] .header-inner {
-  background-color: rgba(24, 20, 18, 0.88);
-  box-shadow: 0 8px 30px -4px rgba(0, 0, 0, 0.6);
-  border-color: rgba(61, 50, 43, 0.85);
+  background-color: rgba(14, 16, 23, 0.94);
+  box-shadow: 0 8px 34px -4px rgba(0, 0, 0, 0.85), 0 0 24px rgba(56, 189, 248, 0.15);
+  border-color: rgba(36, 40, 56, 0.95);
 }
 
 .brand-logo {
@@ -212,10 +329,24 @@ button {
   font-size: 1.5rem;
   box-shadow: 0 4px 14px var(--primary-glow);
   transition: transform 0.3s ease;
+  position: relative;
+}
+
+.brand-icon::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 14px;
+  background: var(--rgb-gradient);
+  background-size: 300% 300%;
+  animation: rgbFlow 4s linear infinite;
+  z-index: -1;
+  opacity: 0.85;
 }
 
 .brand-logo:hover .brand-icon {
-  transform: rotate(-6deg) scale(1.06);
+  transform: rotate(-6deg) scale(1.08);
+  filter: drop-shadow(0 0 10px rgba(0, 229, 255, 0.6));
 }
 
 .brand-text h1 {
@@ -232,7 +363,7 @@ button {
   color: var(--primary);
 }
 
-/* Tab Navigation Buttons */
+/* Tab Navigation Buttons with RGB Active Glow */
 .site-nav {
   display: flex;
   align-items: center;
@@ -266,9 +397,22 @@ button {
 
 .nav-link.active {
   color: #FFFFFF !important;
-  background: linear-gradient(135deg, var(--primary), #E66548) !important;
-  box-shadow: 0 4px 14px var(--primary-glow);
+  background: linear-gradient(135deg, var(--primary), var(--secondary)) !important;
+  box-shadow: 0 4px 16px var(--primary-glow);
   transform: scale(1.03);
+  position: relative;
+}
+
+.nav-link.active::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: var(--radius-full);
+  background: var(--rgb-gradient);
+  background-size: 300% 100%;
+  animation: rgbFlow 3s linear infinite;
+  z-index: -1;
+  opacity: 0.85;
 }
 
 /* Header Action Controls */
@@ -425,20 +569,28 @@ button {
 }
 
 .game-card-tab.active {
-  border-color: var(--primary);
-  background: linear-gradient(180deg, var(--primary-light) 0%, var(--bg-card) 100%);
-  box-shadow: 0 8px 24px var(--primary-glow);
-  transform: translateY(-4px);
+  border-color: transparent !important;
+  background: var(--bg-card);
+  box-shadow: 0 10px 30px -4px rgba(0, 0, 0, 0.45);
+  transform: translateY(-5px);
+  position: relative;
+  animation: rgbPulseShadow 5s infinite;
 }
 
-.game-card-tab.active::after {
+.game-card-tab.active::before {
   content: "";
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, var(--secondary), var(--primary));
+  inset: -2.5px;
+  border-radius: calc(var(--radius-lg) + 2px);
+  background: var(--rgb-gradient);
+  background-size: 300% 300%;
+  animation: rgbFlow 4s linear infinite;
+  z-index: 0;
+}
+
+.game-card-tab > * {
+  position: relative;
+  z-index: 1;
 }
 
 .game-tab-icon {
@@ -509,11 +661,11 @@ button {
 }
 
 .live-beacon {
-  width: 8px;
-  height: 8px;
-  background-color: var(--primary);
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
-  animation: pulseBeacon 1.4s infinite;
+  animation: rgbBeaconPulse 2s infinite;
+  display: inline-block;
 }
 
 @keyframes pulseBeacon {
@@ -590,7 +742,9 @@ button {
   left: 0;
   width: 6px;
   height: 100%;
-  background: linear-gradient(180deg, var(--secondary), var(--primary));
+  background: var(--rgb-gradient);
+  background-size: 100% 300%;
+  animation: rgbFlow 4s linear infinite;
 }
 
 .progress-strip-inner {
@@ -638,10 +792,13 @@ button {
 
 .progress-bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--secondary), var(--primary));
+  background: var(--rgb-gradient);
+  background-size: 250% 100%;
+  animation: rgbFlow 3s linear infinite;
   border-radius: var(--radius-full);
   transition: width 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
   position: relative;
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
 }
 
 .progress-bar-fill::after {
@@ -751,19 +908,33 @@ button {
 }
 
 [data-theme="dark"] .game-disabled-overlay {
-  background: rgba(30, 24, 21, 0.92);
+  background: rgba(14, 16, 23, 0.94);
 }
 
-/* Main Interactive Play Arena */
+/* Main Interactive Play Arena with Top RGB Neon Ribbon */
 .play-arena {
   background: var(--bg-card);
-  border: 2.5px solid var(--border-color);
+  border: 2px solid var(--border-color);
   border-radius: var(--radius-lg);
   padding: 2.5rem;
   box-shadow: var(--shadow-hover);
   margin-bottom: 2.5rem;
   position: relative;
   min-height: 520px;
+  overflow: hidden;
+}
+
+.play-arena::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--rgb-gradient);
+  background-size: 300% 100%;
+  animation: rgbFlow 4s linear infinite;
+  z-index: 10;
 }
 
 .arena-header {
@@ -1272,6 +1443,21 @@ button {
   position: relative;
   width: 320px;
   height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wheel-outer::before {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  background: var(--rgb-gradient);
+  background-size: 300% 300%;
+  animation: rgbFlow 4s linear infinite;
+  z-index: 0;
+  opacity: 0.9;
 }
 
 .wheel-pointer {
@@ -1292,26 +1478,30 @@ button {
   width: 320px;
   height: 320px;
   border-radius: 50%;
-  box-shadow: 0 10px 36px rgba(0,0,0,0.2), 0 0 0 10px var(--bg-card);
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 10px 36px rgba(0,0,0,0.3), 0 0 0 6px var(--bg-card);
   transition: transform 3.8s cubic-bezier(0.17, 0.67, 0.12, 0.99);
 }
 
 .spin-trigger-btn {
-  background: linear-gradient(135deg, var(--secondary), #EA580C);
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
   color: white;
   padding: 1rem 2.4rem;
   font-size: 1.15rem;
   font-weight: 800;
   border-radius: var(--radius-full);
-  box-shadow: 0 6px 20px rgba(234, 88, 12, 0.4);
+  box-shadow: 0 6px 20px rgba(0, 229, 255, 0.35);
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
   transition: var(--bounce);
+  position: relative;
 }
 
 .spin-trigger-btn:hover:not(:disabled) {
-  transform: translateY(-3px) scale(1.04);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 0 25px rgba(0, 229, 255, 0.6), 0 0 45px rgba(255, 0, 128, 0.4);
 }
 
 .science-explainer-card {
