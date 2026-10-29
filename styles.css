@@ -43,7 +43,7 @@
   --tag-veg-text: #047857;
   --tag-veg-border: #6EE7B7;
 
-  /* RGB Lighting Engine Variables */
+  /* Gaming RGB Gradient (Reserved strictly for Master Chef XP Progress & Rewards) */
   --rgb-gradient: linear-gradient(
     90deg,
     #ff0055 0%,
@@ -55,7 +55,9 @@
     #ff00cc 92%,
     #ff0055 100%
   );
-  --rgb-ambient-glow: 0 0 24px rgba(0, 229, 255, 0.35), 0 0 44px rgba(255, 0, 85, 0.20);
+  --theme-gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+  --theme-gradient-h: linear-gradient(90deg, var(--primary), var(--secondary));
+  --theme-glow: 0 4px 20px var(--primary-glow);
 
   --font-serif: 'Playfair Display', Georgia, serif;
   --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -122,40 +124,6 @@
   }
   100% {
     background-position: 0% 50%;
-  }
-}
-
-@keyframes rgbPulseShadow {
-  0% {
-    box-shadow: 0 6px 24px rgba(255, 0, 85, 0.35), 0 0 36px rgba(0, 229, 255, 0.22);
-  }
-  33% {
-    box-shadow: 0 6px 24px rgba(0, 255, 102, 0.35), 0 0 36px rgba(255, 234, 0, 0.22);
-  }
-  66% {
-    box-shadow: 0 6px 24px rgba(0, 229, 255, 0.35), 0 0 36px rgba(121, 40, 202, 0.22);
-  }
-  100% {
-    box-shadow: 0 6px 24px rgba(255, 0, 85, 0.35), 0 0 36px rgba(0, 229, 255, 0.22);
-  }
-}
-
-@keyframes rgbBeaconPulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(0, 229, 255, 0.75);
-    background-color: #00E5FF;
-  }
-  33% {
-    background-color: #FF0055;
-    box-shadow: 0 0 0 7px rgba(255, 0, 85, 0);
-  }
-  66% {
-    background-color: #00FF66;
-    box-shadow: 0 0 0 7px rgba(0, 255, 102, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(0, 229, 255, 0);
-    background-color: #00E5FF;
   }
 }
 
@@ -320,7 +288,7 @@ button {
 .brand-icon {
   width: 42px;
   height: 42px;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  background: var(--theme-gradient);
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -337,11 +305,10 @@ button {
   position: absolute;
   inset: -2px;
   border-radius: 14px;
-  background: var(--rgb-gradient);
-  background-size: 300% 300%;
-  animation: rgbFlow 4s linear infinite;
+  background: var(--theme-gradient);
   z-index: -1;
-  opacity: 0.85;
+  opacity: 0.4;
+  filter: blur(4px);
 }
 
 .brand-logo:hover .brand-icon {
@@ -397,22 +364,10 @@ button {
 
 .nav-link.active {
   color: #FFFFFF !important;
-  background: linear-gradient(135deg, var(--primary), var(--secondary)) !important;
+  background: var(--theme-gradient) !important;
   box-shadow: 0 4px 16px var(--primary-glow);
   transform: scale(1.03);
   position: relative;
-}
-
-.nav-link.active::after {
-  content: "";
-  position: absolute;
-  inset: -2px;
-  border-radius: var(--radius-full);
-  background: var(--rgb-gradient);
-  background-size: 300% 100%;
-  animation: rgbFlow 3s linear infinite;
-  z-index: -1;
-  opacity: 0.85;
 }
 
 /* Header Action Controls */
@@ -571,10 +526,9 @@ button {
 .game-card-tab.active {
   border-color: transparent !important;
   background: var(--bg-card);
-  box-shadow: 0 10px 30px -4px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 10px 30px -4px rgba(0, 0, 0, 0.45), 0 0 18px var(--primary-glow);
   transform: translateY(-5px);
   position: relative;
-  animation: rgbPulseShadow 5s infinite;
 }
 
 .game-card-tab.active::before {
@@ -582,9 +536,7 @@ button {
   position: absolute;
   inset: -2.5px;
   border-radius: calc(var(--radius-lg) + 2px);
-  background: var(--rgb-gradient);
-  background-size: 300% 300%;
-  animation: rgbFlow 4s linear infinite;
+  background: var(--theme-gradient);
   z-index: 0;
 }
 
@@ -664,7 +616,9 @@ button {
   width: 9px;
   height: 9px;
   border-radius: 50%;
-  animation: rgbBeaconPulse 2s infinite;
+  background: var(--primary);
+  box-shadow: 0 0 8px var(--primary-glow);
+  animation: pulseBeacon 2s infinite;
   display: inline-block;
 }
 
@@ -777,6 +731,16 @@ button {
   display: flex;
   align-items: center;
   gap: 0.65rem;
+}
+
+.progress-info h4 .pill-badge {
+  background: var(--bg-card);
+  border: 1.5px solid transparent;
+  background-image: linear-gradient(var(--bg-card), var(--bg-card)), var(--rgb-gradient);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  font-weight: 800;
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.35);
 }
 
 .progress-bar-track {
@@ -931,9 +895,7 @@ button {
   left: 0;
   right: 0;
   height: 4px;
-  background: var(--rgb-gradient);
-  background-size: 300% 100%;
-  animation: rgbFlow 4s linear infinite;
+  background: var(--theme-gradient-h);
   z-index: 10;
 }
 
@@ -1503,13 +1465,12 @@ button {
 .wheel-outer::before {
   content: "";
   position: absolute;
-  inset: -6px;
+  inset: -5px;
   border-radius: 50%;
-  background: var(--rgb-gradient);
-  background-size: 300% 300%;
-  animation: rgbFlow 4s linear infinite;
+  background: var(--theme-gradient);
   z-index: 0;
   opacity: 0.9;
+  box-shadow: 0 0 20px var(--primary-glow);
 }
 
 .wheel-pointer {
@@ -1931,7 +1892,7 @@ input:checked + .slider:before {
     -webkit-backdrop-filter: blur(20px);
     border: 2px solid var(--border-color);
     border-radius: var(--radius-full);
-    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.22), var(--rgb-ambient-glow);
+    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.22), 0 0 16px var(--primary-glow);
     padding: 0.35rem;
     display: flex;
     justify-content: space-around;
@@ -2142,7 +2103,7 @@ input:checked + .slider:before {
   max-height: 900px;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.7), var(--rgb-ambient-glow);
+  box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.7), 0 0 24px var(--primary-glow);
   position: relative;
   overflow: hidden;
   transform: scale(0.92) translateY(24px);
@@ -2160,9 +2121,7 @@ input:checked + .slider:before {
   left: 0;
   right: 0;
   height: 4px;
-  background: var(--rgb-gradient);
-  background-size: 300% 100%;
-  animation: rgbFlow 4s linear infinite;
+  background: var(--theme-gradient-h);
   z-index: 20;
 }
 
