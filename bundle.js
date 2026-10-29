@@ -1131,7 +1131,18 @@ class FusionApp {
       const saved = localStorage.getItem('fusion_app_state');
       if (saved) {
         const parsed = JSON.parse(saved);
-        return { ...DEFAULT_STATE, ...parsed };
+        // Ensure new games like hotPotato are enabled if newly introduced
+        if (parsed.gameToggles && parsed.gameToggles.hotPotato === undefined) {
+          parsed.gameToggles.hotPotato = true;
+        }
+        return { 
+          ...DEFAULT_STATE, 
+          ...parsed,
+          gameToggles: {
+            ...DEFAULT_STATE.gameToggles,
+            ...(parsed.gameToggles || {})
+          }
+        };
       }
     } catch (e) {
       console.warn('Could not load state, using default:', e);
@@ -3430,10 +3441,15 @@ Guidelines:
           </div>
         </div>
 
-        <div style="border-top:1px solid var(--border-color); padding-top:1.25rem; display:flex; justify-content:space-between; align-items:center;">
-          <button class="btn btn-secondary" id="reset-scores-btn" style="color:#DC2626; border-color:#DC2626; padding:0.45rem 0.95rem; font-size:0.82rem;">
-            ⚠️ Reset All Scores
-          </button>
+        <div style="border-top:1px solid var(--border-color); padding-top:1.25rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.6rem;">
+          <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+            <button class="btn btn-secondary" id="reset-admin-btn" style="color:var(--primary); border-color:var(--primary); padding:0.45rem 0.85rem; font-size:0.82rem;">
+              🔄 Reset Admin Defaults
+            </button>
+            <button class="btn btn-secondary" id="reset-scores-btn" style="color:#DC2626; border-color:#DC2626; padding:0.45rem 0.85rem; font-size:0.82rem;">
+              ⚠️ Reset All Scores
+            </button>
+          </div>
           <button class="btn btn-primary" id="save-admin-settings-btn" style="padding:0.5rem 1.4rem; font-size:0.88rem;">
             Save & Apply
           </button>
@@ -3482,6 +3498,26 @@ Guidelines:
           this.renderProgressStrip();
           this.renderLeaderboard();
           showToast('Scores reset successfully!', 'info');
+        }
+      });
+
+      // Reset Admin Defaults (PIN and all game toggles)
+      document.getElementById('reset-admin-btn')?.addEventListener('click', () => {
+        if (confirm('Reset Admin PIN back to default and enable all 5 games?')) {
+          sound.playCorrect();
+          this.state.adminPin = 'careers2026';
+          this.state.gameToggles = {
+            buildDish: true,
+            pronunciation: true,
+            trivia: true,
+            hotPotato: true,
+            spinScience: true
+          };
+          this.saveState();
+          this.renderGameTabs();
+          this.renderActiveGame();
+          this.renderAdminModalContent(true);
+          showToast('Admin PIN and Game Toggles reset to default!', 'success');
         }
       });
     }
