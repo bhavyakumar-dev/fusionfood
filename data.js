@@ -602,8 +602,8 @@ export const INDIA_METROS_DATA = [
     name: 'Mumbai',
     state: 'Maharashtra',
     tagline: 'India’s Capital of Experiential Fusion Dining',
-    x: 28, // SVG percentage coordinates
-    y: 60,
+    x: 194,
+    y: 412,
     famousHubs: 'Bandra, Lower Parel, Colaba, BKC',
     topMarket: 'Crawford Market (exotic herbs, yuzu, imported sauces)',
     dishesAvailable: [
@@ -620,8 +620,8 @@ export const INDIA_METROS_DATA = [
     name: 'Delhi-NCR',
     state: 'National Capital Region',
     tagline: 'The Birthplace of Butter Gravy & Tandoor Innovation',
-    x: 38,
-    y: 28,
+    x: 236,
+    y: 195,
     famousHubs: 'Connaught Place, CyberHub Gurgaon, GK-2, Khan Market',
     topMarket: 'INA Market (Delhi’s premier international food bazaar)',
     dishesAvailable: [
@@ -638,8 +638,8 @@ export const INDIA_METROS_DATA = [
     name: 'Bengaluru',
     state: 'Karnataka',
     tagline: 'Microbrewery Innovations & Global Comfort Fusions',
-    x: 37,
-    y: 77,
+    x: 262,
+    y: 552,
     famousHubs: 'Indiranagar, Koramangala, Lavelle Road, Whitefield',
     topMarket: 'Russell Market (Shivajinagar) & gourmet organic marts',
     dishesAvailable: [
@@ -655,8 +655,8 @@ export const INDIA_METROS_DATA = [
     name: 'Goa',
     state: 'Goa',
     tagline: 'Coastal Haven of Bohemian & Global Flavors',
-    x: 27,
-    y: 70,
+    x: 216,
+    y: 492,
     famousHubs: 'Assagao, Anjuna, Panaji, Morjim',
     topMarket: 'Mapusa Friday Market (sun-dried chilies, local vinegars)',
     dishesAvailable: [
@@ -671,8 +671,8 @@ export const INDIA_METROS_DATA = [
     name: 'Pune',
     state: 'Maharashtra',
     tagline: 'Youthful Gastronomy & Student-Led Fusion Cafes',
-    x: 31,
-    y: 63,
+    x: 224,
+    y: 428,
     famousHubs: 'Koregaon Park, FC Road, Baner, Viman Nagar',
     topMarket: 'Mandai & Camp Wholesale Bazaar',
     dishesAvailable: [
@@ -687,8 +687,8 @@ export const INDIA_METROS_DATA = [
     name: 'Hyderabad',
     state: 'Telangana',
     tagline: 'Royal Nizami Spices Meet Global Street Food',
-    x: 42,
-    y: 61,
+    x: 292,
+    y: 450,
     famousHubs: 'Jubilee Hills, Banjara Hills, Gachibowli, Hitec City',
     topMarket: 'Begum Bazaar & Moazzam Jahi Market',
     dishesAvailable: [
@@ -697,6 +697,23 @@ export const INDIA_METROS_DATA = [
       { name: 'Gulab Jamun & Shahi Tukda Cheesecake', level: 'High (Festive confectioneries and luxury dining)' }
     ],
     questTip: 'Hyderabad’s Begum Bazaar is a treasure trove for whole green cardamom, saffron, and stone flowers (kalpasi)!'
+  },
+  {
+    id: 'kolkata',
+    name: 'Kolkata',
+    state: 'West Bengal',
+    tagline: 'Colonial Confectionery & Sweet-Savory Umami Alchemy',
+    x: 416,
+    y: 338,
+    famousHubs: 'Park Street, Salt Lake, Ballygunge, New Market',
+    topMarket: 'New Market (Sir Stuart Hogg Market) & Gariahat',
+    dishesAvailable: [
+      { name: 'Gulab Jamun & Sandesh Cheesecake', level: 'High (Artisanal patisseries on Park Street)' },
+      { name: 'Makhani Penne & Rolls', level: 'High (Heritage cafes & fusion roll kiosks)' },
+      { name: 'Spiced Veggie Curry Ramen', level: 'Emerging / Niche (Southern Avenue Asian bistros)' },
+      { name: 'Nikkei Tofu Tiradito', level: 'Emerging (Modern fusion dining in Salt Lake)' }
+    ],
+    questTip: 'New Market in Central Kolkata is world-famous for Bandel cheese, nolen gur (date palm jaggery), and freshly ground mustard kashundi!'
   }
 ];
 

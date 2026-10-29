@@ -605,8 +605,8 @@ const INDIA_METROS_DATA = [
     name: 'Mumbai',
     state: 'Maharashtra',
     tagline: 'India’s Capital of Experiential Fusion Dining',
-    x: 28,
-    y: 60,
+    x: 194,
+    y: 412,
     famousHubs: 'Bandra, Lower Parel, Colaba, BKC',
     topMarket: 'Crawford Market (exotic herbs, yuzu, imported sauces)',
     dishesAvailable: [
@@ -623,8 +623,8 @@ const INDIA_METROS_DATA = [
     name: 'Delhi-NCR',
     state: 'National Capital Region',
     tagline: 'The Birthplace of Butter Gravy & Tandoor Innovation',
-    x: 38,
-    y: 28,
+    x: 236,
+    y: 195,
     famousHubs: 'Connaught Place, CyberHub Gurgaon, GK-2, Khan Market',
     topMarket: 'INA Market (Delhi’s premier international food bazaar)',
     dishesAvailable: [
@@ -641,8 +641,8 @@ const INDIA_METROS_DATA = [
     name: 'Bengaluru',
     state: 'Karnataka',
     tagline: 'Microbrewery Innovations & Global Comfort Fusions',
-    x: 37,
-    y: 77,
+    x: 262,
+    y: 552,
     famousHubs: 'Indiranagar, Koramangala, Lavelle Road, Whitefield',
     topMarket: 'Russell Market (Shivajinagar) & gourmet organic marts',
     dishesAvailable: [
@@ -658,8 +658,8 @@ const INDIA_METROS_DATA = [
     name: 'Goa',
     state: 'Goa',
     tagline: 'Coastal Haven of Bohemian & Global Flavors',
-    x: 27,
-    y: 70,
+    x: 216,
+    y: 492,
     famousHubs: 'Assagao, Anjuna, Panaji, Morjim',
     topMarket: 'Mapusa Friday Market (sun-dried chilies, local vinegars)',
     dishesAvailable: [
@@ -674,8 +674,8 @@ const INDIA_METROS_DATA = [
     name: 'Pune',
     state: 'Maharashtra',
     tagline: 'Youthful Gastronomy & Student-Led Fusion Cafes',
-    x: 31,
-    y: 63,
+    x: 224,
+    y: 428,
     famousHubs: 'Koregaon Park, FC Road, Baner, Viman Nagar',
     topMarket: 'Mandai & Camp Wholesale Bazaar',
     dishesAvailable: [
@@ -690,8 +690,8 @@ const INDIA_METROS_DATA = [
     name: 'Hyderabad',
     state: 'Telangana',
     tagline: 'Royal Nizami Spices Meet Global Street Food',
-    x: 42,
-    y: 61,
+    x: 292,
+    y: 450,
     famousHubs: 'Jubilee Hills, Banjara Hills, Gachibowli, Hitec City',
     topMarket: 'Begum Bazaar & Moazzam Jahi Market',
     dishesAvailable: [
@@ -700,6 +700,23 @@ const INDIA_METROS_DATA = [
       { name: 'Gulab Jamun & Shahi Tukda Cheesecake', level: 'High (Festive confectioneries and luxury dining)' }
     ],
     questTip: 'Hyderabad’s Begum Bazaar is a treasure trove for whole green cardamom, saffron, and stone flowers (kalpasi)!'
+  },
+  {
+    id: 'kolkata',
+    name: 'Kolkata',
+    state: 'West Bengal',
+    tagline: 'Colonial Confectionery & Sweet-Savory Umami Alchemy',
+    x: 416,
+    y: 338,
+    famousHubs: 'Park Street, Salt Lake, Ballygunge, New Market',
+    topMarket: 'New Market (Sir Stuart Hogg Market) & Gariahat',
+    dishesAvailable: [
+      { name: 'Gulab Jamun & Sandesh Cheesecake', level: 'High (Artisanal patisseries on Park Street)' },
+      { name: 'Makhani Penne & Rolls', level: 'High (Heritage cafes & fusion roll kiosks)' },
+      { name: 'Spiced Veggie Curry Ramen', level: 'Emerging / Niche (Southern Avenue Asian bistros)' },
+      { name: 'Nikkei Tofu Tiradito', level: 'Emerging (Modern fusion dining in Salt Lake)' }
+    ],
+    questTip: 'New Market in Central Kolkata is world-famous for Bandel cheese, nolen gur (date palm jaggery), and freshly ground mustard kashundi!'
   }
 ];
 
@@ -1030,12 +1047,16 @@ const DEFAULT_STATE = {
   activeGameTab: 'buildDish',
   recipeFilter: 'all',
   recipeCompletedSteps: {},
+  completedCityQuests: [],
   theme: 'light'
 };
 
 class FusionApp {
   constructor() {
     this.state = this.loadState();
+    if (!this.state.completedCityQuests) {
+      this.state.completedCityQuests = [];
+    }
     this.currentTriviaIndex = 0;
     this.triviaScore = 0;
     this.triviaTimer = null;
@@ -1046,6 +1067,7 @@ class FusionApp {
     this.pronounceIndex = 0;
     this.assembledSyllables = [];
     this.buildDishSelectedIngredients = [];
+    this.showMapTutorial = true;
   }
 
   loadState() {
@@ -1614,9 +1636,16 @@ class FusionApp {
           </div>
 
           <div class="syllable-pool">
-            ${scrambled.map(syl => `
-              <button class="syllable-chip pool-chip" data-syl="${syl}">${syl}</button>
-            `).join('')}
+            ${scrambled.map((syl, i) => {
+              const usedCount = this.assembledSyllables.filter(s => s === syl).length;
+              const occCount = scrambled.slice(0, i + 1).filter(s => s === syl).length;
+              const isUsed = usedCount >= occCount;
+              return `
+                <button class="syllable-chip pool-chip" data-syl="${syl}" ${isUsed ? 'disabled style="opacity:0.35; pointer-events:none;"' : ''}>
+                  ${syl}
+                </button>
+              `;
+            }).join('')}
           </div>
 
           <div id="pronounce-validation" style="margin-top:1.5rem;">
@@ -1642,6 +1671,17 @@ class FusionApp {
     arena.querySelector('#voice-practice-btn')?.addEventListener('click', () => {
       sound.playClick();
       this.startVoicePractice(dish.audioText);
+    });
+
+    arena.querySelectorAll('#syllables-target .syllable-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        sound.playClick();
+        const idx = parseInt(chip.getAttribute('data-idx'));
+        if (!isNaN(idx)) {
+          this.assembledSyllables.splice(idx, 1);
+          this.renderPronunciationGame(arena);
+        }
+      });
     });
 
     arena.querySelectorAll('.pool-chip').forEach(btn => {
@@ -1909,10 +1949,11 @@ class FusionApp {
   }
 
   // ========================================================
-  // GAME 4: INDIA AVAILABILITY MAP
+  // GAME 4: INDIA AVAILABILITY MAP & CITY QUEST
   // ========================================================
   renderIndiaMapGame(arena) {
     const metro = this.selectedMetro;
+    const isQuestDone = this.state.completedCityQuests && this.state.completedCityQuests.includes(metro.id);
 
     arena.innerHTML = `
       <div class="arena-header">
@@ -1923,36 +1964,156 @@ class FusionApp {
             <p style="font-size:0.85rem; color:var(--text-muted);">Explore regional fusion adoption & local Indian ingredient bazaars</p>
           </div>
         </div>
-        <div class="arena-badges">
-          <span class="pill-badge" style="color:var(--primary); font-weight:800;">6 Metro Hubs</span>
+        <div class="arena-badges" style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+          <button class="btn btn-secondary" id="toggle-map-tut-btn" style="padding:0.35rem 0.85rem; font-size:0.8rem; border-color:var(--primary); color:var(--primary);">
+            💡 ${this.showMapTutorial ? 'Hide Tutorial' : 'How to Play Tutorial'}
+          </button>
+          <span class="pill-badge" style="color:var(--primary); font-weight:800;">7 Metro Hubs</span>
           <span class="pill-badge">Bazaar Substitutes</span>
         </div>
       </div>
 
+      ${this.showMapTutorial ? `
+        <div class="map-tutorial-banner" id="map-tutorial-box">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+            <h4 style="font-size:1.05rem; display:flex; align-items:center; gap:0.5rem;">
+              <span>🧭</span> <span>How to Play India City Quest:</span>
+            </h4>
+            <button class="btn btn-secondary" id="close-map-tut-btn" style="padding:0.25rem 0.65rem; font-size:0.75rem;">Dismiss ✕</button>
+          </div>
+          <div class="tutorial-steps-grid">
+            <div class="tutorial-step-card">
+              <div class="tut-num">1</div>
+              <div>
+                <strong>Tap City Pins 📍</strong>
+                <p>Click any pulsating metro pin on India's map (Mumbai, Delhi-NCR, Bengaluru, Goa, Pune, Hyderabad, Kolkata).</p>
+              </div>
+            </div>
+            <div class="tutorial-step-card">
+              <div class="tut-num">2</div>
+              <div>
+                <strong>Scout Local Bazaars 🛒</strong>
+                <p>Discover authentic desi ingredient markets (Crawford Market, INA Bazaar, Begum Bazaar) for fusion cooking.</p>
+              </div>
+            </div>
+            <div class="tutorial-step-card">
+              <div class="tut-num">3</div>
+              <div>
+                <strong>Compare Dish Trends 📊</strong>
+                <p>Check the availability level for Nikkei Ceviche, Butter Paneer Tacos, Naanza, and Spiced Ramen in that city.</p>
+              </div>
+            </div>
+            <div class="tutorial-step-card">
+              <div class="tut-num">4</div>
+              <div>
+                <strong>Earn Explorer XP 🌟</strong>
+                <p>Hit "Complete City Quest" to earn +20 XP toward leveling up your Master Chef rank on the Leaderboard!</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      ` : ''}
+
       <div class="map-quest-layout">
-        <!-- Interactive SVG Map -->
+        <!-- Interactive Authentic SVG Map of India -->
         <div class="india-svg-card">
           <h4 style="margin-bottom:0.35rem; font-size:1.15rem;">Interactive Map: Tap Any Metro Hub</h4>
           <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1.25rem;">Click glowing markers to discover regional fusion trends</p>
 
           <div class="svg-map-wrapper">
-            <svg viewBox="0 0 500 580" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M 220 30 L 260 45 L 290 85 L 280 120 L 320 140 L 370 160 L 440 180 L 460 210 L 410 230 L 350 240 L 330 270 L 360 300 L 320 340 L 290 390 L 260 450 L 240 520 L 220 540 L 210 500 L 190 440 L 160 390 L 140 330 L 130 270 L 100 240 L 110 200 L 160 170 L 180 130 L 200 80 Z" 
-                    fill="var(--bg-card)" stroke="var(--border-color)" stroke-width="4" stroke-linejoin="round" />
-              
-              <path d="M 130 270 Q 250 290 360 300" stroke="var(--border-dashed)" stroke-width="1.5" stroke-dasharray="4 4" />
-              <path d="M 160 390 Q 250 380 320 340" stroke="var(--border-dashed)" stroke-width="1.5" stroke-dasharray="4 4" />
+            <svg viewBox="0 0 540 640" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="indiaMapGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="var(--bg-card-subtle)" stop-opacity="0.95" />
+                  <stop offset="100%" stop-color="var(--bg-card)" stop-opacity="0.98" />
+                </linearGradient>
+              </defs>
 
+              <!-- Detailed Realistic Mainland India Outline -->
+              <path class="india-mainland" d="
+                M 242 38
+                C 255 30, 275 28, 290 35
+                C 305 42, 318 55, 326 72
+                C 334 88, 330 108, 322 120
+                C 316 130, 312 142, 318 152
+                C 324 162, 338 170, 344 185
+                C 350 200, 346 212, 358 220
+                C 375 228, 405 238, 424 246
+                C 434 248, 440 238, 446 226
+                C 450 220, 458 222, 460 234
+                C 464 245, 478 244, 486 238
+                C 498 228, 516 212, 532 210
+                C 546 210, 554 224, 548 242
+                C 542 258, 528 276, 530 295
+                C 532 312, 538 332, 528 350
+                C 520 360, 508 358, 504 342
+                C 498 325, 485 312, 470 312
+                C 450 312, 438 324, 425 338
+                C 414 350, 402 372, 390 395
+                C 380 415, 364 438, 352 465
+                C 340 492, 322 528, 312 558
+                C 302 585, 292 612, 275 632
+                C 270 638, 260 640, 256 632
+                C 250 620, 245 598, 238 578
+                C 230 558, 220 532, 215 508
+                C 210 482, 206 456, 198 432
+                C 192 408, 180 388, 168 378
+                C 156 368, 138 372, 124 362
+                C 108 352, 105 334, 118 322
+                C 130 310, 150 314, 158 296
+                C 164 282, 150 270, 134 264
+                C 118 256, 122 242, 134 234
+                C 148 226, 164 220, 172 202
+                C 178 184, 184 160, 196 140
+                C 206 122, 216 98, 218 78
+                C 222 58, 228 42, 242 38
+                Z"
+                fill="url(#indiaMapGrad)"
+                stroke="var(--border-color)"
+                stroke-width="3"
+                stroke-linejoin="round"
+              />
+
+              <!-- Tropic of Cancer Reference Line -->
+              <path d="M 115 330 Q 270 340 475 320" stroke="var(--border-dashed)" stroke-width="1.2" stroke-dasharray="4 4" opacity="0.45" />
+
+              <!-- Culinary Fusion Trade Routes (Corridors connecting hubs) -->
+              <line x1="236" y1="195" x2="194" y2="412" stroke="var(--border-dashed)" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.6" />
+              <line x1="194" y1="412" x2="224" y2="428" stroke="var(--border-dashed)" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.6" />
+              <line x1="224" y1="428" x2="216" y2="492" stroke="var(--border-dashed)" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.6" />
+              <line x1="216" y1="492" x2="262" y2="552" stroke="var(--border-dashed)" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.6" />
+              <line x1="194" y1="412" x2="292" y2="450" stroke="var(--border-dashed)" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.6" />
+              <line x1="292" y1="450" x2="262" y2="552" stroke="var(--border-dashed)" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.6" />
+              <line x1="236" y1="195" x2="416" y2="338" stroke="var(--border-dashed)" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.6" />
+              <line x1="416" y1="338" x2="292" y2="450" stroke="var(--border-dashed)" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.6" />
+
+              <!-- Andaman & Nicobar Islands -->
+              <g opacity="0.8">
+                <ellipse cx="490" cy="515" rx="5" ry="12" fill="var(--bg-card)" stroke="var(--border-color)" stroke-width="1.5" />
+                <ellipse cx="494" cy="542" rx="4" ry="10" fill="var(--bg-card)" stroke="var(--border-color)" stroke-width="1.5" />
+                <ellipse cx="498" cy="570" rx="4" ry="8" fill="var(--bg-card)" stroke="var(--border-color)" stroke-width="1.5" />
+                <text x="440" y="605" font-size="9" fill="var(--text-muted)" font-family="var(--font-sans)" font-weight="700">Andaman & Nicobar</text>
+              </g>
+
+              <!-- Lakshadweep Islands -->
+              <g opacity="0.8">
+                <circle cx="178" cy="565" r="4" fill="var(--bg-card)" stroke="var(--border-color)" stroke-width="1.5" />
+                <circle cx="182" cy="582" r="3.5" fill="var(--bg-card)" stroke="var(--border-color)" stroke-width="1.5" />
+                <text x="125" y="605" font-size="9" fill="var(--text-muted)" font-family="var(--font-sans)" font-weight="700">Lakshadweep</text>
+              </g>
+
+              <!-- Metro Pins (Anchored by exact coordinates - never jump to top-left) -->
               ${INDIA_METROS_DATA.map(m => {
                 const isSelected = m.id === metro.id;
-                const px = (m.x / 100) * 500;
-                const py = (m.y / 100) * 580;
+                const isDone = this.state.completedCityQuests && this.state.completedCityQuests.includes(m.id);
 
                 return `
-                  <g class="metro-pin ${isSelected ? 'selected' : ''}" data-metro-id="${m.id}" transform="translate(${px}, ${py})">
-                    <circle r="${isSelected ? 18 : 12}" fill="${isSelected ? 'var(--primary)' : 'var(--secondary)'}" opacity="0.3" />
-                    <circle r="${isSelected ? 9 : 7}" fill="${isSelected ? 'var(--primary)' : 'var(--secondary)'}" stroke="white" stroke-width="2.5" />
-                    <text x="14" y="5" font-size="12" font-weight="800" fill="var(--text-main)" font-family="var(--font-sans)">${m.name}</text>
+                  <g class="metro-pin ${isSelected ? 'selected' : ''}" data-metro-id="${m.id}" transform="translate(${m.x}, ${m.y})">
+                    <circle class="pin-halo" r="${isSelected ? 18 : 11}" fill="${isSelected ? 'var(--primary)' : 'var(--secondary)'}" opacity="${isSelected ? 0.35 : 0.2}" />
+                    <circle class="pin-core" r="${isSelected ? 8 : 6}" fill="${isSelected ? 'var(--primary)' : 'var(--secondary)'}" stroke="#FFFFFF" stroke-width="2" />
+                    <text x="12" y="4" font-size="${isSelected ? 13 : 11}" font-weight="${isSelected ? 900 : 700}" fill="${isSelected ? 'var(--primary)' : 'var(--text-main)'}" font-family="var(--font-sans)">
+                      ${m.name}${isDone ? ' ✓' : ''}
+                    </text>
                   </g>
                 `;
               }).join('')}
@@ -1965,7 +2126,7 @@ class FusionApp {
           </div>
         </div>
 
-        <!-- City Spotlight -->
+        <!-- City Spotlight Details -->
         <div class="metro-details-card">
           <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.75rem;">
             <div>
@@ -1998,13 +2159,32 @@ class FusionApp {
           </div>
 
           <div style="margin-top:1.5rem; text-align:center;">
-            <button class="btn btn-primary" id="claim-city-xp-btn" style="width:100%; padding:0.75rem;">
-              <span>🌟 Complete ${metro.name} City Quest (+20 XP)</span>
-            </button>
+            ${isQuestDone ? `
+              <button class="btn btn-secondary" disabled style="width:100%; padding:0.75rem; opacity:0.9; cursor:default; border-color:var(--accent-green); color:var(--accent-green); font-weight:800;">
+                <span>✅ ${metro.name} Quest Completed (+20 XP Earned)</span>
+              </button>
+            ` : `
+              <button class="btn btn-primary" id="claim-city-xp-btn" style="width:100%; padding:0.75rem;">
+                <span>🌟 Complete ${metro.name} City Quest (+20 XP)</span>
+              </button>
+            `}
           </div>
         </div>
       </div>
     `;
+
+    // Toggle Tutorial listener
+    arena.querySelector('#toggle-map-tut-btn')?.addEventListener('click', () => {
+      sound.playClick();
+      this.showMapTutorial = !this.showMapTutorial;
+      this.renderIndiaMapGame(arena);
+    });
+
+    arena.querySelector('#close-map-tut-btn')?.addEventListener('click', () => {
+      sound.playClick();
+      this.showMapTutorial = false;
+      this.renderIndiaMapGame(arena);
+    });
 
     arena.querySelectorAll('.metro-pin').forEach(pin => {
       pin.addEventListener('click', () => {
@@ -2015,12 +2195,19 @@ class FusionApp {
       });
     });
 
-    arena.querySelector('#claim-city-xp-btn')?.addEventListener('click', (e) => {
+    arena.querySelector('#claim-city-xp-btn')?.addEventListener('click', () => {
       sound.playFanfare();
       launchConfetti();
+      if (!this.state.completedCityQuests) {
+        this.state.completedCityQuests = [];
+      }
+      if (!this.state.completedCityQuests.includes(metro.id)) {
+        this.state.completedCityQuests.push(metro.id);
+        this.saveState();
+      }
       this.addXP(20, `🗺️ ${metro.name} Explorer`);
-      e.target.disabled = true;
-      e.target.innerText = `✅ ${metro.name} Quest Completed!`;
+      showToast(`Completed ${metro.name} Quest! +20 XP`, 'success');
+      this.renderIndiaMapGame(arena);
     });
   }
 
