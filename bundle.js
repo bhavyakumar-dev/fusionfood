@@ -900,6 +900,62 @@ class SoundEngine {
       osc.stop(now + i * 0.12 + 0.45);
     });
   }
+
+  playSizzle() {
+    if (this.muted) return;
+    this.init();
+    if (!this.audioCtx) return;
+
+    const now = this.audioCtx.currentTime;
+    const bufferSize = Math.floor(this.audioCtx.sampleRate * 0.18);
+    const buffer = this.audioCtx.createBuffer(1, bufferSize, this.audioCtx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = Math.random() * 2 - 1;
+    }
+
+    const noise = this.audioCtx.createBufferSource();
+    noise.buffer = buffer;
+
+    const filter = this.audioCtx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.setValueAtTime(1400, now);
+    filter.Q.setValueAtTime(3.0, now);
+
+    const gain = this.audioCtx.createGain();
+    gain.gain.setValueAtTime(0.25, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+
+    noise.connect(filter);
+    filter.connect(gain);
+    gain.connect(this.audioCtx.destination);
+
+    noise.start(now);
+    noise.stop(now + 0.18);
+  }
+
+  playWhack() {
+    if (this.muted) return;
+    this.init();
+    if (!this.audioCtx) return;
+
+    const now = this.audioCtx.currentTime;
+    const osc = this.audioCtx.createOscillator();
+    const gain = this.audioCtx.createGain();
+
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(360, now);
+    osc.frequency.exponentialRampToValueAtTime(90, now + 0.08);
+
+    gain.gain.setValueAtTime(0.35, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+
+    osc.connect(gain);
+    gain.connect(this.audioCtx.destination);
+
+    osc.start(now);
+    osc.stop(now + 0.08);
+  }
 }
 
 const sound = new SoundEngine();
@@ -1040,7 +1096,7 @@ const DEFAULT_STATE = {
     buildDish: true,
     pronunciation: true,
     trivia: true,
-    indiaMap: true,
+    hotPotato: true,
     spinScience: true
   },
   adminPin: 'careers2026',
@@ -1067,7 +1123,7 @@ class FusionApp {
     this.pronounceIndex = 0;
     this.assembledSyllables = [];
     this.buildDishSelectedIngredients = [];
-    this.showMapTutorial = true;
+    this.hotPotatoGame = null;
   }
 
   loadState() {
@@ -1304,7 +1360,7 @@ class FusionApp {
       { id: 'buildDish', name: 'Build-a-Dish', icon: '🥘', desc: 'Pantry Rush & Recipe Simulation', activeDesc: 'Timed hunt + step sequence' },
       { id: 'pronunciation', name: 'Pronounce Lab', icon: '🗣️', desc: 'Phonetic Matching & Voice Check', activeDesc: 'Listen, reorder & speak' },
       { id: 'trivia', name: 'Family Trivia', icon: '🧠', desc: '10 Qs with Soft Timer & Hints', activeDesc: 'Food science & origins' },
-      { id: 'indiaMap', name: 'India Fusion Map', icon: '🗺️', desc: 'Metro Quests & Availability', activeDesc: 'Explore luxury vs street hubs' },
+      { id: 'hotPotato', name: 'Hot Potato Rush', icon: '🥔', desc: 'Whack, Cook in Coals & Serve Golden', activeDesc: 'Cook on coals, serve golden' },
       { id: 'spinScience', name: 'Science Wheel', icon: '🎡', desc: 'Food Chemistry Explanations', activeDesc: 'Spin & discover reactions' }
     ];
 
@@ -1403,8 +1459,9 @@ class FusionApp {
       case 'trivia':
         this.renderTriviaGame(arena);
         break;
-      case 'indiaMap':
-        this.renderIndiaMapGame(arena);
+      case 'hotPotato':
+      case 'indiaMap': // Backward compatibility
+        this.renderHotPotatoGame(arena);
         break;
       case 'spinScience':
         this.renderSpinScienceGame(arena);
@@ -1949,266 +2006,484 @@ class FusionApp {
   }
 
   // ========================================================
-  // GAME 4: INDIA AVAILABILITY MAP & CITY QUEST
+  // GAME 4: HOT POTATO RUSH (PROMPT POTATO ARCADE)
+  // Whack, Cook in Coals & Serve Golden!
   // ========================================================
-  renderIndiaMapGame(arena) {
-    const metro = this.selectedMetro;
-    const isQuestDone = this.state.completedCityQuests && this.state.completedCityQuests.includes(metro.id);
+  renderHotPotatoGame(arena) {
+    // Cleanup previous loop if active
+    if (this.hotPotatoLoop) {
+      cancelAnimationFrame(this.hotPotatoLoop);
+      this.hotPotatoLoop = null;
+    }
+
+    const highScore = localStorage.getItem('fusion_hot_potato_high') || 0;
 
     arena.innerHTML = `
       <div class="arena-header">
         <div class="arena-title-group">
-          <span class="arena-icon">🗺️</span>
+          <span class="arena-icon">🥔</span>
           <div>
-            <h3>India Culinary Availability Map & City Quest</h3>
-            <p style="font-size:0.85rem; color:var(--text-muted);">Explore regional fusion adoption & local Indian ingredient bazaars</p>
+            <h3>Hot Potato Rush</h3>
+            <p style="font-size:0.85rem; color:var(--text-muted);">
+              Inspired by PromptPotatoGames: Whack the potato, bounce it into glowing coals to cook it, and serve through the green window once golden!
+            </p>
           </div>
         </div>
         <div class="arena-badges" style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
-          <button class="btn btn-secondary" id="toggle-map-tut-btn" style="padding:0.35rem 0.85rem; font-size:0.8rem; border-color:var(--primary); color:var(--primary);">
-            💡 ${this.showMapTutorial ? 'Hide Tutorial' : 'How to Play Tutorial'}
-          </button>
-          <span class="pill-badge" style="color:var(--primary); font-weight:800;">7 Metro Hubs</span>
-          <span class="pill-badge">Bazaar Substitutes</span>
+          <span class="pill-badge" style="color:var(--primary); font-weight:800;" id="hp-score-badge">Score: 0</span>
+          <span class="pill-badge" id="hp-high-badge">Best: ${highScore}</span>
+          <span class="pill-badge" style="color:#F59E0B;" id="hp-heat-badge">Heat: Raw (0%)</span>
         </div>
       </div>
 
-      ${this.showMapTutorial ? `
-        <div class="map-tutorial-banner" id="map-tutorial-box">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
-            <h4 style="font-size:1.05rem; display:flex; align-items:center; gap:0.5rem;">
-              <span>🧭</span> <span>How to Play India City Quest:</span>
-            </h4>
-            <button class="btn btn-secondary" id="close-map-tut-btn" style="padding:0.25rem 0.65rem; font-size:0.75rem;">Dismiss ✕</button>
-          </div>
-          <div class="tutorial-steps-grid">
-            <div class="tutorial-step-card">
-              <div class="tut-num">1</div>
-              <div>
-                <strong>Tap City Pins 📍</strong>
-                <p>Click any pulsating metro pin on India's map (Mumbai, Delhi-NCR, Bengaluru, Goa, Pune, Hyderabad, Kolkata).</p>
-              </div>
-            </div>
-            <div class="tutorial-step-card">
-              <div class="tut-num">2</div>
-              <div>
-                <strong>Scout Local Bazaars 🛒</strong>
-                <p>Discover authentic desi ingredient markets (Crawford Market, INA Bazaar, Begum Bazaar) for fusion cooking.</p>
-              </div>
-            </div>
-            <div class="tutorial-step-card">
-              <div class="tut-num">3</div>
-              <div>
-                <strong>Compare Dish Trends 📊</strong>
-                <p>Check the availability level for Nikkei Ceviche, Butter Paneer Tacos, Naanza, and Spiced Ramen in that city.</p>
-              </div>
-            </div>
-            <div class="tutorial-step-card">
-              <div class="tut-num">4</div>
-              <div>
-                <strong>Earn Explorer XP 🌟</strong>
-                <p>Hit "Complete City Quest" to earn +20 XP toward leveling up your Master Chef rank on the Leaderboard!</p>
-              </div>
+      <div class="hot-potato-arena-wrapper">
+        <div class="hot-potato-canvas-container" id="hp-canvas-container">
+          <canvas id="hot-potato-canvas" width="800" height="460"></canvas>
+          <div class="hot-potato-overlay" id="hp-start-overlay">
+            <div class="hp-overlay-card">
+              <div style="font-size:3.5rem; margin-bottom:0.4rem; animation:hpTumble 1.8s infinite ease-in-out;">🥔</div>
+              <h3 style="font-size:1.75rem; margin-bottom:0.4rem;">Hot Potato Rush!</h3>
+              <p style="color:var(--text-muted); font-size:0.92rem; max-width:440px; margin:0 auto 1.25rem; line-height:1.5;">
+                🔥 <strong>Cook:</strong> Bounce the potato on the hot tandoor coals at the bottom.<br>
+                💥 <strong>Whack:</strong> Click, tap or press <strong>SPACE</strong> to whack the potato upwards.<br>
+                ✨ <strong>Serve:</strong> Once it turns <strong>Golden Crispy</strong>, fling it into the <strong>Green Serving Window</strong> on the right! Don't let it turn to charcoal!
+              </p>
+              <button class="btn btn-primary" id="hp-start-btn" style="padding:0.75rem 2.2rem; font-size:1.05rem;">
+                🎮 Start Cooking!
+              </button>
             </div>
           </div>
         </div>
-      ` : ''}
 
-      <div class="map-quest-layout">
-        <!-- Interactive Authentic SVG Map of India -->
-        <div class="india-svg-card">
-          <h4 style="margin-bottom:0.35rem; font-size:1.15rem;">Interactive Map: Tap Any Metro Hub</h4>
-          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1.25rem;">Click glowing markers to discover regional fusion trends</p>
-
-          <div class="svg-map-wrapper">
-            <svg viewBox="0 0 540 640" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <linearGradient id="indiaMapGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stop-color="var(--bg-card-subtle)" stop-opacity="0.95" />
-                  <stop offset="100%" stop-color="var(--bg-card)" stop-opacity="0.98" />
-                </linearGradient>
-              </defs>
-
-              <!-- Detailed Realistic Mainland India Outline -->
-              <path class="india-mainland" d="
-                M 242 38
-                C 255 30, 275 28, 290 35
-                C 305 42, 318 55, 326 72
-                C 334 88, 330 108, 322 120
-                C 316 130, 312 142, 318 152
-                C 324 162, 338 170, 344 185
-                C 350 200, 346 212, 358 220
-                C 375 228, 405 238, 424 246
-                C 434 248, 440 238, 446 226
-                C 450 220, 458 222, 460 234
-                C 464 245, 478 244, 486 238
-                C 498 228, 516 212, 532 210
-                C 546 210, 554 224, 548 242
-                C 542 258, 528 276, 530 295
-                C 532 312, 538 332, 528 350
-                C 520 360, 508 358, 504 342
-                C 498 325, 485 312, 470 312
-                C 450 312, 438 324, 425 338
-                C 414 350, 402 372, 390 395
-                C 380 415, 364 438, 352 465
-                C 340 492, 322 528, 312 558
-                C 302 585, 292 612, 275 632
-                C 270 638, 260 640, 256 632
-                C 250 620, 245 598, 238 578
-                C 230 558, 220 532, 215 508
-                C 210 482, 206 456, 198 432
-                C 192 408, 180 388, 168 378
-                C 156 368, 138 372, 124 362
-                C 108 352, 105 334, 118 322
-                C 130 310, 150 314, 158 296
-                C 164 282, 150 270, 134 264
-                C 118 256, 122 242, 134 234
-                C 148 226, 164 220, 172 202
-                C 178 184, 184 160, 196 140
-                C 206 122, 216 98, 218 78
-                C 222 58, 228 42, 242 38
-                Z"
-                fill="url(#indiaMapGrad)"
-                stroke="var(--border-color)"
-                stroke-width="3"
-                stroke-linejoin="round"
-              />
-
-              <!-- Tropic of Cancer Reference Line -->
-              <path d="M 115 330 Q 270 340 475 320" stroke="var(--border-dashed)" stroke-width="1.2" stroke-dasharray="4 4" opacity="0.45" />
-
-              <!-- Culinary Fusion Trade Routes (Corridors connecting hubs) -->
-              <line x1="236" y1="195" x2="194" y2="412" stroke="var(--border-dashed)" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.6" />
-              <line x1="194" y1="412" x2="224" y2="428" stroke="var(--border-dashed)" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.6" />
-              <line x1="224" y1="428" x2="216" y2="492" stroke="var(--border-dashed)" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.6" />
-              <line x1="216" y1="492" x2="262" y2="552" stroke="var(--border-dashed)" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.6" />
-              <line x1="194" y1="412" x2="292" y2="450" stroke="var(--border-dashed)" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.6" />
-              <line x1="292" y1="450" x2="262" y2="552" stroke="var(--border-dashed)" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.6" />
-              <line x1="236" y1="195" x2="416" y2="338" stroke="var(--border-dashed)" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.6" />
-              <line x1="416" y1="338" x2="292" y2="450" stroke="var(--border-dashed)" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.6" />
-
-              <!-- Andaman & Nicobar Islands -->
-              <g opacity="0.8">
-                <ellipse cx="490" cy="515" rx="5" ry="12" fill="var(--bg-card)" stroke="var(--border-color)" stroke-width="1.5" />
-                <ellipse cx="494" cy="542" rx="4" ry="10" fill="var(--bg-card)" stroke="var(--border-color)" stroke-width="1.5" />
-                <ellipse cx="498" cy="570" rx="4" ry="8" fill="var(--bg-card)" stroke="var(--border-color)" stroke-width="1.5" />
-                <text x="440" y="605" font-size="9" fill="var(--text-muted)" font-family="var(--font-sans)" font-weight="700">Andaman & Nicobar</text>
-              </g>
-
-              <!-- Lakshadweep Islands -->
-              <g opacity="0.8">
-                <circle cx="178" cy="565" r="4" fill="var(--bg-card)" stroke="var(--border-color)" stroke-width="1.5" />
-                <circle cx="182" cy="582" r="3.5" fill="var(--bg-card)" stroke="var(--border-color)" stroke-width="1.5" />
-                <text x="125" y="605" font-size="9" fill="var(--text-muted)" font-family="var(--font-sans)" font-weight="700">Lakshadweep</text>
-              </g>
-
-              <!-- Metro Pins (Anchored by exact coordinates - never jump to top-left) -->
-              ${INDIA_METROS_DATA.map(m => {
-                const isSelected = m.id === metro.id;
-                const isDone = this.state.completedCityQuests && this.state.completedCityQuests.includes(m.id);
-
-                return `
-                  <g class="metro-pin ${isSelected ? 'selected' : ''}" data-metro-id="${m.id}" transform="translate(${m.x}, ${m.y})">
-                    <circle class="pin-halo" r="${isSelected ? 18 : 11}" fill="${isSelected ? 'var(--primary)' : 'var(--secondary)'}" opacity="${isSelected ? 0.35 : 0.2}" />
-                    <circle class="pin-core" r="${isSelected ? 8 : 6}" fill="${isSelected ? 'var(--primary)' : 'var(--secondary)'}" stroke="#FFFFFF" stroke-width="2" />
-                    <text x="12" y="4" font-size="${isSelected ? 13 : 11}" font-weight="${isSelected ? 900 : 700}" fill="${isSelected ? 'var(--primary)' : 'var(--text-main)'}" font-family="var(--font-sans)">
-                      ${m.name}${isDone ? ' ✓' : ''}
-                    </text>
-                  </g>
-                `;
-              }).join('')}
-            </svg>
-          </div>
-
-          <div style="display:flex; justify-content:center; gap:1.5rem; font-size:0.82rem; margin-top:1.25rem;">
-            <span style="display:flex; align-items:center; gap:0.4rem;"><span style="width:10px; height:10px; border-radius:50%; background:var(--primary); display:inline-block;"></span> Selected City</span>
-            <span style="display:flex; align-items:center; gap:0.4rem;"><span style="width:10px; height:10px; border-radius:50%; background:var(--secondary); display:inline-block;"></span> Metro Hub</span>
-          </div>
-        </div>
-
-        <!-- City Spotlight Details -->
-        <div class="metro-details-card">
-          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.75rem;">
-            <div>
-              <span class="pill-badge" style="color:var(--primary);">${metro.state}</span>
-              <h3 style="font-size:1.75rem; margin-top:0.35rem;">${metro.name}</h3>
+        <!-- Touch Mobile Whack Controls -->
+        <div class="hp-controls-bar">
+          <button class="btn btn-primary hp-action-btn" id="hp-tap-whack-btn">
+            💥 WHACK POTATO (Tap or Space)
+          </button>
+          <div class="hp-status-strip">
+            <div class="hp-meter-outer">
+              <div class="hp-meter-fill" id="hp-meter-fill"></div>
             </div>
-            <span style="font-size:2rem;">📍</span>
-          </div>
-
-          <p style="font-size:0.95rem; color:var(--secondary); font-weight:700; margin-bottom:1.25rem;">
-            "${metro.tagline}"
-          </p>
-
-          <div style="background:var(--bg-parchment); border-radius:var(--radius-md); padding:1.15rem; margin-bottom:1.25rem; border:1.5px solid var(--border-color);">
-            <div style="font-size:0.8rem; text-transform:uppercase; font-weight:800; color:var(--text-muted); margin-bottom:0.35rem;">
-              🛒 Top Ingredient Bazaar:
-            </div>
-            <strong style="color:var(--primary); font-size:1rem;">${metro.topMarket}</strong>
-            <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.35rem;">${metro.questTip}</p>
-          </div>
-
-          <h4 style="font-size:1.05rem; margin-bottom:0.85rem;">Dishes Availability Breakdown:</h4>
-          <div style="display:flex; flex-direction:column; gap:0.65rem;">
-            ${metro.dishesAvailable.map(d => `
-              <div style="background:var(--bg-card); border:1.5px solid var(--border-color); border-radius:var(--radius-sm); padding:0.75rem 0.95rem; font-size:0.88rem; display:flex; justify-content:space-between; align-items:center;">
-                <strong>${d.name}</strong>
-                <span style="font-size:0.78rem; color:var(--text-muted);">${d.level}</span>
-              </div>
-            `).join('')}
-          </div>
-
-          <div style="margin-top:1.5rem; text-align:center;">
-            ${isQuestDone ? `
-              <button class="btn btn-secondary" disabled style="width:100%; padding:0.75rem; opacity:0.9; cursor:default; border-color:var(--accent-green); color:var(--accent-green); font-weight:800;">
-                <span>✅ ${metro.name} Quest Completed (+20 XP Earned)</span>
-              </button>
-            ` : `
-              <button class="btn btn-primary" id="claim-city-xp-btn" style="width:100%; padding:0.75rem;">
-                <span>🌟 Complete ${metro.name} City Quest (+20 XP)</span>
-              </button>
-            `}
+            <span id="hp-status-text" style="font-size:0.85rem; font-weight:700;">State: Raw</span>
           </div>
         </div>
       </div>
     `;
 
-    // Toggle Tutorial listener
-    arena.querySelector('#toggle-map-tut-btn')?.addEventListener('click', () => {
-      sound.playClick();
-      this.showMapTutorial = !this.showMapTutorial;
-      this.renderIndiaMapGame(arena);
-    });
+    this.initHotPotatoEngine(arena);
+  }
 
-    arena.querySelector('#close-map-tut-btn')?.addEventListener('click', () => {
-      sound.playClick();
-      this.showMapTutorial = false;
-      this.renderIndiaMapGame(arena);
-    });
+  initHotPotatoEngine(arena) {
+    const canvas = arena.querySelector('#hot-potato-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const startOverlay = arena.querySelector('#hp-start-overlay');
+    const startBtn = arena.querySelector('#hp-start-btn');
+    const whackBtn = arena.querySelector('#hp-tap-whack-btn');
+    const scoreBadge = arena.querySelector('#hp-score-badge');
+    const highBadge = arena.querySelector('#hp-high-badge');
+    const meterFill = arena.querySelector('#hp-meter-fill');
+    const statusText = arena.querySelector('#hp-status-text');
 
-    arena.querySelectorAll('.metro-pin').forEach(pin => {
-      pin.addEventListener('click', () => {
-        sound.playClick();
-        const id = pin.getAttribute('data-metro-id');
-        this.selectedMetro = INDIA_METROS_DATA.find(m => m.id === id) || INDIA_METROS_DATA[0];
-        this.renderIndiaMapGame(arena);
+    let isPlaying = false;
+    let score = 0;
+    let highScore = parseInt(localStorage.getItem('fusion_hot_potato_high') || '0', 10);
+
+    // Physics & potato object
+    const potato = {
+      x: 200,
+      y: 160,
+      vx: 3,
+      vy: 0,
+      radius: 28,
+      rotation: 0,
+      rotSpeed: 0.05,
+      cookLevel: 0, // 0 = raw, 35-75 = golden/cooked, >90 = burnt
+      isBurnt: false,
+      served: false
+    };
+
+    // Particles array for sizzles and sparkles
+    let particles = [];
+
+    // Service window on right wall
+    const serveWindow = {
+      x: 775,
+      y: 110,
+      w: 25,
+      h: 150
+    };
+
+    // Coals zone at the bottom
+    const coalsHeight = 55;
+
+    const resetPotato = (isNextRound = false) => {
+      potato.x = 120 + Math.random() * 80;
+      potato.y = 120;
+      potato.vx = 2.5 + Math.random() * 2.2;
+      potato.vy = -1;
+      potato.rotation = 0;
+      potato.cookLevel = 0;
+      potato.isBurnt = false;
+      potato.served = false;
+    };
+
+    const whackPotato = () => {
+      if (!isPlaying) return;
+      sound.playWhack();
+
+      // Give strong upward and forward impulse
+      potato.vy = -9.2 - Math.random() * 2;
+      potato.vx += (Math.random() * 3.5 - 1.2);
+      // Keep x velocity reasonable
+      if (potato.vx < -6) potato.vx = -6;
+      if (potato.vx > 7) potato.vx = 7;
+      potato.rotSpeed = (Math.random() - 0.5) * 0.28;
+
+      // Sparkle burst at whack location
+      for (let i = 0; i < 8; i++) {
+        particles.push({
+          x: potato.x,
+          y: potato.y,
+          vx: (Math.random() - 0.5) * 6,
+          vy: (Math.random() - 0.5) * 6,
+          color: '#FFE066',
+          size: 4 + Math.random() * 3,
+          life: 1.0
+        });
+      }
+    };
+
+    const gameOver = (reason) => {
+      isPlaying = false;
+      sound.playWrong();
+      if (score > highScore) {
+        highScore = score;
+        localStorage.setItem('fusion_hot_potato_high', highScore);
+        highBadge.innerText = `Best: ${highScore}`;
+      }
+
+      startOverlay.style.display = 'flex';
+      startOverlay.innerHTML = `
+        <div class="hp-overlay-card">
+          <div style="font-size:3.5rem; margin-bottom:0.4rem;">${reason === 'burnt' ? '🔥' : '💥'}</div>
+          <h3 style="font-size:1.7rem; color:#F43F5E; margin-bottom:0.25rem;">
+            ${reason === 'burnt' ? 'Charcoal Alert! Potato Burnt!' : 'Dropped Potato!'}
+          </h3>
+          <p style="color:var(--text-main); font-size:1.1rem; font-weight:800; margin-bottom:0.5rem;">
+            Final Score: ${score} Potatoes Served
+          </p>
+          <p style="color:var(--text-muted); font-size:0.86rem; margin-bottom:1.25rem;">
+            ${reason === 'burnt' 
+              ? 'You kept the potato on the sizzling coals too long! Serve it through the green window when it glows Golden.'
+              : 'Keep the potato in the air by whacking it before it hits the side spikes!'}
+          </p>
+          <button class="btn btn-primary" id="hp-restart-btn" style="padding:0.75rem 2.2rem; font-size:1.05rem;">
+            🔄 Play Again
+          </button>
+        </div>
+      `;
+
+      arena.querySelector('#hp-restart-btn')?.addEventListener('click', () => {
+        startOverlay.style.display = 'none';
+        score = 0;
+        scoreBadge.innerText = `Score: 0`;
+        resetPotato();
+        isPlaying = true;
       });
+    };
+
+    const serveSuccess = () => {
+      sound.playFanfare();
+      launchConfetti(canvas.getBoundingClientRect().right, canvas.getBoundingClientRect().top + 150);
+      score += 10;
+      scoreBadge.innerText = `Score: ${score}`;
+      if (score > highScore) {
+        highScore = score;
+        localStorage.setItem('fusion_hot_potato_high', highScore);
+        highBadge.innerText = `Best: ${highScore}`;
+      }
+
+      this.addXP(15, '🥔 Master Potato Roaster');
+      showToast(`Served Golden Crispy Fusion Potato! +10 Pts (+15 XP)`, 'success');
+
+      // Bonus celebration burst
+      for (let i = 0; i < 20; i++) {
+        particles.push({
+          x: serveWindow.x,
+          y: serveWindow.y + Math.random() * serveWindow.h,
+          vx: -Math.random() * 8,
+          vy: (Math.random() - 0.5) * 8,
+          color: '#10B981',
+          size: 5 + Math.random() * 4,
+          life: 1.2
+        });
+      }
+
+      resetPotato(true);
+    };
+
+    // User controls
+    startBtn?.addEventListener('click', () => {
+      sound.playClick();
+      startOverlay.style.display = 'none';
+      score = 0;
+      scoreBadge.innerText = `Score: 0`;
+      resetPotato();
+      isPlaying = true;
     });
 
-    arena.querySelector('#claim-city-xp-btn')?.addEventListener('click', () => {
-      sound.playFanfare();
-      launchConfetti();
-      if (!this.state.completedCityQuests) {
-        this.state.completedCityQuests = [];
-      }
-      if (!this.state.completedCityQuests.includes(metro.id)) {
-        this.state.completedCityQuests.push(metro.id);
-        this.saveState();
-      }
-      this.addXP(20, `🗺️ ${metro.name} Explorer`);
-      showToast(`Completed ${metro.name} Quest! +20 XP`, 'success');
-      this.renderIndiaMapGame(arena);
+    whackBtn?.addEventListener('click', whackPotato);
+
+    canvas.addEventListener('pointerdown', (e) => {
+      whackPotato();
     });
+
+    const keyHandler = (e) => {
+      if (e.code === 'Space' || e.key === ' ') {
+        if (this.state.activeGameTab === 'hotPotato') {
+          e.preventDefault();
+          whackPotato();
+        }
+      }
+    };
+    window.addEventListener('keydown', keyHandler);
+
+    // Physics Engine Loop
+    const gravity = 0.28;
+    const updateLoop = () => {
+      if (isPlaying) {
+        // Apply Gravity
+        potato.vy += gravity;
+        potato.x += potato.vx;
+        potato.y += potato.vy;
+        potato.rotation += potato.rotSpeed;
+
+        // Left wall bounce
+        if (potato.x - potato.radius < 0) {
+          potato.x = potato.radius;
+          potato.vx = -potato.vx * 0.85;
+          sound.playTick();
+        }
+
+        // Right wall bounce or Serve Window check
+        if (potato.x + potato.radius >= serveWindow.x) {
+          // Check if in green window range vertically
+          if (potato.y >= serveWindow.y && potato.y <= serveWindow.y + serveWindow.h) {
+            // Check cooking stage
+            if (potato.cookLevel >= 38 && potato.cookLevel <= 85) {
+              serveSuccess();
+            } else if (potato.cookLevel < 38) {
+              // Too raw to serve
+              potato.x = serveWindow.x - potato.radius;
+              potato.vx = -Math.abs(potato.vx) * 0.9;
+              sound.playWrong();
+              showToast('Potato is still RAW! Cook it on the coals first!', 'info');
+            } else {
+              // Burnt
+              gameOver('burnt');
+            }
+          } else {
+            // Hit wall outside window
+            potato.x = serveWindow.x - potato.radius;
+            potato.vx = -Math.abs(potato.vx) * 0.85;
+            sound.playTick();
+          }
+        }
+
+        // Ceiling bounce
+        if (potato.y - potato.radius <= 0) {
+          potato.y = potato.radius;
+          potato.vy = Math.abs(potato.vy) * 0.7;
+        }
+
+        // Bottom Coals Zone
+        const coalsY = canvas.height - coalsHeight;
+        if (potato.y + potato.radius >= coalsY) {
+          potato.y = coalsY - potato.radius;
+          potato.vy = -6.5 - Math.random() * 2; // Auto bounce off coals
+          potato.cookLevel += 18; // Cooking!
+          sound.playSizzle();
+
+          // Smoke / ember particles
+          for (let i = 0; i < 10; i++) {
+            particles.push({
+              x: potato.x + (Math.random() - 0.5) * 20,
+              y: coalsY,
+              vx: (Math.random() - 0.5) * 3,
+              vy: -2 - Math.random() * 3,
+              color: Math.random() > 0.5 ? '#FF4500' : '#FFD700',
+              size: 3 + Math.random() * 4,
+              life: 0.9
+            });
+          }
+        }
+
+        // Burnt check
+        if (potato.cookLevel > 95) {
+          gameOver('burnt');
+        }
+
+        // Update UI meter
+        const cookPct = Math.min(100, Math.floor(potato.cookLevel));
+        meterFill.style.width = `${cookPct}%`;
+
+        let color = '#38BDF8';
+        let label = `Raw (${cookPct}%)`;
+        if (cookPct >= 38 && cookPct <= 85) {
+          color = '#10B981';
+          label = `✨ GOLDEN & CRISPY! SERVE NOW! (${cookPct}%)`;
+          meterFill.style.background = 'linear-gradient(90deg, #10B981, #F59E0B)';
+        } else if (cookPct > 85) {
+          color = '#EF4444';
+          label = `⚠️ BURNING! SERVE FAST! (${cookPct}%)`;
+          meterFill.style.background = '#EF4444';
+        } else {
+          meterFill.style.background = '#38BDF8';
+        }
+        statusText.style.color = color;
+        statusText.innerText = `State: ${label}`;
+        arena.querySelector('#hp-heat-badge').innerText = `Heat: ${cookPct}%`;
+      }
+
+      // DRAW CANVAS
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Background Kitchen Tandoor Ambience
+      const bgGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      bgGrad.addColorStop(0, '#10141F');
+      bgGrad.addColorStop(1, '#080A10');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Tandoor Grid lines
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+      ctx.lineWidth = 1;
+      for (let x = 40; x < canvas.width; x += 40) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+      }
+
+      // 1. Draw Coals at the bottom
+      const coalGrad = ctx.createLinearGradient(0, canvas.height - coalsHeight, 0, canvas.height);
+      coalGrad.addColorStop(0, '#FF4500');
+      coalGrad.addColorStop(0.3, '#E11D48');
+      coalGrad.addColorStop(1, '#1E0B0F');
+      ctx.fillStyle = coalGrad;
+      ctx.fillRect(0, canvas.height - coalsHeight, canvas.width, coalsHeight);
+
+      // Sizzling Coal Embers
+      ctx.fillStyle = '#FFA500';
+      for (let i = 0; i < canvas.width; i += 24) {
+        const coalY = canvas.height - coalsHeight + 4 + Math.sin((Date.now() / 200) + i) * 3;
+        ctx.beginPath();
+        ctx.arc(i + 12, coalY, 8 + Math.sin(i) * 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = 'bold 13px "Outfit", sans-serif';
+      ctx.fillText('🔥 HOT COALS TANDOOR ZONE (Bounce here to roast)', 20, canvas.height - 18);
+
+      // 2. Draw Green Serving Window
+      ctx.fillStyle = 'rgba(16, 185, 129, 0.25)';
+      ctx.strokeStyle = '#10B981';
+      ctx.lineWidth = 3;
+      ctx.fillRect(serveWindow.x, serveWindow.y, serveWindow.w, serveWindow.h);
+      ctx.strokeRect(serveWindow.x, serveWindow.y, serveWindow.w, serveWindow.h);
+
+      // Window pulsing glow
+      ctx.save();
+      ctx.translate(serveWindow.x - 10, serveWindow.y + serveWindow.h / 2);
+      ctx.rotate(-Math.PI / 2);
+      ctx.fillStyle = '#10B981';
+      ctx.font = 'bold 13px "Outfit", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('🍽️ SERVING WINDOW', 0, 0);
+      ctx.restore();
+
+      // 3. Draw Particles
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life -= 0.035;
+
+        if (p.life <= 0) {
+          particles.splice(i, 1);
+          continue;
+        }
+
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = Math.max(0, p.life);
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = 1.0;
+      }
+
+      // 4. Draw Potato with Color Dynamics
+      ctx.save();
+      ctx.translate(potato.x, potato.y);
+      ctx.rotate(potato.rotation);
+
+      // Color based on cooking level
+      let potatoFill = '#E2B878'; // Raw russet skin
+      let potatoStroke = '#8C6030';
+      if (potato.cookLevel >= 38 && potato.cookLevel <= 85) {
+        potatoFill = '#F59E0B'; // Golden fried/roasted
+        potatoStroke = '#B45309';
+      } else if (potato.cookLevel > 85) {
+        potatoFill = '#4B2515'; // Dark burning
+        potatoStroke = '#1F110B';
+      }
+
+      // Potato Body (Slightly irregular oval)
+      ctx.fillStyle = potatoFill;
+      ctx.strokeStyle = potatoStroke;
+      ctx.lineWidth = 3.5;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, potato.radius + 4, potato.radius - 3, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      // Potato Spots / Texture
+      ctx.fillStyle = potatoStroke;
+      ctx.beginPath();
+      ctx.arc(-10, -6, 2.5, 0, Math.PI * 2);
+      ctx.arc(8, 7, 2, 0, Math.PI * 2);
+      ctx.arc(12, -8, 2.5, 0, Math.PI * 2);
+      ctx.arc(-6, 9, 2, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Golden Steam / Glow
+      if (potato.cookLevel >= 38 && potato.cookLevel <= 85) {
+        ctx.fillStyle = 'rgba(255, 215, 0, 0.4)';
+        ctx.beginPath();
+        ctx.arc(0, 0, potato.radius + 9, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Potato Face
+      ctx.fillStyle = '#1A1108';
+      ctx.beginPath();
+      ctx.arc(-8, -2, 2.8, 0, Math.PI * 2); // left eye
+      ctx.arc(8, -2, 2.8, 0, Math.PI * 2);  // right eye
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(0, 4, 4, 0, Math.PI); // smile
+      ctx.stroke();
+
+      ctx.restore();
+
+      // Next frame
+      this.hotPotatoLoop = requestAnimationFrame(updateLoop);
+    };
+
+    this.hotPotatoLoop = requestAnimationFrame(updateLoop);
   }
 
   // ========================================================
@@ -3130,9 +3405,9 @@ Guidelines:
             </label>
           </div>
           <div class="toggle-row">
-            <span>🗺️ India Availability Map & Metros</span>
+            <span>🥔 Hot Potato Rush (Arcade Cooking)</span>
             <label class="switch">
-              <input type="checkbox" id="toggle-indiaMap" ${this.state.gameToggles.indiaMap ? 'checked' : ''} />
+              <input type="checkbox" id="toggle-hotPotato" ${this.state.gameToggles.hotPotato !== false ? 'checked' : ''} />
               <span class="slider"></span>
             </label>
           </div>
@@ -3185,7 +3460,7 @@ Guidelines:
         this.state.gameToggles.buildDish = document.getElementById('toggle-buildDish')?.checked ?? true;
         this.state.gameToggles.pronunciation = document.getElementById('toggle-pronunciation')?.checked ?? true;
         this.state.gameToggles.trivia = document.getElementById('toggle-trivia')?.checked ?? true;
-        this.state.gameToggles.indiaMap = document.getElementById('toggle-indiaMap')?.checked ?? true;
+        this.state.gameToggles.hotPotato = document.getElementById('toggle-hotPotato')?.checked ?? true;
         this.state.gameToggles.spinScience = document.getElementById('toggle-spinScience')?.checked ?? true;
 
         this.saveState();
