@@ -27,17 +27,17 @@
       </a>
 
       <!-- Main View Tabs (Instant Tab Switcher - No Endless Scrolling) -->
-      <nav class="site-nav" id="main-nav-bar" aria-label="Main Navigation">
-        <button class="nav-link active" data-tab-target="games" id="tab-btn-games">
+      <nav class="site-nav" id="main-nav-bar" aria-label="Main Navigation" role="tablist">
+        <button class="nav-link active" data-tab-target="games" id="tab-btn-games" role="tab" aria-selected="true" aria-controls="pane-games">
           <span>🎮</span> <span>Games Hub</span>
         </button>
-        <button class="nav-link" data-tab-target="kitchen" id="tab-btn-kitchen">
+        <button class="nav-link" data-tab-target="kitchen" id="tab-btn-kitchen" role="tab" aria-selected="false" aria-controls="pane-kitchen">
           <span>📖</span> <span>Kitchen Lab</span>
         </button>
-        <button class="nav-link" data-tab-target="fusion" id="tab-btn-fusion">
+        <button class="nav-link" data-tab-target="fusion" id="tab-btn-fusion" role="tab" aria-selected="false" aria-controls="pane-fusion">
           <span>🌍</span> <span>Fusion Explorer</span>
         </button>
-        <button class="nav-link" data-tab-target="leaderboard" id="tab-btn-leaderboard" style="display:none;">
+        <button class="nav-link" data-tab-target="leaderboard" id="tab-btn-leaderboard" role="tab" aria-selected="false" aria-controls="pane-leaderboard" style="display:none;">
           <span>🏆</span> <span>Leaderboard</span>
         </button>
       </nav>
@@ -295,19 +295,31 @@
         </div>
 
         <div class="scoreboard-grid">
-          <!-- Global Leaderboard & Hall of Fame -->
+          <!-- Leaderboard Multi-Scope & Privacy Safe Card (FF-01, FF-12, FF-13) -->
           <div class="family-roster-card">
-            <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.5rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem; margin-bottom:1rem;">
               <h3 style="font-size:1.4rem; display:flex; align-items:center; gap:0.6rem; margin:0;">
-                <span>🏆 Global Hall of Fame & Leaderboard</span>
+                <span>🏆 Leaderboard & Hall of Fame</span>
               </h3>
-              <button id="clear-website-data-btn" class="btn btn-secondary" style="color:#DC2626; border-color:rgba(220,38,38,0.35); padding:0.35rem 0.8rem; font-size:0.78rem; font-weight:700;">
-                🗑️ Clear All Website Data
+              <div class="leaderboard-scope-toggle" id="leaderboard-scope-toggle" role="tablist" aria-label="Leaderboard View Scope">
+                <button class="scope-btn active" data-scope="local" role="tab" aria-selected="true">👨‍👩‍👧 Family Roster (Private)</button>
+                <button class="scope-btn" data-scope="global" role="tab" aria-selected="false">🌍 Global Hall of Fame</button>
+              </div>
+            </div>
+
+            <!-- Privacy & Global Publishing Notice (FF-13) -->
+            <div class="leaderboard-privacy-banner" style="background:var(--bg-card-subtle); border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:0.65rem 0.95rem; margin-bottom:1.15rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.6rem; font-size:0.82rem; color:var(--text-muted);">
+              <div style="display:flex; align-items:center; gap:0.45rem;">
+                <span aria-hidden="true">🔒</span>
+                <span><strong>Privacy Shield:</strong> Local family scores are kept private on this device. Publishing to the Global Hall of Fame requires parental confirmation.</span>
+              </div>
+              <button class="btn btn-secondary" id="publish-global-score-btn" style="padding:0.3rem 0.75rem; font-size:0.78rem; font-weight:700;">
+                🌐 Publish Score
               </button>
             </div>
 
             <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:1rem;">
-              Filter global rankings and arcade high scores across challenges:
+              Filter rankings and arcade high scores across challenges:
             </p>
             <div class="leaderboard-filter-tabs" id="leaderboard-filter-tabs" style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:1.25rem;">
               <button class="recipe-chip active" data-lb-filter="all">👑 Level Leaderboard</button>
@@ -472,8 +484,8 @@
     </div>
   </div>
 
-  <!-- Toast Notification Container -->
-  <div id="toast-container" class="toast-container"></div>
+  <!-- Toast Notification Container with Accessible ARIA Live Region (A-05, A-15) -->
+  <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
 
   <!-- Warm Illustrated Cookbook Footer -->
   <footer class="site-footer">
@@ -510,6 +522,17 @@
             <li>🧪 Food Science Explanations</li>
           </ul>
         </div>
+      </div>
+
+      <!-- Architecture Version Switcher (Audit 9 & 11: Direct V1 / V2 / V3 Access) -->
+      <div class="footer-version-bar" style="margin-top:1.5rem; padding-top:1rem; border-top:1px solid var(--border-color); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.75rem; font-size:0.84rem; color:var(--text-muted);">
+        <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+          <span style="font-weight:700;">Architecture Release:</span>
+          <button class="recipe-chip active footer-version-btn" data-ver="v2" aria-label="Version 2 Modern Redesign">v2 Modern (Bifurcated)</button>
+          <button class="recipe-chip footer-version-btn" data-ver="v1" aria-label="Version 1 Classic Hub">v1 Classic Hub</button>
+          <button class="recipe-chip footer-version-btn" data-ver="v3" aria-label="Version 3 AI and Vision Lab">v3 AI & Vision Lab</button>
+        </div>
+        <div style="font-size:0.78rem;">Verified Cloudflare D1 Backend & Local Parity</div>
       </div>
 
       <div class="footer-bottom">
