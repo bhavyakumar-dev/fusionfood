@@ -9,7 +9,7 @@ pages_build_output_dir = "./dist"
 [[d1_databases]]
 binding = "DB"
 database_name = "foodfusionweb"
-database_id = "653756d0-4a06-4e6a-b022-13d4635125c3"
+database_id = "2cd5a387-170d-46a1-895c-c24deb2f5312"
 
 [vars]
 ENVIRONMENT = "production"
