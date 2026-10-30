@@ -2143,6 +2143,24 @@ body.has-modal-open .mobile-bottom-nav {
   transition: transform 0.15s ease-out;
 }
 
+#admin-modal .modal-dialog {
+  max-width: 580px;
+}
+
+.admin-ai-config-card {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.15rem;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="dark"] .admin-ai-config-card {
+  background: #141724;
+  border-color: #2D3348;
+}
+
 .modal-overlay.open .modal-dialog {
   transform: translateY(0);
 }

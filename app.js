@@ -5240,6 +5240,7 @@ class FusionApp {
     const completedSteps = this.state.recipeCompletedSteps[dish.id] || [];
     const totalSteps = dish.recipeSteps.length;
     const hasApiKey = !!this.getGeminiKey();
+    const hasWorkersAi = !!this.getWorkersAiKey();
 
     dialog.innerHTML = `
       <!-- Header -->
@@ -5367,40 +5368,10 @@ class FusionApp {
               <span style="font-size:0.78rem; color:var(--text-muted);">Real-time cooking helper for ${dish.name}</span>
             </div>
 
-            <!-- API Key Toggle Pill -->
-            <button class="api-key-pill ${hasApiKey ? 'active' : ''}" id="toggle-api-key-box-btn">
-              <span>${hasApiKey ? '⚡ AI Key Active' : '⚙️ Setup AI Engine'}</span>
-            </button>
-          </div>
-
-          <!-- Collapsible API Key Box — hidden by default, toggle via button -->
-          <div class="api-key-box" id="api-key-config-box" style="display:none;">
-            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.35rem;">
-              <span style="font-weight:700;">Google Gemini API Key:</span>
-              <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" style="font-size:0.76rem; color:var(--primary); font-weight:700; white-space:nowrap;">
-                Get Free Key ↗
-              </a>
+            <!-- AI Engine Live Status Badge (Configured securely via Admin Panel) -->
+            <div class="pill-badge" style="font-size:0.75rem; font-weight:800; padding:0.25rem 0.65rem; border-radius:var(--radius-full); background:${hasApiKey ? 'rgba(34, 197, 94, 0.15)' : (hasWorkersAi ? 'rgba(2, 132, 199, 0.15)' : 'var(--bg-card-subtle)')}; color:${hasApiKey ? '#15803D' : (hasWorkersAi ? 'var(--primary)' : 'var(--text-muted)')}; border:1px solid ${hasApiKey ? '#86efac' : (hasWorkersAi ? 'var(--primary)' : 'var(--border-color)')};">
+              <span>${hasApiKey ? '✨ Cloud AI Ready' : (hasWorkersAi ? '⚡ Workers AI Ready' : '👩‍🍳 Offline AI Ready')}</span>
             </div>
-            <div class="api-key-input-row" style="display:flex; flex-wrap:wrap; gap:0.4rem;">
-              <input type="password" id="gemini-api-key-input" class="api-key-input" placeholder="Paste AI Studio API key (AIzaSy...)" value="${this.getGeminiKey()}" style="min-width:0; flex:1 1 180px;">
-              <button class="icon-btn" id="show-hide-key-btn" title="Toggle visibility" style="width:34px; height:34px; font-size:0.9rem; flex-shrink:0;">👁️</button>
-              <button class="btn btn-primary" id="save-gemini-key-btn" style="padding:0.35rem 0.85rem; font-size:0.8rem; flex-shrink:0;">Save</button>
-            </div>
-            <div style="margin-top:0.6rem; border-top:1px dashed var(--border-color); padding-top:0.6rem;">
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem;">
-                <span style="font-weight:700; font-size:0.82rem;">⚡ Or Cloudflare Workers AI:</span>
-              </div>
-              <div style="display:flex; flex-direction:column; gap:0.4rem;">
-                <input type="password" id="workers-ai-token-input" class="api-key-input" placeholder="Cloudflare API Token with Workers AI Read" value="${this.getWorkersAiKey()}">
-                <div style="display:flex; gap:0.4rem;">
-                  <input type="text" id="workers-ai-account-input" class="api-key-input" placeholder="Cloudflare Account ID" value="${this.getWorkersAiAccount()}">
-                  <button class="btn btn-primary" id="save-workers-ai-btn" style="padding:0.35rem 0.85rem; font-size:0.8rem;">Save</button>
-                </div>
-              </div>
-            </div>
-            <span style="font-size:0.72rem; color:var(--text-muted); margin-top:0.25rem;">
-              Keys are securely stored only inside your browser. Offline responses work instantly without keys!
-            </span>
           </div>
 
           <!-- Chat Messages Container -->
@@ -5411,7 +5382,6 @@ class FusionApp {
                 <span>👩‍🍳 Sous-Chef Maya</span>
               </div>
               Namaste! I'm your AI Sous-Chef for <strong>${dish.name}</strong>. How can I assist your kitchen adventure today?
-              ${!hasApiKey ? '<div style="margin-top:0.4rem; font-size:0.78rem; color:var(--secondary); font-weight:700;">💡 Tip: Enter your Gemini API key above to unlock fully customized, real-time responses!</div>' : ''}
             </div>
           </div>
 
@@ -5463,56 +5433,6 @@ class FusionApp {
         const stepNum = parseInt(btn.getAttribute('data-step'), 10);
         this.toggleStepDone(dish.id, stepNum);
       });
-    });
-
-    // API Key box toggle
-    const toggleKeyBtn = document.getElementById('toggle-api-key-box-btn');
-    const keyBox = document.getElementById('api-key-config-box');
-    toggleKeyBtn?.addEventListener('click', () => {
-      sound.playClick();
-      keyBox.style.display = keyBox.style.display === 'none' ? 'flex' : 'none';
-    });
-
-    // Show/hide key
-    const keyInput = document.getElementById('gemini-api-key-input');
-    const showHideBtn = document.getElementById('show-hide-key-btn');
-    showHideBtn?.addEventListener('click', () => {
-      if (keyInput.type === 'password') {
-        keyInput.type = 'text';
-        showHideBtn.innerText = '🙈';
-      } else {
-        keyInput.type = 'password';
-        showHideBtn.innerText = '👁️';
-      }
-    });
-
-    // Save Gemini key
-    document.getElementById('save-gemini-key-btn')?.addEventListener('click', (e) => {
-      e.preventDefault();
-      const val = keyInput.value.trim();
-      this.setGeminiKey(val);
-      sound.playCorrect();
-      showToast(val ? 'Gemini API key saved!' : 'Gemini API key removed', 'success');
-      keyBox.style.display = 'none';
-      if (toggleKeyBtn) {
-        toggleKeyBtn.className = `api-key-pill ${val || this.getWorkersAiKey() ? 'active' : ''}`;
-        toggleKeyBtn.innerHTML = `<span>${val || this.getWorkersAiKey() ? '⚡ AI Key Active' : '⚙️ Setup AI Engine'}</span>`;
-      }
-    });
-
-    // Save Workers AI config
-    document.getElementById('save-workers-ai-btn')?.addEventListener('click', (e) => {
-      e.preventDefault();
-      const token = document.getElementById('workers-ai-token-input')?.value.trim();
-      const accountId = document.getElementById('workers-ai-account-input')?.value.trim();
-      this.setWorkersAiConfig(token, accountId);
-      sound.playCorrect();
-      showToast(token ? 'Cloudflare Workers AI configured!' : 'Workers AI config removed', 'success');
-      keyBox.style.display = 'none';
-      if (toggleKeyBtn) {
-        toggleKeyBtn.className = `api-key-pill ${token || this.getGeminiKey() ? 'active' : ''}`;
-        toggleKeyBtn.innerHTML = `<span>${token || this.getGeminiKey() ? '⚡ AI Key Active' : '⚙️ Setup AI Engine'}</span>`;
-      }
     });
 
     // Suggestion chips
@@ -6252,6 +6172,58 @@ Guidelines:
           </div>
         </div>
 
+        <!-- AI Engine & API Key Setup (Moved to Admin Panel) -->
+        <div class="admin-ai-config-card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem; flex-wrap:wrap; gap:0.4rem;">
+            <div style="display:flex; align-items:center; gap:0.5rem;">
+              <span style="font-size:1.2rem;">🤖</span>
+              <strong style="font-size:0.95rem;">Gemini & Workers AI Setup</strong>
+            </div>
+            <span id="admin-ai-status-pill" class="pill-badge" style="background:${this.getGeminiKey() ? 'rgba(34, 197, 94, 0.15)' : (this.getWorkersAiKey() ? 'rgba(2, 132, 199, 0.15)' : 'var(--bg-card-subtle)')}; color:${this.getGeminiKey() ? 'var(--accent-green)' : (this.getWorkersAiKey() ? 'var(--primary)' : 'var(--text-muted)')}; border-color:${this.getGeminiKey() ? 'var(--accent-green)' : (this.getWorkersAiKey() ? 'var(--primary)' : 'var(--border-color)')}; font-size:0.75rem;">
+              ${this.getGeminiKey() ? '🟢 Gemini API Active' : (this.getWorkersAiKey() ? '⚡ Workers AI Active' : '⚪ Smart Offline Mode')}
+            </span>
+          </div>
+          <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:0.85rem; line-height:1.45;">
+            API keys configured here power Sous-Chef Maya for all visitors during the career fair. Keys are kept private from visitors.
+          </p>
+
+          <!-- Google Gemini API Key -->
+          <div style="margin-bottom:0.85rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem; flex-wrap:wrap; gap:0.3rem;">
+              <span style="font-weight:700; font-size:0.82rem;">Google Gemini API Key:</span>
+              <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" style="font-size:0.76rem; color:var(--primary); font-weight:700;">
+                Get Free Key from Google AI Studio ↗
+              </a>
+            </div>
+            <div class="api-key-input-row" style="display:flex; gap:0.4rem; flex-wrap:wrap;">
+              <input type="password" id="admin-gemini-key-input" class="api-key-input" placeholder="Paste AI Studio API key (AIzaSy...)" value="${this.getGeminiKey()}" style="flex:1 1 180px; min-width:0;">
+              <button class="icon-btn" id="admin-show-hide-key-btn" title="Toggle visibility" style="width:34px; height:34px; font-size:0.9rem; flex-shrink:0;">👁️</button>
+              <button class="btn btn-primary" id="admin-save-gemini-key-btn" style="padding:0.35rem 0.85rem; font-size:0.8rem; flex-shrink:0;">Save Key</button>
+            </div>
+          </div>
+
+          <!-- Cloudflare Workers AI Token -->
+          <div style="border-top:1px dashed var(--border-color); padding-top:0.75rem;">
+            <span style="font-weight:700; font-size:0.82rem; display:block; margin-bottom:0.35rem;">⚡ Or Cloudflare Workers AI (Alternative):</span>
+            <div style="display:flex; flex-direction:column; gap:0.4rem;">
+              <input type="password" id="admin-workers-token-input" class="api-key-input" placeholder="Cloudflare API Token with Workers AI Read" value="${this.getWorkersAiKey()}">
+              <div style="display:flex; gap:0.4rem; flex-wrap:wrap;">
+                <input type="text" id="admin-workers-account-input" class="api-key-input" placeholder="Cloudflare Account ID" value="${this.getWorkersAiAccount()}" style="flex:1 1 180px; min-width:0;">
+                <button class="btn btn-secondary" id="admin-save-workers-btn" style="padding:0.35rem 0.85rem; font-size:0.8rem; flex-shrink:0;">Save Workers AI</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Clear Keys Option -->
+          ${(this.getGeminiKey() || this.getWorkersAiKey()) ? `
+            <div style="margin-top:0.65rem; text-align:right;">
+              <button id="admin-clear-ai-keys-btn" style="font-size:0.75rem; color:#EF4444; background:none; border:none; cursor:pointer; text-decoration:underline;">
+                Remove Stored AI Credentials
+              </button>
+            </div>
+          ` : ''}
+        </div>
+
         <div style="background:var(--bg-parchment); border:1.5px solid var(--border-color); border-radius:var(--radius-sm); padding:0.95rem; margin-bottom:1.25rem;">
           <label style="font-size:0.82rem; font-weight:800; color:var(--text-muted); display:block; margin-bottom:0.35rem;">
             🔑 Update Secret Admin PIN:
@@ -6279,6 +6251,52 @@ Guidelines:
           </button>
         </div>
       `;
+
+      // Admin show/hide Gemini key
+      const adminKeyInput = document.getElementById('admin-gemini-key-input');
+      const adminShowHideBtn = document.getElementById('admin-show-hide-key-btn');
+      adminShowHideBtn?.addEventListener('click', () => {
+        if (adminKeyInput.type === 'password') {
+          adminKeyInput.type = 'text';
+          adminShowHideBtn.innerText = '🙈';
+        } else {
+          adminKeyInput.type = 'password';
+          adminShowHideBtn.innerText = '👁️';
+        }
+      });
+
+      // Admin save Gemini key
+      document.getElementById('admin-save-gemini-key-btn')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        const val = adminKeyInput.value.trim();
+        this.setGeminiKey(val);
+        sound.playCorrect();
+        showToast(val ? 'Google Gemini API key saved!' : 'Gemini key cleared', 'success');
+        this.renderAdminModalContent(true);
+      });
+
+      // Admin save Workers AI config
+      document.getElementById('admin-save-workers-btn')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        const token = document.getElementById('admin-workers-token-input')?.value.trim();
+        const accountId = document.getElementById('admin-workers-account-input')?.value.trim();
+        this.setWorkersAiConfig(token, accountId);
+        sound.playCorrect();
+        showToast(token ? 'Cloudflare Workers AI configured!' : 'Workers AI config removed', 'success');
+        this.renderAdminModalContent(true);
+      });
+
+      // Admin clear AI credentials
+      document.getElementById('admin-clear-ai-keys-btn')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (confirm('Clear all stored AI API keys? The app will use instant offline responses.')) {
+          this.setGeminiKey('');
+          this.setWorkersAiConfig('', '');
+          sound.playClick();
+          showToast('Stored AI keys cleared', 'info');
+          this.renderAdminModalContent(true);
+        }
+      });
 
       // Update PIN
       document.getElementById('save-new-pin-btn')?.addEventListener('click', () => {
