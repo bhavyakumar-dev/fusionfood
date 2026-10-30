@@ -2,7 +2,7 @@
 # Cloudflare Pages Configuration for Fusion Food Family Lab
 # ====================================================================
 
-name = "foodfusionweb"
+name = "fusionfood"
 compatibility_date = "2024-04-01"
 compatibility_flags = ["nodejs_compat"]
 
@@ -23,4 +23,4 @@ database_id = "653756d0-4a06-4e6a-b022-13d4635125c3"
 [vars]
 ENVIRONMENT = "production"
 APP_NAME = "Fusion Food Family Lab"
-CORS_ORIGIN = "https://foodfusionweb.pages.dev"
+CORS_ORIGIN = "https://fusionfood.pages.dev"
