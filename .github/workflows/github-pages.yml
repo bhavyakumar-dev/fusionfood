@@ -26,9 +26,6 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v6
 
-      - name: Set up GitHub Pages
-        uses: actions/configure-pages@v5
-
       - name: Check JavaScript syntax
         run: |
           node --check app.js
@@ -49,6 +46,9 @@ jobs:
           test -s _site/index.html
           test -s _site/bundle.js
           test -s _site/styles.css
+
+      - name: Set up GitHub Pages
+        uses: actions/configure-pages@v5
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
