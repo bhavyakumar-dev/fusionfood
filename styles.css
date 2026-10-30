@@ -2146,7 +2146,62 @@ body.has-modal-open .mobile-bottom-nav {
 }
 
 #admin-modal .modal-dialog {
-  max-width: 580px;
+  max-width: 660px;
+}
+
+.admin-subtab-nav {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.api-token-reveal-card {
+  background: #FEF3C7;
+  border: 2px solid #F59E0B;
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+[data-theme="dark"] .api-token-reveal-card {
+  background: #2D2310;
+  border-color: #D97706;
+}
+
+[data-theme="dark"] .api-token-reveal-card #newly-generated-token-text {
+  color: #FDE68A !important;
+}
+
+.api-keys-table-container {
+  max-height: 240px;
+  overflow-y: auto;
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+}
+
+.api-keys-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.api-keys-table th {
+  background: var(--bg-parchment);
+  color: var(--text-muted);
+  font-weight: 700;
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+[data-theme="dark"] .api-keys-table th {
+  background: #181C2E;
+}
+
+.api-keys-table td {
+  border-bottom: 1px solid var(--border-color);
 }
 
 .admin-ai-config-card {

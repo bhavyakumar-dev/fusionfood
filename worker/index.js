@@ -8,6 +8,7 @@ import * as syncHandler from '../functions/api/sync.js';
 import * as leaderboardHandler from '../functions/api/leaderboard.js';
 import * as submitScoreHandler from '../functions/api/submit-score.js';
 import * as feedbackHandler from '../functions/api/feedback.js';
+import * as adminKeysHandler from '../functions/api/admin/keys.js';
 
 function getCorsHeaders(request) {
   const origin = request.headers.get('Origin') || '*';
@@ -97,6 +98,16 @@ export default {
           response = await feedbackHandler.onRequestGet(context);
         } else if (request.method === 'POST') {
           response = await feedbackHandler.onRequestPost(context);
+        } else {
+          response = jsonResponse({ success: false, error: 'Method Not Allowed' }, 405);
+        }
+      } else if (pathname === '/api/admin/keys') {
+        if (request.method === 'GET') {
+          response = await adminKeysHandler.onRequestGet(context);
+        } else if (request.method === 'POST') {
+          response = await adminKeysHandler.onRequestPost(context);
+        } else if (request.method === 'DELETE') {
+          response = await adminKeysHandler.onRequestDelete(context);
         } else {
           response = jsonResponse({ success: false, error: 'Method Not Allowed' }, 405);
         }

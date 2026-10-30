@@ -77,7 +77,26 @@ CREATE INDEX IF NOT EXISTS idx_feedback_category ON feedback (category);
 CREATE INDEX IF NOT EXISTS idx_feedback_recipe_id ON feedback (recipe_id);
 
 -- --------------------------------------------------------------------
--- 4. GLOBAL SEED DATA
+-- 4. API KEYS TABLE
+-- Stores admin-generated API access tokens for REST endpoints
+-- --------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS api_keys (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  key_id TEXT NOT NULL UNIQUE,
+  name TEXT NOT NULL,
+  key_prefix TEXT NOT NULL,
+  key_token TEXT NOT NULL,
+  scope TEXT NOT NULL DEFAULT 'read_write' CHECK(scope IN ('read', 'read_write', 'admin')),
+  status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active', 'revoked')),
+  expires_at DATETIME DEFAULT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_api_keys_status ON api_keys (status);
+CREATE INDEX IF NOT EXISTS idx_api_keys_token ON api_keys (key_token);
+
+-- --------------------------------------------------------------------
+-- 5. GLOBAL SEED DATA
 -- Diverse international culinary students and parent master chefs
 -- --------------------------------------------------------------------
 
