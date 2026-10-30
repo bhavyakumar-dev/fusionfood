@@ -153,7 +153,6 @@
 }
 
 html {
-  scroll-behavior: smooth;
   font-size: 16px;
   scrollbar-gutter: stable;
   overflow-x: hidden !important;
@@ -2668,9 +2667,14 @@ input:checked + .slider:before {
   }
 
   .icon-btn {
-    width: 30px;
-    height: 30px;
-    font-size: 0.85rem;
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+    font-size: 0.95rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
 
   /* Hide Desktop Header Tabs on Mobile/Compact Views */
@@ -4275,9 +4279,9 @@ input:checked + .slider:before {
   }
 
   .header-actions .icon-btn {
-    width: 30px !important;
-    height: 30px !important;
-    font-size: 0.85rem !important;
+    min-width: 44px !important;
+    min-height: 44px !important;
+    font-size: 0.95rem !important;
   }
 
   /* Universal Landscape Constraint (All viewport widths including > 750px e.g. 844x390, 915x412) */
@@ -5215,10 +5219,19 @@ body {
 .recipe-chip,
 .scroll-arrow-btn,
 .btn,
-.footer-version-btn {
+.footer-version-btn,
+.footer-nav-link,
+#admin-footer-link,
+.brand-logo {
   min-height: 44px;
-  min-width: 44px;
   box-sizing: border-box;
+}
+
+.footer-nav-link,
+#admin-footer-link,
+.brand-logo {
+  display: inline-flex;
+  align-items: center;
 }
 
 /* 6. Modal Responsiveness & Viewport Height Bounds (MOD-02, MOD-08, MOD-12) */

@@ -4422,6 +4422,8 @@ class FusionApp {
       const navBar = document.getElementById('main-nav-bar');
       if (navBar && tabId !== 'games') {
         navBar.scrollIntoView({ behavior: 'auto', block: 'start' });
+      } else if (tabId === 'games') {
+        window.scrollTo({ top: 0, behavior: 'auto' });
       }
     }
   }
@@ -4540,8 +4542,18 @@ class FusionApp {
             </tbody>
           </table>
         </div>
+        <div style="margin-top:1.25rem; display:flex; justify-content:flex-end;">
+          <button class="btn btn-primary" id="btn-modal-open-full-leaderboard" style="padding:0.45rem 1rem; font-size:0.84rem;">
+            📊 View Full Rankings & Ladders Page →
+          </button>
+        </div>
       </div>
     `;
+
+    body.querySelector('#btn-modal-open-full-leaderboard')?.addEventListener('click', () => {
+      this.closeLeaderboardModal();
+      this.switchMainTab('leaderboard');
+    });
   }
 
   renderProfileModalContent() {
@@ -4862,7 +4874,7 @@ class FusionApp {
       tab.addEventListener('click', () => {
         const gameId = tab.getAttribute('data-game-id');
         if (!this.state.gameToggles[gameId]) {
-          alert('This game is currently turned off by the Admin. Open the Admin Lock icon in the header with your secret PIN to enable it!');
+          showToast('🔒 This game is turned off in Admin Mode. Open Admin Settings (🔒) to enable it!', 'warning');
           return;
         }
         sound.playClick();
@@ -7704,18 +7716,19 @@ class FusionApp {
       <!-- Header -->
       <div class="recipe-popout-header">
         <div class="recipe-popout-title-wrap">
-          <div class="recipe-popout-meta-row" style="display:flex; flex-wrap:wrap; gap:0.45rem; align-items:center;">
+          <div class="recipe-popout-meta-row recipe-meta-banner" style="display:flex; flex-wrap:wrap; gap:0.45rem; align-items:center;">
             <span class="veg-badge"><span class="veg-icon-dot"></span> 100% Pure Veg</span>
             <span class="pill-badge">${dish.origin}</span>
-            <span class="pill-badge">⏱️ ${dish.prepTime || '15 mins'} prep • 🍳 ${dish.cookTime || '10 mins'} cook</span>
-            <span class="pill-badge">🍽️ ${dish.servings || '2 servings'}</span>
-            <span class="pill-badge" style="font-weight:700;">📊 ${dish.difficulty || 'Beginner'}</span>
+            <span class="pill-badge prep-time">⏱️ ${dish.prepTime || '15 mins'} prep</span>
+            <span class="pill-badge cook-time">🍳 ${dish.cookTime || '10 mins'} cook</span>
+            <span class="pill-badge servings">🍽️ ${dish.servings || '2 servings'}</span>
+            <span class="pill-badge difficulty" style="font-weight:700;">📊 ${dish.difficulty || 'Beginner'}</span>
             <span style="font-size:0.8rem; color:var(--text-muted);">Availability: <strong>${dish.availability}</strong></span>
           </div>
           <h2 id="popout-recipe-title">${dish.name}</h2>
           <div class="recipe-popout-phonetic-row">
             <span style="font-size:0.84rem; color:var(--text-muted);">Phonetic: <em>${dish.phonetic}</em></span>
-            <button class="icon-btn" id="popout-pronounce-btn" title="Listen to Pronunciation" style="width:28px; height:28px; font-size:0.85rem;">🗣️</button>
+            <button class="icon-btn" id="popout-pronounce-btn" title="Listen to Pronunciation" aria-label="Listen to Pronunciation" style="min-width:44px; min-height:44px; font-size:1.05rem;">🗣️</button>
           </div>
         </div>
 
@@ -7882,6 +7895,7 @@ class FusionApp {
     `;
 
     modal.classList.add('open');
+    document.body.classList.add('has-modal-open');
     this.bindRecipePopoutEvents(dish);
   }
 
@@ -8646,6 +8660,7 @@ Guidelines:
     const modal = document.getElementById('admin-modal');
     if (!modal) return;
     modal.classList.add('open');
+    document.body.classList.add('has-modal-open');
     this.renderAdminModalContent(false);
   }
 
@@ -9155,7 +9170,8 @@ Guidelines:
             showToast('Admin PIN updated securely!', 'success');
             document.getElementById('new-admin-pin').value = '';
           } else {
-            alert('Please enter a PIN with at least 4 characters.');
+            sound.playWrong();
+            showToast('Please enter a PIN with at least 4 characters.', 'error');
           }
         });
 
@@ -9233,7 +9249,8 @@ Guidelines:
                 this.renderAdminModalContent(true);
                 showToast('Website data successfully restored from backup!', 'success');
               } catch (err) {
-                alert('Invalid backup JSON file.');
+                sound.playWrong();
+                showToast('Invalid backup JSON file.', 'error');
               }
             };
             reader.readAsText(file);
@@ -9716,7 +9733,11 @@ Guidelines:
     // Header Actions: Camera, Portfolio, and Leaderboard
     document.getElementById('header-leaderboard-pill')?.addEventListener('click', () => {
       sound.playClick();
-      this.switchMainTab('leaderboard');
+      this.openLeaderboardModal();
+    });
+    document.getElementById('close-leaderboard-modal-btn')?.addEventListener('click', () => this.closeLeaderboardModal());
+    document.getElementById('leaderboard-modal')?.addEventListener('click', (e) => {
+      if (e.target.id === 'leaderboard-modal') this.closeLeaderboardModal();
     });
     document.getElementById('open-camera-scanner-btn')?.addEventListener('click', () => this.openCameraScannerModal());
     document.getElementById('close-camera-modal-btn')?.addEventListener('click', () => this.closeCameraScannerModal());
@@ -9736,8 +9757,8 @@ Guidelines:
     });
 
     // Global Modal Escape & Focus Trapping (MOD-05, MOD-06, MOD-07)
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
+    const handleModalKeydown = (e) => {
+      if (e.key === 'Escape' || e.keyCode === 27) {
         this.closeAdminModal();
         this.closeRecipePopout();
         this.closeProfileModal();
@@ -9745,7 +9766,7 @@ Guidelines:
         this.closePortfolioModal();
         this.closeTourModal();
         this.closeHotPotatoFullscreenModal();
-        document.getElementById('leaderboard-modal')?.classList.remove('open');
+        this.closeLeaderboardModal();
         document.body.classList.remove('has-modal-open');
         if (this.lastFocusedElement && typeof this.lastFocusedElement.focus === 'function') {
           this.lastFocusedElement.focus();
@@ -9767,7 +9788,9 @@ Guidelines:
           }
         }
       }
-    });
+    };
+    document.addEventListener('keydown', handleModalKeydown);
+    window.addEventListener('keydown', handleModalKeydown);
 
     // Hero Dual Action CTAs (FF-10)
     document.getElementById('hero-primary-cta')?.addEventListener('click', () => {
@@ -12156,7 +12179,8 @@ Guidelines:
       const comment = (section.querySelector('#feedback-comment-input')?.value || '').trim();
 
       if (!author || !comment) {
-        alert('Please enter your name and a brief review.');
+        sound.playWrong();
+        showToast('Please enter your name and a brief review.', 'warning');
         return;
       }
 
