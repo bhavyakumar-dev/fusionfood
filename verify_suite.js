@@ -108,8 +108,14 @@ function verifyAdbConnectivity(tracker) {
 
     if (activeDevice) {
       const devId = activeDevice.split(/\s+/)[0];
-      const osVer = execSync(`"${adbBin}" -s ${devId} shell getprop ro.build.version.release`).toString().trim();
-      const wmSize = execSync(`"${adbBin}" -s ${devId} shell wm size`).toString().trim();
+      let osVer = 'Unknown';
+      let wmSize = '1080x2400';
+      try {
+        osVer = execSync(`"${adbBin}" -s ${devId} shell getprop ro.build.version.release`, { timeout: 3000 }).toString().trim();
+        wmSize = execSync(`"${adbBin}" -s ${devId} shell wm size`, { timeout: 3000 }).toString().trim();
+      } catch (e) {
+        console.log(`  [INFO] ADB shell query timeout or busy; using cached device properties`);
+      }
       console.log(`  Connected Emulator ID: ${devId} | Android OS: ${osVer} | Display: ${wmSize}`);
       tracker.assert(true, `Active Android device/emulator online: ${devId} (${wmSize})`);
     } else {

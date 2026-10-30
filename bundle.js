@@ -5375,16 +5375,16 @@ class FusionApp {
 
           <!-- Collapsible API Key Box — hidden by default, toggle via button -->
           <div class="api-key-box" id="api-key-config-box" style="display:none;">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.35rem;">
               <span style="font-weight:700;">Google Gemini API Key:</span>
-              <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" style="font-size:0.76rem; color:var(--primary); font-weight:700;">
+              <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" style="font-size:0.76rem; color:var(--primary); font-weight:700; white-space:nowrap;">
                 Get Free Key ↗
               </a>
             </div>
-            <div class="api-key-input-row">
-              <input type="password" id="gemini-api-key-input" class="api-key-input" placeholder="Paste AI Studio API key (AIzaSy...)" value="${this.getGeminiKey()}">
-              <button class="icon-btn" id="show-hide-key-btn" title="Toggle visibility" style="width:34px; height:34px; font-size:0.9rem;">👁️</button>
-              <button class="btn btn-primary" id="save-gemini-key-btn" style="padding:0.35rem 0.85rem; font-size:0.8rem;">Save</button>
+            <div class="api-key-input-row" style="display:flex; flex-wrap:wrap; gap:0.4rem;">
+              <input type="password" id="gemini-api-key-input" class="api-key-input" placeholder="Paste AI Studio API key (AIzaSy...)" value="${this.getGeminiKey()}" style="min-width:0; flex:1 1 180px;">
+              <button class="icon-btn" id="show-hide-key-btn" title="Toggle visibility" style="width:34px; height:34px; font-size:0.9rem; flex-shrink:0;">👁️</button>
+              <button class="btn btn-primary" id="save-gemini-key-btn" style="padding:0.35rem 0.85rem; font-size:0.8rem; flex-shrink:0;">Save</button>
             </div>
             <div style="margin-top:0.6rem; border-top:1px dashed var(--border-color); padding-top:0.6rem;">
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem;">
