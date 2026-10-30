@@ -4350,6 +4350,7 @@ class FusionApp {
   }
 
   switchMainTab(tabId, playSound = true) {
+    if (tabId !== 'games' && this.pauseHotPotatoSession) this.pauseHotPotatoSession();
     if (playSound) sound.playClick();
     if (this.triviaTimer) {
       clearInterval(this.triviaTimer);
@@ -4805,12 +4806,14 @@ class FusionApp {
       { id: 'spinScience', name: 'Science Wheel', icon: 'science', desc: 'Food Chemistry Explanations', activeDesc: 'Spin & discover reactions' }
     ];
 
+    track.setAttribute('role', 'tablist');
+    track.setAttribute('aria-label', 'Arcade games');
     track.innerHTML = games.map(g => {
       const isEnabled = this.state.gameToggles[g.id];
       const isActive = this.state.activeGameTab === g.id;
 
       return `
-        <button type="button" class="game-card-tab ${isActive ? 'active' : ''}" data-game-id="${g.id}" role="tab" aria-selected="${isActive ? 'true' : 'false'}" aria-label="${g.name}: ${g.desc}">
+        <button type="button" class="game-card-tab ${isActive ? 'active' : ''}" id="game-tab-${g.id}" data-game-id="${g.id}" role="tab" aria-selected="${isActive ? 'true' : 'false'}" aria-controls="play-arena-container" tabindex="${isActive ? '0' : '-1'}" aria-label="${g.name}: ${g.desc}">
           ${!isEnabled ? `
             <div class="game-disabled-overlay">
               <span style="font-size:1.5rem;">🔒</span>
@@ -4874,6 +4877,7 @@ class FusionApp {
   }
 
   renderActiveGame() {
+    this.pauseHotPotatoSession = null;
     if (this.hotPotatoLoop) { cancelAnimationFrame(this.hotPotatoLoop); this.hotPotatoLoop = null; }
     if (this.hotPotatoKeyHandler) { window.removeEventListener('keydown', this.hotPotatoKeyHandler); this.hotPotatoKeyHandler = null; }
     const arena = document.getElementById('play-arena-container');
@@ -4892,7 +4896,7 @@ class FusionApp {
         arena.innerHTML = `
           <div style="text-align:center; padding:3rem 1rem;">
             <h2>All games are currently toggled off!</h2>
-            <p style="color:var(--text-muted); margin:1rem 0;">Click the Admin Lock icon in the header and enter your secret Admin PIN to turn on any game.</p>
+            <p style="color:var(--text-muted); margin:1rem 0;">Open Tools → Admin Settings to choose which games appear.</p>
             <button class="btn btn-primary" id="open-admin-from-arena">Open Admin Controls</button>
           </div>
         `;
@@ -6155,6 +6159,7 @@ class FusionApp {
         </div>
       `;
 
+      this.pauseHotPotatoSession = pauseGame;
       arena.querySelector('#hp-resume-btn')?.addEventListener('click', () => {
         sound.playClick();
         startOverlay.style.display = 'none';
