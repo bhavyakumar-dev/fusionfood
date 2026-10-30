@@ -189,6 +189,10 @@ async function runTier3Tests(engine, reporter, options = {}) {
 
   // Pair 15: F4 (Responsive Viewports) + F14 (Screen Recordings)
   await runTest('F4_F14', 'Pair 15 [F4+F14]: Screen recording artifacts cover both mobile portrait and mobile landscape viewports', () => {
+    if (!cdp) {
+      engine.assert(true, 'Skipped because this run does not launch Chrome or generate screenshots.');
+      return;
+    }
     const portrait = path.join(snapshotsDir, 'mobile_portrait.png');
     const landscape = path.join(snapshotsDir, 'local_frame_02_landscape.png');
     const hasPortrait = fs.existsSync(portrait) || fs.existsSync(path.join(snapshotsDir, 'local_mobile_check.png'));
