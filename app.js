@@ -8670,29 +8670,58 @@ Guidelines:
     document.body.classList.remove('has-modal-open');
   }
 
+  async hashLocalAdminPin(pin, saltHex) {
+    const salt = Uint8Array.from((saltHex.match(/.{2}/g) || []), pair => parseInt(pair, 16));
+    const key = await window.crypto.subtle.importKey('raw', new TextEncoder().encode(pin), 'PBKDF2', false, ['deriveBits']);
+    const bits = await window.crypto.subtle.deriveBits({ name: 'PBKDF2', salt, iterations: 120000, hash: 'SHA-256' }, key, 256);
+    return Array.from(new Uint8Array(bits), byte => byte.toString(16).padStart(2, '0')).join('');
+  }
+
+  async saveLocalAdminPin(pin) {
+    const salt = Array.from(window.crypto.getRandomValues(new Uint8Array(16)), byte => byte.toString(16).padStart(2, '0')).join('');
+    const digest = await this.hashLocalAdminPin(pin, salt);
+    localStorage.setItem('fusion_admin_pin_v1', salt + ':' + digest);
+  }
+
   renderAdminModalContent(isAuthenticated = false) {
     const body = document.getElementById('admin-modal-body');
     if (!body) return;
 
     if (!isAuthenticated) {
-      body.innerHTML = `
-        <p style="font-size:0.92rem; color:var(--text-muted); margin-bottom:1.25rem; line-height:1.5;">
-          Enter your secret Admin PIN to manage game visibility toggles, change settings, or reset household scores.
-        </p>
-        <div class="pin-input-group">
-          <input type="password" id="admin-pin-field" class="pin-input" placeholder="••••••••" maxlength="16" aria-label="Enter 8-character Secret Admin PIN" />
-          <button class="btn btn-primary" id="admin-submit-pin-btn">Unlock 🔓</button>
-        </div>
-        <div id="pin-error-msg" class="admin-error-text" style="font-size:0.85rem; font-weight:700; min-height:22px;"></div>
-      `;
+      const storedPin = localStorage.getItem('fusion_admin_pin_v1');
+      const isFirstSetup = !storedPin;
+      body.innerHTML = [
+        '<div class="admin-lock-intro">',
+        '<h4>' + (isFirstSetup ? 'Create a local admin PIN' : 'Unlock local admin settings') + '</h4>',
+        '<p>' + (isFirstSetup ? 'Set a new PIN for this browser. The old default credential has been retired.' : 'Enter the PIN configured on this device.') + '</p>',
+        '<p class="admin-lock-note">This is a local interface lock only. It does not authenticate or protect server-side database operations.</p>',
+        '</div>',
+        '<div class="pin-input-group">',
+        '<label class="sr-only" for="admin-pin-field">' + (isFirstSetup ? 'Create admin PIN' : 'Admin PIN') + '</label>',
+        '<input type="password" id="admin-pin-field" class="pin-input" placeholder="' + (isFirstSetup ? 'Create an 8+ character PIN' : 'Enter local PIN') + '" minlength="8" maxlength="64" autocomplete="current-password" />',
+        '<button type="button" class="btn btn-primary" id="admin-submit-pin-btn">' + (isFirstSetup ? 'Save PIN' : 'Unlock') + '</button>',
+        '</div>',
+        '<div id="pin-error-msg" class="admin-error-text" role="status" aria-live="polite"></div>'
+      ].join('');
 
-      document.getElementById('admin-submit-pin-btn')?.addEventListener('click', () => {
-        const val = document.getElementById('admin-pin-field')?.value;
-        if (val === ) {
-          sound.playChime();
-          showToast('Admin Mode Unlocked', 'success');
-          this.renderAdminModalContent(true);
-        } else {
+      document.getElementById('admin-submit-pin-btn')?.addEventListener('click', async () => {
+        const value = (document.getElementById('admin-pin-field')?.value || '').trim();
+        const message = document.getElementById('pin-error-msg');
+        if (!window.crypto?.subtle) { message.textContent = 'Secure PIN setup requires HTTPS in a modern browser.'; return; }
+        if (isFirstSetup) {
+          if (value.length < 8) { message.textContent = 'Use at least 8 characters for your new PIN.'; return; }
+          try { await this.saveLocalAdminPin(value); sound.playChime(); this.renderAdminModalContent(true); showToast('Local admin PIN created.', 'success'); }
+          catch (error) { message.textContent = 'Could not store the PIN securely in this browser.'; }
+          return;
+        }
+        try {
+          const parts = storedPin.split(':');
+          const digest = parts.length === 2 ? await this.hashLocalAdminPin(value, parts[0]) : '';
+          if (parts.length === 2 && digest === parts[1]) { sound.playChime(); this.renderAdminModalContent(true); showToast('Local admin settings unlocked.', 'success'); }
+          else { sound.playWrong(); message.textContent = 'Incorrect PIN. Please try again.'; }
+        } catch (error) { message.textContent = 'Unable to verify this local PIN in the current browser.'; }
+      });
+    } else {
           sound.playWrong();
           document.getElementById('pin-error-msg').innerText = '❌ Incorrect PIN. Please try again.';
         }
@@ -8888,10 +8917,10 @@ Guidelines:
           <!-- Secret Admin PIN -->
           <div style="background:var(--bg-parchment); border:1.5px solid var(--border-color); border-radius:var(--radius-sm); padding:0.95rem; margin-bottom:1.25rem;">
             <label style="font-size:0.82rem; font-weight:800; color:var(--text-muted); display:block; margin-bottom:0.35rem;">
-              🔑 Update Secret Admin PIN:
+              Change local admin PIN:
             </label>
             <div style="display:flex; gap:0.5rem;">
-              <input type="password" id="new-admin-pin" class="pin-input" style="padding:0.45rem 0.75rem; font-size:0.9rem;" placeholder="New PIN" />
+              <input type="password" id="new-admin-pin" class="pin-input" style="padding:0.45rem 0.75rem; font-size:0.9rem;" placeholder="New PIN (8+ characters)" minlength="8" maxlength="64" />
               <button class="btn btn-secondary" id="save-new-pin-btn" style="padding:0.45rem 0.85rem; font-size:0.82rem;">Update PIN</button>
             </div>
           </div>
@@ -9158,18 +9187,21 @@ Guidelines:
           }
         });
 
-        // Update PIN
-        document.getElementById('save-new-pin-btn')?.addEventListener('click', () => {
+        // Change the browser-local interface PIN.
+        document.getElementById('save-new-pin-btn')?.addEventListener('click', async () => {
           const newPin = document.getElementById('new-admin-pin')?.value.trim();
-          if (newPin && newPin.length >= 4) {
-             = newPin;
-            this.saveState();
-            sound.playCorrect();
-            showToast('Admin PIN updated securely!', 'success');
-            document.getElementById('new-admin-pin').value = '';
+          if (newPin && newPin.length >= 8) {
+            try {
+              await this.saveLocalAdminPin(newPin);
+              sound.playCorrect();
+              showToast('Local admin PIN updated.', 'success');
+              document.getElementById('new-admin-pin').value = '';
+            } catch (error) {
+              showToast('Secure local PIN storage is unavailable in this browser.', 'error');
+            }
           } else {
             sound.playWrong();
-            showToast('Please enter a PIN with at least 4 characters.', 'error');
+            showToast('Please use at least 8 characters.', 'error');
           }
         });
 
@@ -9278,7 +9310,7 @@ Guidelines:
 
         // Reset Admin Defaults
         document.getElementById('reset-admin-btn')?.addEventListener('click', () => {
-          if (confirm('Reset Admin PIN back to default and enable all features?')) {
+          if (confirm('Clear the local admin PIN and restore all feature defaults?')) {
             sound.playCorrect();
             localStorage.removeItem('fusion_admin_pin_v1');
             this.state.gameToggles = {
@@ -9294,7 +9326,7 @@ Guidelines:
             this.renderGameTabs();
             this.renderActiveGame();
             this.renderAdminModalContent(true);
-            showToast('Admin PIN and Game Toggles reset to default!', 'success');
+            showToast('Local admin PIN cleared and feature defaults restored.', 'success');
           }
         });
       } else if (this.adminSubTab === 'api') {
