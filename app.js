@@ -4486,6 +4486,64 @@ class FusionApp {
     document.body.classList.remove('has-modal-open');
   }
 
+  openLeaderboardModal() {
+    sound.playClick();
+    const modal = document.getElementById('leaderboard-modal');
+    if (!modal) return;
+    modal.classList.add('open');
+    document.body.classList.add('has-modal-open');
+    this.renderLeaderboardModalContent();
+  }
+
+  closeLeaderboardModal() {
+    sound.playClick();
+    const modal = document.getElementById('leaderboard-modal');
+    if (!modal) return;
+    modal.classList.remove('open');
+    document.body.classList.remove('has-modal-open');
+  }
+
+  renderLeaderboardModalContent() {
+    const body = document.getElementById('leaderboard-modal-body');
+    if (!body) return;
+    const list = this.getLeaderboardData ? this.getLeaderboardData() : (this.state.leaderboard || []);
+    body.innerHTML = `
+      <div style="padding:0.5rem 0;">
+        <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1rem;">Top ranked chefs across all interactive arcade labs and kitchen challenges.</p>
+        <div class="table-responsive-wrapper">
+          <table class="table" style="width:100%; text-align:left; border-collapse:collapse;">
+            <thead>
+              <tr style="border-bottom:2px solid var(--border-color);">
+                <th style="padding:0.6rem 0.5rem;">Rank</th>
+                <th style="padding:0.6rem 0.5rem;">Chef</th>
+                <th style="padding:0.6rem 0.5rem;">Game</th>
+                <th style="padding:0.6rem 0.5rem;">Score</th>
+                <th style="padding:0.6rem 0.5rem;">Badge</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${list.length === 0 ? `
+                <tr>
+                  <td colspan="5" style="text-align:center; padding:1.5rem; color:var(--text-muted);">
+                    No local scores recorded yet. Complete games to appear on the roster!
+                  </td>
+                </tr>
+              ` : list.slice(0, 10).map((r, i) => `
+                <tr style="border-bottom:1px solid var(--border-color);">
+                  <td style="padding:0.5rem; font-weight:800; color:var(--primary);">#${i + 1}</td>
+                  <td style="padding:0.5rem; font-weight:700;">${this.escapeHtml(r.name || 'Anonymous')}</td>
+                  <td style="padding:0.5rem; color:var(--text-muted);">${this.escapeHtml(r.game || 'Arcade')}</td>
+                  <td style="padding:0.5rem; font-weight:800; color:var(--text-main);">${r.score || 0}</td>
+                  <td style="padding:0.5rem;">${r.badge || '🌟'}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  }
+
   renderProfileModalContent() {
     const body = document.getElementById('profile-modal-body');
     if (!body) return;
@@ -4624,11 +4682,13 @@ class FusionApp {
         this.db.set(DB_CONFIG.STORE_TELEMETRY, entry).catch(() => {});
       }
       // Sync telemetry to server (/api/interactions) without blocking
-      fetch('/api/interactions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(entry)
-      }).catch(() => {});
+      if (typeof window !== 'undefined' && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {
+        fetch('/api/interactions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(entry)
+        }).catch(() => {});
+      }
     } catch (e) {}
   }
 
@@ -8346,6 +8406,9 @@ Guidelines:
     `;
 
     try {
+      if (typeof window !== 'undefined' && window.location.protocol !== 'http:' && window.location.protocol !== 'https:') {
+        throw new Error('Local file protocol - using fallback rankings');
+      }
       const apiFilter = filter === 'ladder' ? 'all' : filter;
       const response = await fetch(`/api/leaderboard?filter=${encodeURIComponent(apiFilter)}&limit=25`, {
         headers: { 'Accept': 'application/json' }
@@ -8557,11 +8620,16 @@ Guidelines:
     }
 
     try {
-      const res = await fetch('/api/submit-score', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
+      if (typeof window !== 'undefined' && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {
+        const res = await fetch('/api/submit-score', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) {
+          console.warn(`submit-score returned HTTP ${res.status}`);
+        }
+      }
       if (!res.ok) {
         console.warn(`submit-score returned HTTP ${res.status}`);
       }
@@ -9590,6 +9658,23 @@ Guidelines:
     document.getElementById('close-profile-modal-btn')?.addEventListener('click', () => this.closeProfileModal());
     document.getElementById('profile-modal')?.addEventListener('click', (e) => {
       if (e.target.id === 'profile-modal') this.closeProfileModal();
+    });
+    document.getElementById('close-leaderboard-modal-btn')?.addEventListener('click', () => this.closeLeaderboardModal());
+    document.getElementById('leaderboard-modal')?.addEventListener('click', (e) => {
+      if (e.target.id === 'leaderboard-modal') this.closeLeaderboardModal();
+    });
+
+    // M-10: Mobile keyboard handling - scroll inputs into view on virtual keyboard appearance
+    document.addEventListener('focusin', (e) => {
+      if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT')) {
+        if (window.innerWidth <= 768) {
+          setTimeout(() => {
+            try {
+              e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } catch (err) {}
+          }, 300);
+        }
+      }
     });
     document.getElementById('admin-modal-open-btn')?.addEventListener('click', () => this.openAdminModal());
     document.getElementById('admin-footer-link')?.addEventListener('click', () => this.openAdminModal());
@@ -12094,11 +12179,13 @@ Guidelines:
       }
 
       // Sync to /api/feedback without blocking
-      fetch('/api/feedback', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newReview)
-      }).catch(() => {});
+      if (typeof window !== 'undefined' && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {
+        fetch('/api/feedback', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newReview)
+        }).catch(() => {});
+      }
 
       showToast('Thank you! Your review has been added.', 'success');
       this.renderFeedbackSection();
