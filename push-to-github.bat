@@ -4,7 +4,7 @@ cd /d "%~dp0"
 
 echo ==========================================================
 echo   Fusion Food Family Lab - GitHub Push & Setup
-echo   Repository: https://github.com/shivanktoper/fusionfood
+echo   Repository: https://github.com/shivanktoper/v5
 echo   Account (this folder only): shivanktoper ^<cantibanti7@gmail.com^>
 echo ==========================================================
 echo.
@@ -24,7 +24,7 @@ if %errorlevel% neq 0 (
 :: Configure local repo scope only
 git config --local user.name "shivanktoper"
 git config --local user.email "cantibanti7@gmail.com"
-git remote set-url origin https://github.com/shivanktoper/fusionfood.git
+git remote set-url origin https://github.com/shivanktoper/v5.git
 
 echo [*] Remote repository:
 git remote -v
@@ -40,7 +40,7 @@ if %errorlevel% equ 0 (
     echo.
     echo ==========================================================
     echo   SUCCESS: All code pushed to GitHub successfully!
-    echo   View online: https://github.com/shivanktoper/fusionfood
+    echo   View online: https://github.com/shivanktoper/v5
     echo ==========================================================
 ) else (
     echo.

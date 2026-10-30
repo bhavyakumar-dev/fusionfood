@@ -1,5 +1,10 @@
 // Fusion Food Family Lab - Complete Standalone Bundle (Zero CORS, 100% Offline Compatible)
 
+// GitHub Pages is static hosting: no Cloudflare Functions or D1 database are available there.
+function isGitHubPagesStaticHost() {
+  return typeof window !== 'undefined' && window.location.hostname.toLowerCase().endsWith('github.io');
+}
+
 // Guard offline test fallback fetches to prevent uncaught net::ERR_CONNECTION_REFUSED in browser error logs
 if (typeof window !== 'undefined' && window.fetch) {
   const _originalFetch = window.fetch;
@@ -2294,6 +2299,19 @@ class FusionDatabase {
   }
 }
 
+function fusionFoodIcon(name, size = 25) {
+  const drawings = {
+    plate: '<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="5.5"/><path d="M3 4v16M1 7h4M21 4v16"/>',
+    audio: '<path d="M4 10v4h4l5 4V6l-5 4H4z"/><path d="M17 9a5 5 0 0 1 0 6M19.5 6.5a8.5 8.5 0 0 1 0 11"/>',
+    brain: '<path d="M9 5a3 3 0 0 0-5 2 3 3 0 0 0 0 5 3 3 0 0 0 2 5 3 3 0 0 0 5 2V5z"/><path d="M15 5a3 3 0 0 1 5 2 3 3 0 0 1 0 5 3 3 0 0 1-2 5 3 3 0 0 1-5 2V5z"/><path d="M9 9h2m2 6h2M9 15h2m2-6h2"/>',
+    map: '<path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3V6z"/><path d="M9 3v15m6-12v15"/>',
+    potato: '<path d="M5 8c2-4 10-5 14-1 4 4 2 10-2 12-5 3-12 1-14-4-1-2 0-5 2-7z"/><path d="M8 10h.01M15 9h.01M10 15c1.5 1 3 1 4 0"/>',
+    science: '<path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3"/><path d="M8 15h8m-6-3h4"/>'
+  };
+  const path = drawings[name] || drawings.plate;
+  return '<svg class="ui-icon" width="' + size + '" height="' + size + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' + path + '</svg>';
+}
+
 const DEFAULT_STATE = {
   currentProfile: 'kid',
   currentTab: 'games', // 'games', 'kitchen', 'leaderboard'
@@ -2352,59 +2370,15 @@ const DEFAULT_STATE = {
     voiceId: 'en-IN-Wavenet-D',
     elevenLabsKey: ''
   },
-  kidScoreVerifications: [
-    {
-      scoreId: 'sc_kid_01',
-      playerName: 'Aarav (Kid Chef)',
-      game: 'Hot Potato Rush',
-      score: 480,
-      timestamp: '2026-10-30T11:00:00.000Z',
-      verified: true,
-      verifiedBy: 'Chef Parent'
-    },
-    {
-      scoreId: 'sc_kid_02',
-      playerName: 'Rhea (Kid Chef)',
-      game: 'Family Trivia Quiz',
-      score: 950,
-      timestamp: '2026-10-30T11:15:00.000Z',
-      verified: false,
-      verifiedBy: null
-    }
-  ],
+  kidScoreVerifications: [],
   faceHashes: {},
-  guestReviews: [
-    {
-      id: 'rev_01',
-      author: 'Chef Ranveer B.',
-      rating: 5,
-      comment: 'Incredible fusion concepts! The paneer tikka tacos and 3D molecular spice chemistry make cooking captivating for kids.',
-      date: '2026-10-28',
-      role: 'Master Chef Mentor'
-    },
-    {
-      id: 'rev_02',
-      author: 'Ananya & Kabir',
-      rating: 5,
-      comment: 'Hot Potato Rush was a hit with our family on the weekend. The audio sizzle and coals physics feel like an authentic arcade game!',
-      date: '2026-10-29',
-      role: 'Family Chefs'
-    },
-    {
-      id: 'rev_03',
-      author: 'Dr. Meenakshi S.',
-      rating: 5,
-      comment: 'The Indian substitutes for rare global ingredients (like paneer for queso blanco) make international cooking accessible to any Indian kitchen.',
-      date: '2026-10-30',
-      role: 'Culinary Nutritionist'
-    }
-  ],
+  guestReviews: [],
   apiKeys: [],
   activeGameTab: 'buildDish',
   recipeFilter: 'all',
   recipeCompletedSteps: {},
   completedCityQuests: [],
-  theme: 'light',
+  theme: 'dark',
   onboarded: true
 };
 
@@ -4117,6 +4091,15 @@ class FusionApp {
   constructor() {
     this.db = new FusionDatabase();
     this.state = this.loadState();
+    if (typeof window !== 'undefined') {
+      const routeParams = new URLSearchParams(window.location.search);
+      const routeVersion = (routeParams.get('v') || routeParams.get('version') || '').toLowerCase();
+      let routePath = (window.location.pathname || '').toLowerCase();
+      while (routePath.endsWith('/')) routePath = routePath.slice(0, -1);
+      if (['1', 'v1'].includes(routeVersion) || routePath.endsWith('/v1')) this.state.appVersion = 'v1';
+      else if (['2', 'v2'].includes(routeVersion) || routePath.endsWith('/v2')) this.state.appVersion = 'v2';
+      else if (['3', 'v3'].includes(routeVersion) || routePath.endsWith('/v3')) this.state.appVersion = 'v3';
+    }
     if (!this.state.completedCityQuests) {
       this.state.completedCityQuests = [];
     }
@@ -4149,19 +4132,21 @@ class FusionApp {
         if (parsed.gameToggles && parsed.gameToggles.indiaMap === undefined) {
           parsed.gameToggles.indiaMap = true;
         }
-        if (!Array.isArray(parsed.apiKeys)) parsed.apiKeys = [];
-        // Discard demo credentials and never keep bearer tokens in browser storage.
-        parsed.apiKeys = parsed.apiKeys
-          .filter(key => !['key_master_admin', 'key_public_ro'].includes(key?.keyId))
-          .map(({ token, ...metadata }) => metadata);
-        // Remove the old client-side PIN field from legacy localStorage records.
         delete parsed.adminPin;
+        if (Array.isArray(parsed.apiKeys)) {
+          parsed.apiKeys = parsed.apiKeys.filter(key => !['key_master_admin', 'key_public_ro'].includes(key.keyId) && !/^ff_live_(adm|ro)_/.test(key.token || ''));
+        } else {
+          parsed.apiKeys = [];
+        }
+        if (Array.isArray(parsed.guestReviews)) parsed.guestReviews = parsed.guestReviews.filter(r => !['rev_01', 'rev_02', 'rev_03'].includes(r.id));
+        else parsed.guestReviews = [];
+        if (Array.isArray(parsed.kidScoreVerifications)) parsed.kidScoreVerifications = parsed.kidScoreVerifications.filter(r => !['sc_kid_01', 'sc_kid_02'].includes(r.scoreId));
+        else parsed.kidScoreVerifications = [];
         if (!parsed.v2Features) {
           parsed.v2Features = { ...DEFAULT_STATE.v2Features };
         }
-        if (!parsed.kidScoreVerifications || !Array.isArray(parsed.kidScoreVerifications)) {
-          parsed.kidScoreVerifications = [...DEFAULT_STATE.kidScoreVerifications];
-        }
+        if (!Array.isArray(parsed.guestReviews)) parsed.guestReviews = [];
+        if (!Array.isArray(parsed.kidScoreVerifications)) parsed.kidScoreVerifications = [];
         if (!parsed.faceHashes) {
           parsed.faceHashes = {};
         }
@@ -4282,19 +4267,6 @@ class FusionApp {
 
     // 5. Re-render all views
     
-    // Detect URL version parameter or path (/v1, /v2, /v3 or ?v=1, ?v=2, ?v=3)
-    if (typeof window !== 'undefined') {
-      const urlParams = new URLSearchParams(window.location.search);
-      const vParam = urlParams.get('v') || urlParams.get('version');
-      const pathname = (window.location.pathname || '').toLowerCase();
-      if (pathname.includes('/v1') || vParam === '1' || vParam === 'v1') {
-        this.state.appVersion = 'v1';
-      } else if (pathname.includes('/v3') || vParam === '3' || vParam === 'v3') {
-        this.state.appVersion = 'v3';
-      } else if (pathname.includes('/v2') || vParam === '2' || vParam === 'v2') {
-        this.state.appVersion = 'v2';
-      }
-    }
     this.applyTheme(this.state.theme);
     this.renderHeader();
     this.renderProgressStrip();
@@ -4325,13 +4297,6 @@ class FusionApp {
     this.initScrolltideShowcase();
     this.updateNavAccessibility();
     this.applyV2FeatureVisibility();
-
-    // Auto-prompt onboarding modal on first session if not onboarded
-    if (this.state.onboarded === false) {
-      setTimeout(() => {
-        this.openProfileModal();
-      }, 400);
-    }
   }
 
   // ========================================================
@@ -4347,6 +4312,33 @@ class FusionApp {
         this.switchMainTab(tabTarget);
       });
     });
+
+    // WAI-ARIA APG Roving Tabindex & Arrow Key Navigation
+    const navBar = document.getElementById('main-nav-bar');
+    if (navBar) {
+      navBar.addEventListener('keydown', (e) => {
+        const tabs = Array.from(navBar.querySelectorAll('[role="tab"]'));
+        const currIdx = tabs.indexOf(document.activeElement);
+        if (currIdx === -1) return;
+
+        let targetIdx = -1;
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+          targetIdx = (currIdx + 1) % tabs.length;
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+          targetIdx = (currIdx - 1 + tabs.length) % tabs.length;
+        } else if (e.key === 'Home') {
+          targetIdx = 0;
+        } else if (e.key === 'End') {
+          targetIdx = tabs.length - 1;
+        }
+
+        if (targetIdx !== -1) {
+          e.preventDefault();
+          tabs[targetIdx].focus();
+          tabs[targetIdx].click();
+        }
+      });
+    }
 
     // Also support footer links
     document.querySelectorAll('.footer-nav-link[data-tab]').forEach(link => {
@@ -4368,6 +4360,7 @@ class FusionApp {
   }
 
   switchMainTab(tabId, playSound = true) {
+    if (tabId !== 'games' && this.pauseHotPotatoSession) this.pauseHotPotatoSession();
     if (playSound) sound.playClick();
     if (this.triviaTimer) {
       clearInterval(this.triviaTimer);
@@ -4376,11 +4369,12 @@ class FusionApp {
     this.state.currentTab = tabId;
     this.saveState();
 
-    // Update Nav Buttons across both site-nav and mobile-bottom-nav
+    // Update Nav Buttons across both site-nav and mobile-bottom-nav with roving tabindex
     document.querySelectorAll('.nav-link[data-tab-target]').forEach(btn => {
       const isTarget = btn.getAttribute('data-tab-target') === tabId;
       btn.classList.toggle('active', isTarget);
       btn.setAttribute('aria-selected', isTarget ? 'true' : 'false');
+      btn.setAttribute('tabindex', isTarget ? '0' : '-1');
     });
 
     // Update Tab Panes
@@ -4676,7 +4670,7 @@ class FusionApp {
         this.db.set(DB_CONFIG.STORE_TELEMETRY, entry).catch(() => {});
       }
       // Sync telemetry to server (/api/interactions) without blocking
-      if (typeof window !== 'undefined' && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {
+      if (typeof window !== 'undefined' && !isGitHubPagesStaticHost() && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {
         fetch('/api/interactions', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -4814,20 +4808,22 @@ class FusionApp {
     if (!track) return;
 
     const games = [
-      { id: 'buildDish', name: 'Build-a-Dish', icon: '🥘', desc: 'Pantry Rush & Recipe Simulation', activeDesc: 'Timed hunt + step sequence' },
-      { id: 'pronunciation', name: 'Pronounce Lab', icon: '🗣️', desc: 'Phonetic Matching & Voice Check', activeDesc: 'Listen, reorder & speak' },
-      { id: 'trivia', name: 'Family Trivia', icon: '🧠', desc: '10 Qs with Soft Timer & Hints', activeDesc: 'Food science & origins' },
-      { id: 'indiaMap', name: 'India Fusion Map', icon: '🗺️', desc: 'Metro Quests & Bazaar Markets', activeDesc: 'City quests & ingredients' },
-      { id: 'hotPotato', name: 'Hot Potato Rush', icon: '🥔', desc: 'Whack, Cook in Coals & Serve Golden', activeDesc: 'Cook on coals, serve golden' },
-      { id: 'spinScience', name: 'Science Wheel', icon: '🎡', desc: 'Food Chemistry Explanations', activeDesc: 'Spin & discover reactions' }
+      { id: 'buildDish', name: 'Build-a-Dish', icon: 'plate', desc: 'Pantry Rush & Recipe Simulation', activeDesc: 'Timed hunt + step sequence' },
+      { id: 'pronunciation', name: 'Pronounce Lab', icon: 'audio', desc: 'Phonetic Matching & Voice Check', activeDesc: 'Listen, reorder & speak' },
+      { id: 'trivia', name: 'Family Trivia', icon: 'brain', desc: '10 Qs with Soft Timer & Hints', activeDesc: 'Food science & origins' },
+      { id: 'indiaMap', name: 'India Fusion Map', icon: 'map', desc: 'Metro Quests & Bazaar Markets', activeDesc: 'City quests & ingredients' },
+      { id: 'hotPotato', name: 'Hot Potato Rush', icon: 'potato', desc: 'Whack, Cook in Coals & Serve Golden', activeDesc: '60-second round' },
+      { id: 'spinScience', name: 'Science Wheel', icon: 'science', desc: 'Food Chemistry Explanations', activeDesc: 'Spin & discover reactions' }
     ];
 
+    track.setAttribute('role', 'tablist');
+    track.setAttribute('aria-label', 'Arcade games');
     track.innerHTML = games.map(g => {
       const isEnabled = this.state.gameToggles[g.id];
       const isActive = this.state.activeGameTab === g.id;
 
       return `
-        <button type="button" class="game-card-tab ${isActive ? 'active' : ''}" data-game-id="${g.id}" role="tab" aria-selected="${isActive ? 'true' : 'false'}" aria-label="${g.name}: ${g.desc}">
+        <button type="button" class="game-card-tab ${isActive ? 'active' : ''}" id="game-tab-${g.id}" data-game-id="${g.id}" role="tab" aria-selected="${isActive ? 'true' : 'false'}" aria-controls="play-arena-container" tabindex="${isActive ? '0' : '-1'}" aria-label="${g.name}: ${g.desc}">
           ${!isEnabled ? `
             <div class="game-disabled-overlay">
               <span style="font-size:1.5rem;">🔒</span>
@@ -4835,7 +4831,7 @@ class FusionApp {
             </div>
           ` : ''}
           <div>
-            <div class="game-tab-icon">${g.icon}</div>
+            <div class="game-tab-icon">${fusionFoodIcon(g.icon, 25)}</div>
             <h3>${g.name}</h3>
             <p>${g.desc}</p>
           </div>
@@ -4891,6 +4887,9 @@ class FusionApp {
   }
 
   renderActiveGame() {
+    this.pauseHotPotatoSession = null;
+    if (this.hotPotatoLoop) { cancelAnimationFrame(this.hotPotatoLoop); this.hotPotatoLoop = null; }
+    if (this.hotPotatoKeyHandler) { window.removeEventListener('keydown', this.hotPotatoKeyHandler); this.hotPotatoKeyHandler = null; }
     const arena = document.getElementById('play-arena-container');
     if (!arena) return;
 
@@ -4907,7 +4906,7 @@ class FusionApp {
         arena.innerHTML = `
           <div style="text-align:center; padding:3rem 1rem;">
             <h2>All games are currently toggled off!</h2>
-            <p style="color:var(--text-muted); margin:1rem 0;">Click the Admin Lock icon in the header and enter your secret Admin PIN to turn on any game.</p>
+            <p style="color:var(--text-muted); margin:1rem 0;">Open Tools → Admin Settings to choose which games appear.</p>
             <button class="btn btn-primary" id="open-admin-from-arena">Open Admin Controls</button>
           </div>
         `;
@@ -5004,7 +5003,7 @@ class FusionApp {
               }).join('')}
             </div>
 
-            <div id="pantry-feedback" style="margin-top:1rem; min-height:48px; font-size:0.88rem; font-weight:700;">${this.lastPantryFeedback || ''}</div>
+            <div id="pantry-feedback" role="status" aria-live="polite" aria-atomic="true" style="margin-top:1rem; min-height:48px; font-size:0.88rem; font-weight:700;">${this.lastPantryFeedback || ''}</div>
               <div id="dish-3d-canvas-container" class="dish-3d-canvas-container" style="min-height:160px; margin-top:0.75rem;"></div>
           </div>
 
@@ -5160,7 +5159,7 @@ class FusionApp {
             </button>
           </div>
 
-          <div id="mic-result" style="font-size:0.9rem; min-height:26px; font-weight:700; color:var(--secondary);"></div>
+          <div id="mic-result" role="status" aria-live="polite" aria-atomic="true" style="font-size:0.9rem; min-height:26px; font-weight:700; color:var(--secondary);"></div>
         </div>
 
         <!-- Syllable Builder -->
@@ -5491,7 +5490,7 @@ class FusionApp {
             <strong>👨‍🍳 Parent Clue:</strong> ${q.parentHint}
           </div>
 
-          <div id="trivia-feedback-box" style="margin-top:1.5rem;"></div>
+          <div id="trivia-feedback-box" role="status" aria-live="polite" aria-atomic="true" style="margin-top:1.5rem;"></div>
         </div>
       </div>
     `;
@@ -5889,7 +5888,7 @@ class FusionApp {
     const profile = this.getActiveProfile();
     const highScore = profile.bests?.hotPotato || localStorage.getItem('fusion_hot_potato_high') || 0;
     const diff = this.getDifficultySettings();
-    const isItchMode = this.state.hpMode === 'itch';
+    const isItchMode = false; // Third-party embeds cannot be governed by the session timer.
 
     arena.innerHTML = `
       <div class="arena-header">
@@ -5904,6 +5903,7 @@ class FusionApp {
         </div>
         <div class="arena-badges" style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
           <span class="pill-badge" style="color:var(--primary); font-weight:800;" id="hp-score-badge">Score: 0</span>
+          <span class="pill-badge hp-timer-badge" id="hp-timer-badge" aria-live="off">01:00</span>
           <span class="pill-badge" id="hp-high-badge">Best: ${highScore}</span>
           <span class="pill-badge" style="color:#F59E0B;" id="hp-heat-badge">Heat: Raw (0%)</span>
         </div>
@@ -5993,6 +5993,8 @@ class FusionApp {
   }
 
   initHotPotatoEngine(arena) {
+    if (this.hotPotatoLoop) { cancelAnimationFrame(this.hotPotatoLoop); this.hotPotatoLoop = null; }
+    if (this.hotPotatoKeyHandler) { window.removeEventListener('keydown', this.hotPotatoKeyHandler); this.hotPotatoKeyHandler = null; }
     const canvas = arena.querySelector('#hot-potato-canvas');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -6003,11 +6005,24 @@ class FusionApp {
     const highBadge = arena.querySelector('#hp-high-badge');
     const meterFill = arena.querySelector('#hp-meter-fill');
     const statusText = arena.querySelector('#hp-status-text');
+    const timerBadge = arena.querySelector('#hp-timer-badge');
 
     const profile = this.getActiveProfile();
     const diff = this.getDifficultySettings();
     let isPlaying = false;
     let score = 0;
+    const ROUND_DURATION_MS = 60_000;
+    let timeRemainingMs = ROUND_DURATION_MS;
+    let roundEndsAt = 0;
+    const paintTimer = () => {
+      const seconds = Math.ceil(timeRemainingMs / 1000);
+      if (!timerBadge) return;
+      timerBadge.textContent = String(Math.floor(seconds / 60)).padStart(2, '0') + ':' + String(seconds % 60).padStart(2, '0');
+      timerBadge.classList.toggle('is-urgent', seconds <= 10);
+    };
+    const startTimer = () => { timeRemainingMs = ROUND_DURATION_MS; roundEndsAt = performance.now() + timeRemainingMs; paintTimer(); };
+    const pauseTimer = () => { if (roundEndsAt) timeRemainingMs = Math.max(0, roundEndsAt - performance.now()); roundEndsAt = 0; paintTimer(); };
+    const resumeTimer = () => { roundEndsAt = performance.now() + timeRemainingMs; paintTimer(); };
     let highScore = profile.bests?.hotPotato || parseInt(localStorage.getItem('fusion_hot_potato_high') || '0', 10);
 
     // Physics & potato object
@@ -6124,6 +6139,7 @@ class FusionApp {
 
     const pauseGame = () => {
       if (!isPlaying) return;
+      pauseTimer();
       isPlaying = false;
       sound.playClick();
       if (stopBtn) stopBtn.style.display = 'none';
@@ -6158,6 +6174,7 @@ class FusionApp {
         startOverlay.style.display = 'none';
         if (stopBtn) stopBtn.style.display = 'inline-flex';
         isPlaying = true;
+        resumeTimer();
       });
 
       arena.querySelector('#hp-finish-btn')?.addEventListener('click', () => {
@@ -6186,6 +6203,7 @@ class FusionApp {
           scoreBadge.innerText = 'Score: 0';
           resetPotato();
           isPlaying = true;
+          startTimer();
           if (stopBtn) stopBtn.style.display = 'inline-flex';
         });
       });
@@ -6197,16 +6215,20 @@ class FusionApp {
         scoreBadge.innerText = 'Score: 0';
         resetPotato();
         isPlaying = true;
+        startTimer();
         if (stopBtn) stopBtn.style.display = 'inline-flex';
       });
     };
 
+    this.pauseHotPotatoSession = pauseGame;
     stopBtn?.addEventListener('click', () => pauseGame());
 
     const gameOver = (reason) => {
+      if (!isPlaying) return;
+      pauseTimer();
       isPlaying = false;
       if (stopBtn) stopBtn.style.display = 'none';
-      sound.playWrong();
+      if (reason !== 'time') sound.playWrong();
       if (reason === 'burnt') {
         this.deductScoreAndXP(15, 'Burnt Hot Potato (-15 XP)');
         score = Math.max(0, score - 20);
@@ -6216,20 +6238,18 @@ class FusionApp {
       startOverlay.style.display = 'flex';
       startOverlay.innerHTML = `
         <div class="hp-overlay-card">
-          <div class="hp-overlay-icon">${reason === 'burnt' ? '🔥' : '💥'}</div>
-          <h3 class="hp-overlay-title" style="color:#F43F5E;">
-            ${reason === 'burnt' ? 'Charcoal Alert! Burnt! (-15 XP / -20 pts)' : 'Dropped Potato!'}
+          <div class="hp-overlay-icon">${reason === 'time' ? '⌛' : reason === 'burnt' ? '🔥' : '•'}</div>
+          <h3 class="hp-overlay-title" style="color:var(--primary-text);">
+            ${reason === 'time' ? 'Round Complete' : reason === 'burnt' ? 'Charcoal Alert! Burnt! (-15 XP / -20 pts)' : 'Dropped Potato!'}
           </h3>
           <p style="color:var(--text-main); font-size:1.05rem; font-weight:800; margin-bottom:0.35rem;">
             Score: ${score} Potatoes Served
           </p>
           <p class="hp-overlay-desc">
-            ${reason === 'burnt' 
-              ? 'Kept on sizzling coals too long! Serve through the green window when it glows Golden.'
-              : 'Keep the potato airborne by tapping towards the green window!'}
+            ${reason === 'time' ? 'Your fixed 60-second round has ended. Your final score is shown above.' : reason === 'burnt' ? 'Kept on sizzling coals too long! Serve through the green window when it glows Golden.' : 'Keep the potato airborne by tapping towards the green window!'}
           </p>
           <button class="btn btn-primary" id="hp-restart-btn" style="padding:0.75rem 2.2rem; font-size:1.05rem;">
-            🔄 Play Again
+            ${reason === 'time' ? 'Play Another 60-Second Round' : 'Play Again'}
           </button>
         </div>
       `;
@@ -6240,6 +6260,7 @@ class FusionApp {
         scoreBadge.innerText = `Score: 0`;
         resetPotato();
         isPlaying = true;
+        startTimer();
         if (stopBtn) stopBtn.style.display = 'inline-flex';
       });
     };
@@ -6278,6 +6299,7 @@ class FusionApp {
       scoreBadge.innerText = `Score: 0`;
       resetPotato();
       isPlaying = true;
+      startTimer();
       if (stopBtn) stopBtn.style.display = 'inline-flex';
     });
 
@@ -6313,6 +6335,7 @@ class FusionApp {
         }
       }
     };
+    this.hotPotatoKeyHandler = keyHandler;
     window.addEventListener('keydown', keyHandler);
 
     // Physics Engine Loop with Adaptive Gravity
@@ -6321,9 +6344,15 @@ class FusionApp {
 
     const updateLoop = () => {
       if (isPlaying) {
-        if (threePotato) {
+        timeRemainingMs = Math.max(0, roundEndsAt - performance.now());
+        paintTimer();
+        if (timeRemainingMs <= 0) {
+          gameOver('time');
+        }
+        if (isPlaying && threePotato) {
           threePotato.update(potato.x, potato.y, potato.vx, potato.vy, potato.cookLevel);
         }
+        if (isPlaying) {
         // Apply Gravity
         potato.vy += gravity;
         potato.x += potato.vx;
@@ -6416,6 +6445,7 @@ class FusionApp {
         }
         const heatBadge = arena.querySelector('#hp-heat-badge');
         if (heatBadge) heatBadge.innerText = `Heat: ${cookPct}%`;
+        }
       }
 
       // DRAW CANVAS
@@ -6551,7 +6581,12 @@ class FusionApp {
 
       ctx.restore();
 
-      // Next frame
+      // Next frame; stop scheduling work once this arena has been replaced.
+      if (!canvas.isConnected) {
+        if (this.hotPotatoKeyHandler) { window.removeEventListener('keydown', this.hotPotatoKeyHandler); this.hotPotatoKeyHandler = null; }
+        this.hotPotatoLoop = null;
+        return;
+      }
       this.hotPotatoLoop = requestAnimationFrame(updateLoop);
     };
 
@@ -6563,6 +6598,7 @@ class FusionApp {
   // Single-canvas simulation ported from Prompt Potato Games
   // ========================================================
   openHotPotatoFullscreenModal() {
+    if (this.pauseHotPotatoSession) this.pauseHotPotatoSession();
     const modal = document.getElementById('hot-potato-modal');
     if (!modal) return;
     document.body.classList.add('has-modal-open');
@@ -6700,6 +6736,9 @@ class FusionApp {
     let gameState = 'menu';
     let score = 0, best = +(localStorage.getItem('hotpotato_best') || 0);
     let lives = 3, elapsed = 0, combo = 0, served = 0, perfects = 0;
+    let timeRemaining = 60;
+    let roundEndsAtMs = 0;
+    let endReason = 'lives';
     let shake = 0, shakeX = 0, shakeY = 0;
     let mouse = { x: W / 2, y: H / 2 };
     let whackCooldown = 0, respawnTimer = 0, hintTimer = 0;
@@ -6727,6 +6766,7 @@ class FusionApp {
 
     const resetGame = () => {
       score = 0; lives = 3; elapsed = 0; combo = 0; served = 0; perfects = 0;
+      timeRemaining = 60; roundEndsAtMs = performance.now() + 60_000; endReason = 'lives';
       particles = []; floaters = []; toppingsFalling = []; embers = [];
       emberTimer = 28; toppingTimer = 5; respawnTimer = 0; hintTimer = 0;
       serveZone = { side: 1, y: 200, h: 96, flash: 0 };
@@ -6820,6 +6860,13 @@ class FusionApp {
 
       if (gameState === 'play') {
         elapsed += dt;
+        timeRemaining = Math.max(0, (roundEndsAtMs - now) / 1000);
+        if (timeRemaining <= 0) {
+          gameState = 'over'; endReason = 'time';
+          if (score > best) { best = score; localStorage.setItem('hotpotato_best', best); }
+          sfx.gameover();
+        }
+        if (gameState === 'play') {
         whackCooldown = Math.max(0, whackCooldown - dt);
         if (flashMsg) { flashMsg.t -= dt; if (flashMsg.t <= 0) flashMsg = null; }
         serveZone.flash = Math.max(0, serveZone.flash - dt * 2);
@@ -6896,6 +6943,7 @@ class FusionApp {
             sfx.pickup();
             toppingsFalling.splice(i, 1);
           }
+        }
         }
       }
 
@@ -6988,7 +7036,11 @@ class FusionApp {
         ctx.fillStyle = '#FFF';
         ctx.textAlign = 'left';
         ctx.fillText(`Score: ${score}`, 20, 36);
-        ctx.fillText(`Lives: ${'🥔'.repeat(Math.max(0, lives))}`, W - 140, 36);
+        ctx.fillText(`Lives: ${Math.max(0, lives)}`, W - 140, 36);
+        const timerSeconds = Math.max(0, Math.ceil(timeRemaining));
+        ctx.textAlign = 'center';
+        ctx.fillStyle = timeRemaining <= 10 ? '#FF9B83' : '#FDE68A';
+        ctx.fillText(`TIME ${String(Math.floor(timerSeconds / 60)).padStart(2, '0')}:${String(timerSeconds % 60).padStart(2, '0')}`, W / 2, 36);
         if (combo > 1) {
           ctx.fillStyle = '#FFD94A';
           ctx.textAlign = 'center';
@@ -7011,10 +7063,11 @@ class FusionApp {
         ctx.font = 'bold 42px sans-serif';
         ctx.fillStyle = '#F43F5E';
         ctx.textAlign = 'center';
-        ctx.fillText('GAME OVER', W / 2, H * 0.42);
+        ctx.fillText(endReason === 'time' ? 'ROUND COMPLETE' : 'GAME OVER', W / 2, H * 0.42);
         ctx.font = '24px sans-serif';
         ctx.fillStyle = '#FFF';
         ctx.fillText(`Final Score: ${score} pts`, W / 2, H * 0.52);
+        ctx.fillText(endReason === 'time' ? '60-second session finished' : 'Session ended', W / 2, H * 0.58);
         ctx.fillText('— TAP / CLICK TO RETRY —', W / 2, H * 0.64);
       }
 
@@ -7328,9 +7381,16 @@ class FusionApp {
 
     // Clicking the card or the button pops out the full recipe & AI Chatbot
     container.querySelectorAll('.cookbook-recipe-card').forEach(card => {
-      card.addEventListener('click', () => {
+      card.addEventListener('click', (e) => {
         const dishId = card.getAttribute('data-dish-id');
-        this.openRecipePopout(dishId);
+        if (dishId) this.openRecipePopout(dishId);
+      });
+      card.querySelectorAll('.open-recipe-popout-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const dishId = btn.getAttribute('data-dish-id');
+          if (dishId) this.openRecipePopout(dishId);
+        });
       });
     });
 
@@ -7869,8 +7929,8 @@ class FusionApp {
 
           <!-- Chat Input Bar -->
           <form class="chat-input-bar" id="recipe-chat-form">
-            <input type="text" id="recipe-chat-input" class="chat-input" placeholder="Ask Sous-Chef anything about this recipe..." autocomplete="off">
-            <button type="submit" class="chat-send-btn" id="recipe-chat-send-btn" title="Send Question">➤</button>
+            <input type="text" id="recipe-chat-input" class="chat-input" placeholder="Ask Sous-Chef anything about this recipe..." aria-label="Ask AI Sous-Chef a question about this recipe" autocomplete="off">
+            <button type="submit" class="chat-send-btn" id="recipe-chat-send-btn" title="Send Question" aria-label="Send Question to AI Sous-Chef">➤</button>
           </form>
         </div>
       </div>
@@ -8288,7 +8348,7 @@ Guidelines:
   renderLocalFamilyRoster(rosterContainer, filter, isOfflineFallback = false) {
     const noticeHtml = isOfflineFallback
       ? `<div style="font-size:0.82rem; color:var(--text-muted); margin-bottom:0.85rem; padding:0.4rem 0.8rem; background:var(--bg-card-subtle); border-radius:var(--radius-sm); border:1px solid var(--border-color);">
-          🌐 <em>Offline mode: Displaying local Family Roster rankings</em>
+          🌐 <em>${isGitHubPagesStaticHost() ? 'GitHub Pages static mode: showing this browser’s local Family Roster. Scores are not shared globally.' : 'Offline mode: Displaying local Family Roster rankings'}</em>
         </div>`
       : '';
 
@@ -8391,6 +8451,10 @@ Guidelines:
   async renderGlobalLeaderboard(rosterContainer, filter) {
     if (window.location.protocol === 'file:') {
       this.renderLocalFamilyRoster(rosterContainer, filter, false);
+      return;
+    }
+    if (isGitHubPagesStaticHost()) {
+      this.renderLocalFamilyRoster(rosterContainer, filter, true);
       return;
     }
 
@@ -8615,20 +8679,16 @@ Guidelines:
       }
     }
 
+    // GitHub Pages has no API/database backend; keep this score in local storage only.
+    if (isGitHubPagesStaticHost() || typeof window === 'undefined' || window.location.protocol === 'file:') return;
+
     try {
-      if (typeof window !== 'undefined' && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {
-        const res = await fetch('/api/submit-score', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        if (!res.ok) {
-          console.warn(`submit-score returned HTTP ${res.status}`);
-        }
-      }
-      if (!res.ok) {
-        console.warn(`submit-score returned HTTP ${res.status}`);
-      }
+      const response = await fetch('/api/submit-score', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!response.ok) console.warn(`submit-score returned HTTP ${response.status}`);
     } catch (e) {
       console.warn('Network error submitting score, safely saved to local IndexedDB fallback:', e);
     }
@@ -8662,60 +8722,56 @@ Guidelines:
     }
   }
 
+  async hashLocalAdminPin(pin, saltHex) {
+    const salt = Uint8Array.from((saltHex.match(/.{2}/g) || []), pair => parseInt(pair, 16));
+    const key = await window.crypto.subtle.importKey('raw', new TextEncoder().encode(pin), 'PBKDF2', false, ['deriveBits']);
+    const bits = await window.crypto.subtle.deriveBits({ name: 'PBKDF2', salt, iterations: 120000, hash: 'SHA-256' }, key, 256);
+    return Array.from(new Uint8Array(bits), byte => byte.toString(16).padStart(2, '0')).join('');
+  }
+
+  async saveLocalAdminPin(pin) {
+    const salt = Array.from(window.crypto.getRandomValues(new Uint8Array(16)), byte => byte.toString(16).padStart(2, '0')).join('');
+    const digest = await this.hashLocalAdminPin(pin, salt);
+    localStorage.setItem('fusion_admin_pin_v1', salt + ':' + digest);
+  }
+
   renderAdminModalContent(isAuthenticated = false) {
     const body = document.getElementById('admin-modal-body');
     if (!body) return;
 
     if (!isAuthenticated) {
-      body.innerHTML = `
-        <p style="font-size:0.92rem; color:var(--text-muted); margin-bottom:1.25rem; line-height:1.5;">
-          Enter your secret Admin PIN to manage game visibility toggles, change settings, or reset household scores.
-        </p>
-        <div class="pin-input-group">
-          <input type="password" id="admin-pin-field" class="pin-input" placeholder="••••••••" maxlength="16" />
-          <button class="btn btn-primary" id="admin-submit-pin-btn">Unlock 🔓</button>
-        </div>
-        <div id="pin-error-msg" class="admin-error-text" style="font-size:0.85rem; font-weight:700; min-height:22px;"></div>
-      `;
+      const storedPin = localStorage.getItem('fusion_admin_pin_v1');
+      const isFirstSetup = !storedPin;
+      body.innerHTML = [
+        '<div class="admin-lock-intro">',
+        '<h4>' + (isFirstSetup ? 'Create a local admin PIN' : 'Unlock local admin settings') + '</h4>',
+        '<p>' + (isFirstSetup ? 'Set a new PIN for this browser. The old default credential has been retired.' : 'Enter the PIN configured on this device.') + '</p>',
+        '<p class="admin-lock-note">This is a local interface lock only. It does not authenticate or protect server-side database operations.</p>',
+        '</div>',
+        '<div class="pin-input-group">',
+        '<label class="sr-only" for="admin-pin-field">' + (isFirstSetup ? 'Create admin PIN' : 'Admin PIN') + '</label>',
+        '<input type="password" id="admin-pin-field" class="pin-input" placeholder="' + (isFirstSetup ? 'Create an 8+ character PIN' : 'Enter local PIN') + '" minlength="8" maxlength="64" autocomplete="current-password" />',
+        '<button type="button" class="btn btn-primary" id="admin-submit-pin-btn">' + (isFirstSetup ? 'Save PIN' : 'Unlock') + '</button>',
+        '</div>',
+        '<div id="pin-error-msg" class="admin-error-text" role="status" aria-live="polite"></div>'
+      ].join('');
 
       document.getElementById('admin-submit-pin-btn')?.addEventListener('click', async () => {
-        const input = document.getElementById('admin-pin-field');
-        const errorEl = document.getElementById('pin-error-msg');
-        const pin = String(input?.value || '');
-
-        // file:// mode is local-only; it never authenticates to a remote API.
-        if (typeof window !== 'undefined' && window.location.protocol === 'file:') {
-          sound.playChime();
-          showToast('Offline admin controls apply only to this browser.', 'info');
-          this.renderAdminModalContent(true);
+        const value = (document.getElementById('admin-pin-field')?.value || '').trim();
+        const message = document.getElementById('pin-error-msg');
+        if (!window.crypto?.subtle) { message.textContent = 'Secure PIN setup requires HTTPS in a modern browser.'; return; }
+        if (isFirstSetup) {
+          if (value.length < 8) { message.textContent = 'Use at least 8 characters for your new PIN.'; return; }
+          try { await this.saveLocalAdminPin(value); sound.playChime(); this.renderAdminModalContent(true); showToast('Local admin PIN created.', 'success'); }
+          catch (error) { message.textContent = 'Could not store the PIN securely in this browser.'; }
           return;
         }
-
-        const button = document.getElementById('admin-submit-pin-btn');
-        if (button) button.disabled = true;
         try {
-          const response = await fetch('/api/admin/session', {
-            method: 'POST',
-            credentials: 'same-origin',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ pin })
-          });
-          const result = await response.json().catch(() => ({}));
-          if (!response.ok || !result.success) {
-            throw new Error(result.error || `Admin authentication failed (HTTP ${response.status}).`);
-          }
-
-          sound.playChime();
-          showToast('Admin Mode Unlocked', 'success');
-          this.adminSessionActive = true;
-          this.apiKeysLoaded = false;
-          this.renderAdminModalContent(true);
-        } catch (error) {
-          sound.playWrong();
-          if (errorEl) errorEl.innerText = error.message || 'Admin authentication failed.';
-        } finally {
-          if (button) button.disabled = false;
-        }
+          const parts = storedPin.split(':');
+          const digest = parts.length === 2 ? await this.hashLocalAdminPin(value, parts[0]) : '';
+          if (parts.length === 2 && digest === parts[1]) { sound.playChime(); this.renderAdminModalContent(true); showToast('Local admin settings unlocked.', 'success'); }
+          else { sound.playWrong(); message.textContent = 'Incorrect PIN. Please try again.'; }
+        } catch (error) { message.textContent = 'Unable to verify this local PIN in the current browser.'; }
       });
     } else {
       if (!this.adminSubTab) this.adminSubTab = 'features';
@@ -8760,45 +8816,45 @@ Guidelines:
           <h4 style="font-size:0.9rem; margin:0 0 0.5rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Arcade Game Toggles</h4>
           <div class="admin-toggles-list" style="margin-bottom:1.25rem;">
             <div class="toggle-row">
-              <span>🥘 Build-a-Dish (Pantry Rush & Steps)</span>
+              <span id="lbl-toggle-buildDish">🥘 Build-a-Dish (Pantry Rush & Steps)</span>
               <label class="switch">
-                <input type="checkbox" id="toggle-buildDish" ${this.state.gameToggles.buildDish ? 'checked' : ''} />
-                <span class="slider"></span>
+                <input type="checkbox" id="toggle-buildDish" aria-labelledby="lbl-toggle-buildDish" ${this.state.gameToggles.buildDish ? 'checked' : ''} />
+                <span class="slider" aria-hidden="true"></span>
               </label>
             </div>
             <div class="toggle-row">
-              <span>🗣️ Pronunciation Challenge & Audio</span>
+              <span id="lbl-toggle-pronunciation">🗣️ Pronunciation Challenge & Audio</span>
               <label class="switch">
-                <input type="checkbox" id="toggle-pronunciation" ${this.state.gameToggles.pronunciation ? 'checked' : ''} />
-                <span class="slider"></span>
+                <input type="checkbox" id="toggle-pronunciation" aria-labelledby="lbl-toggle-pronunciation" ${this.state.gameToggles.pronunciation ? 'checked' : ''} />
+                <span class="slider" aria-hidden="true"></span>
               </label>
             </div>
             <div class="toggle-row">
-              <span>🧠 Family Trivia Quiz (10 Qs)</span>
+              <span id="lbl-toggle-trivia">🧠 Family Trivia Quiz (10 Qs)</span>
               <label class="switch">
-                <input type="checkbox" id="toggle-trivia" ${this.state.gameToggles.trivia ? 'checked' : ''} />
-                <span class="slider"></span>
+                <input type="checkbox" id="toggle-trivia" aria-labelledby="lbl-toggle-trivia" ${this.state.gameToggles.trivia ? 'checked' : ''} />
+                <span class="slider" aria-hidden="true"></span>
               </label>
             </div>
             <div class="toggle-row">
-              <span>🗺️ India Fusion Map & City Quests</span>
+              <span id="lbl-toggle-indiaMap">🗺️ India Fusion Map & City Quests</span>
               <label class="switch">
-                <input type="checkbox" id="toggle-indiaMap" ${this.state.gameToggles.indiaMap !== false ? 'checked' : ''} />
-                <span class="slider"></span>
+                <input type="checkbox" id="toggle-indiaMap" aria-labelledby="lbl-toggle-indiaMap" ${this.state.gameToggles.indiaMap !== false ? 'checked' : ''} />
+                <span class="slider" aria-hidden="true"></span>
               </label>
             </div>
             <div class="toggle-row">
-              <span>🥔 Hot Potato Rush (Arcade Cooking)</span>
+              <span id="lbl-toggle-hotPotato">🥔 Hot Potato Rush (Arcade Cooking)</span>
               <label class="switch">
-                <input type="checkbox" id="toggle-hotPotato" ${this.state.gameToggles.hotPotato !== false ? 'checked' : ''} />
-                <span class="slider"></span>
+                <input type="checkbox" id="toggle-hotPotato" aria-labelledby="lbl-toggle-hotPotato" ${this.state.gameToggles.hotPotato !== false ? 'checked' : ''} />
+                <span class="slider" aria-hidden="true"></span>
               </label>
             </div>
             <div class="toggle-row">
-              <span>🎡 Spin the Wheel & Food Science</span>
+              <span id="lbl-toggle-spinScience">🎡 Spin the Wheel & Food Science</span>
               <label class="switch">
-                <input type="checkbox" id="toggle-spinScience" ${this.state.gameToggles.spinScience ? 'checked' : ''} />
-                <span class="slider"></span>
+                <input type="checkbox" id="toggle-spinScience" aria-labelledby="lbl-toggle-spinScience" ${this.state.gameToggles.spinScience ? 'checked' : ''} />
+                <span class="slider" aria-hidden="true"></span>
               </label>
             </div>
           </div>
@@ -8807,52 +8863,52 @@ Guidelines:
           <h4 style="font-size:0.9rem; margin:0 0 0.5rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Granular Modular Sub-Toggles</h4>
           <div class="admin-toggles-list" style="margin-bottom:1.25rem;">
             <div class="toggle-row">
-              <span>🏆 Header Leaderboard Pill</span>
+              <span id="lbl-toggle-v2-header-lb">🏆 Header Leaderboard Pill</span>
               <label class="switch">
-                <input type="checkbox" id="toggle-v2-header-lb" ${v2.leaderboardInHeader !== false ? 'checked' : ''} />
-                <span class="slider"></span>
+                <input type="checkbox" id="toggle-v2-header-lb" aria-labelledby="lbl-toggle-v2-header-lb" ${v2.leaderboardInHeader !== false ? 'checked' : ''} />
+                <span class="slider" aria-hidden="true"></span>
               </label>
             </div>
             <div class="toggle-row">
-              <span>🌍 Fusion Explorer Tab</span>
+              <span id="lbl-toggle-v2-fusion-tab">🌍 Fusion Explorer Tab</span>
               <label class="switch">
-                <input type="checkbox" id="toggle-v2-fusion-tab" ${v2.fusionExplorerTab !== false ? 'checked' : ''} />
-                <span class="slider"></span>
+                <input type="checkbox" id="toggle-v2-fusion-tab" aria-labelledby="lbl-toggle-v2-fusion-tab" ${v2.fusionExplorerTab !== false ? 'checked' : ''} />
+                <span class="slider" aria-hidden="true"></span>
               </label>
             </div>
             <div class="toggle-row">
-              <span>🍢 Tandoori Skewer & Plating Studio</span>
+              <span id="lbl-toggle-v2-skewer">🍢 Tandoori Skewer & Plating Studio</span>
               <label class="switch">
-                <input type="checkbox" id="toggle-v2-skewer" ${v2.tandoorSkewerGame !== false ? 'checked' : ''} />
-                <span class="slider"></span>
+                <input type="checkbox" id="toggle-v2-skewer" aria-labelledby="lbl-toggle-v2-skewer" ${v2.tandoorSkewerGame !== false ? 'checked' : ''} />
+                <span class="slider" aria-hidden="true"></span>
               </label>
             </div>
             <div class="toggle-row">
-              <span>📸 Chef Hat AR Camera & Age Scanner</span>
+              <span id="lbl-toggle-v2-camera">📸 Chef Hat AR Camera & Age Scanner</span>
               <label class="switch">
-                <input type="checkbox" id="toggle-v2-camera" ${v2.chefHatCameraFilter !== false ? 'checked' : ''} />
-                <span class="slider"></span>
+                <input type="checkbox" id="toggle-v2-camera" aria-labelledby="lbl-toggle-v2-camera" ${v2.chefHatCameraFilter !== false ? 'checked' : ''} />
+                <span class="slider" aria-hidden="true"></span>
               </label>
             </div>
             <div class="toggle-row">
-              <span>🛡️ AI Facial Landmark Anti-Duplication Protection</span>
+              <span id="lbl-toggle-v2-face-dupe">🛡️ AI Facial Landmark Anti-Duplication Protection</span>
               <label class="switch">
-                <input type="checkbox" id="toggle-v2-face-dupe" ${v2.faceVectorAntiDuplication !== false ? 'checked' : ''} />
-                <span class="slider"></span>
+                <input type="checkbox" id="toggle-v2-face-dupe" aria-labelledby="lbl-toggle-v2-face-dupe" ${v2.faceVectorAntiDuplication !== false ? 'checked' : ''} />
+                <span class="slider" aria-hidden="true"></span>
               </label>
             </div>
             <div class="toggle-row">
-              <span>📄 PDF Portfolio & Career Roadmap Export</span>
+              <span id="lbl-toggle-v2-pdf">📄 PDF Portfolio & Career Roadmap Export</span>
               <label class="switch">
-                <input type="checkbox" id="toggle-v2-pdf" ${v2.pdfPortfolioExport !== false ? 'checked' : ''} />
-                <span class="slider"></span>
+                <input type="checkbox" id="toggle-v2-pdf" aria-labelledby="lbl-toggle-v2-pdf" ${v2.pdfPortfolioExport !== false ? 'checked' : ''} />
+                <span class="slider" aria-hidden="true"></span>
               </label>
             </div>
             <div class="toggle-row">
-              <span>🤖 AI Face Guided Tour & Self-Explaining Overlay</span>
+              <span id="lbl-toggle-v2-tour">🤖 AI Face Guided Tour & Self-Explaining Overlay</span>
               <label class="switch">
-                <input type="checkbox" id="toggle-v2-tour" ${v2.aiFaceExplainerTour !== false ? 'checked' : ''} />
-                <span class="slider"></span>
+                <input type="checkbox" id="toggle-v2-tour" aria-labelledby="lbl-toggle-v2-tour" ${v2.aiFaceExplainerTour !== false ? 'checked' : ''} />
+                <span class="slider" aria-hidden="true"></span>
               </label>
             </div>
           </div>
@@ -8908,12 +8964,12 @@ Guidelines:
           <!-- Admin PIN lives in Cloudflare Secrets, never browser storage. -->
           <div style="background:var(--bg-parchment); border:1.5px solid var(--border-color); border-radius:var(--radius-sm); padding:0.95rem; margin-bottom:1.25rem;">
             <label style="font-size:0.82rem; font-weight:800; color:var(--text-muted); display:block; margin-bottom:0.35rem;">
-              🔐 Cloudflare-managed Admin PIN
+              Change local admin PIN:
             </label>
-            <p style="font-size:0.78rem; color:var(--text-muted); margin:0; line-height:1.5;">
-              The Admin PIN is stored as a Cloudflare secret and is not saved in this browser. Rotate it with
-              <code>wrangler pages secret put ADMIN_PIN --project-name=fusionfood</code>.
-            </p>
+            <div style="display:flex; gap:0.5rem;">
+              <input type="password" id="new-admin-pin" class="pin-input" style="padding:0.45rem 0.75rem; font-size:0.9rem;" placeholder="New PIN (8+ characters)" minlength="8" maxlength="64" />
+              <button class="btn btn-secondary" id="save-new-pin-btn" style="padding:0.45rem 0.85rem; font-size:0.82rem;">Update PIN</button>
+            </div>
           </div>
 
           <!-- Data Safety, Backup & Recovery Hub (FF-01) -->
@@ -9178,6 +9234,24 @@ Guidelines:
           }
         });
 
+        // Change the browser-local interface PIN.
+        document.getElementById('save-new-pin-btn')?.addEventListener('click', async () => {
+          const newPin = document.getElementById('new-admin-pin')?.value.trim();
+          if (newPin && newPin.length >= 8) {
+            try {
+              await this.saveLocalAdminPin(newPin);
+              sound.playCorrect();
+              showToast('Local admin PIN updated.', 'success');
+              document.getElementById('new-admin-pin').value = '';
+            } catch (error) {
+              showToast('Secure local PIN storage is unavailable in this browser.', 'error');
+            }
+          } else {
+            sound.playWrong();
+            showToast('Please use at least 8 characters.', 'error');
+          }
+        });
+
         // Save toggles
         document.getElementById('save-admin-settings-btn')?.addEventListener('click', () => {
           sound.playCorrect();
@@ -9283,9 +9357,16 @@ Guidelines:
 
         // Reset Admin Defaults
         document.getElementById('reset-admin-btn')?.addEventListener('click', () => {
-          if (confirm('Reset local game toggles and feature settings to defaults? The Cloudflare Admin PIN will not change.')) {
+          if (confirm('Clear the local admin PIN and restore all feature defaults?')) {
             sound.playCorrect();
-            this.state.gameToggles = { ...DEFAULT_STATE.gameToggles };
+            localStorage.removeItem('fusion_admin_pin_v1');
+            this.state.gameToggles = {
+              buildDish: true,
+              pronunciation: true,
+              trivia: true,
+              hotPotato: true,
+              spinScience: true
+            };
             this.state.v2Features = { ...DEFAULT_STATE.v2Features };
             this.state.appVersion = DEFAULT_STATE.appVersion;
             this.saveState();
@@ -9293,10 +9374,24 @@ Guidelines:
             this.renderGameTabs();
             this.renderActiveGame();
             this.renderAdminModalContent(true);
-            showToast('Local admin defaults restored. Cloudflare Admin PIN unchanged.', 'success');
+            showToast('Local admin PIN cleared and feature defaults restored.', 'success');
           }
         });
       } else if (this.adminSubTab === 'api') {
+        if (isGitHubPagesStaticHost()) {
+          body.innerHTML = `
+            <div class="admin-ai-config-card">
+              <h4>Backend/API tools are unavailable on GitHub Pages</h4>
+              <p style="color:var(--text-muted); line-height:1.65;">
+                GitHub Pages hosts static files only. It cannot run the Cloudflare API routes or D1 database used for shared API keys, global scores and feedback.
+              </p>
+              <p style="color:var(--text-muted); line-height:1.65;">
+                This edition stores profiles, progress, scores and reviews in this browser using local storage and IndexedDB. Those records are not shared with other visitors or devices.
+              </p>
+            </div>
+          `;
+          return;
+        }
         // API KEY GENERATOR TAB
         if (
           typeof window !== 'undefined' &&
@@ -9599,31 +9694,49 @@ Guidelines:
       .replace(/'/g, '&#39;');
   }
 
-  async generateApiKey(name, scope = 'read_write', expiryDays = 365) {
-    const normalizedName = (name || 'API Client').trim().slice(0, 100);
-    const days = Number.parseInt(expiryDays, 10);
-    let newKey;
+  generateApiKey(name, scope = 'read_write', expiryDays = 365) {
+    const chars = '0123456789abcdef';
+    let hex = '';
+    for (let i = 0; i < 32; i++) {
+      hex += chars[Math.floor(Math.random() * chars.length)];
+    }
+    let idHex = '';
+    for (let i = 0; i < 8; i++) {
+      idHex += chars[Math.floor(Math.random() * chars.length)];
+    }
 
-    if (typeof window !== 'undefined' && window.location.protocol === 'file:') {
-      // Offline keys are browser-only demonstrations and never reach the API.
-      const tokenBytes = crypto.getRandomValues(new Uint8Array(32));
-      const idBytes = crypto.getRandomValues(new Uint8Array(8));
-      const tokenHex = Array.from(tokenBytes, b => b.toString(16).padStart(2, '0')).join('');
-      const idHex = Array.from(idBytes, b => b.toString(16).padStart(2, '0')).join('');
-      const token = `ff_live_${tokenHex}`;
-      let expiresAt = null;
-      if (Number.isFinite(days) && days > 0) {
-        const expiry = new Date();
-        expiry.setDate(expiry.getDate() + days);
-        expiresAt = expiry.toISOString();
-      }
-      newKey = {
-        keyId: `key_${idHex}`, name: normalizedName, token,
-        prefix: `${token.slice(0, 12)}...${token.slice(-4)}`,
-        scope, status: 'active', createdAt: new Date().toISOString(), expiresAt
-      };
-    } else {
-      const response = await fetch('/api/admin/keys', {
+    const scopePrefix = scope === 'read' ? 'ro' : (scope === 'admin' ? 'adm' : 'rw');
+    const token = `ff_live_${scopePrefix}_${hex}`;
+    const keyId = `key_${idHex}`;
+    const prefix = `${token.slice(0, 14)}...${token.slice(-4)}`;
+
+    let expiresAt = null;
+    const days = parseInt(expiryDays, 10);
+    if (!isNaN(days) && days > 0) {
+      const exp = new Date();
+      exp.setDate(exp.getDate() + days);
+      expiresAt = exp.toISOString();
+    }
+
+    const newKey = {
+      keyId,
+      name: (name || 'API Client').trim(),
+      token,
+      prefix,
+      scope,
+      status: 'active',
+      createdAt: new Date().toISOString(),
+      expiresAt
+    };
+
+    if (!Array.isArray(this.state.apiKeys)) {
+      this.state.apiKeys = [];
+    }
+    this.state.apiKeys.unshift(newKey);
+    this.saveState();
+
+    if (typeof window !== 'undefined' && !isGitHubPagesStaticHost() && window.location.protocol !== 'file:') {
+      fetch('/api/admin/keys', {
         method: 'POST',
         credentials: 'same-origin',
         headers: { 'Content-Type': 'application/json' },
@@ -9664,11 +9777,23 @@ Guidelines:
     if (key) {
       key.status = 'revoked';
       this.saveState();
+
+      if (typeof window !== 'undefined' && !isGitHubPagesStaticHost() && window.location.protocol !== 'file:') {
+        fetch(`/api/admin/keys?keyId=${encodeURIComponent(keyId)}`, {
+          method: 'DELETE'
+        }).catch(err => {
+          console.warn('Backend API key revocation notice (using local state):', err);
+        });
+      }
     }
   }
 
   async runApiDiagnosticPing(endpoint, outputEl) {
     if (!outputEl) return;
+    if (isGitHubPagesStaticHost()) {
+      outputEl.textContent = 'GitHub Pages is static hosting. There are no /api endpoints here; profiles, scores and reviews are stored locally in this browser.';
+      return;
+    }
     outputEl.innerHTML = `<span style="color:#60A5FA;">📡 Pinging ${endpoint}...</span>`;
     const t0 = performance.now();
     try {
@@ -9818,7 +9943,6 @@ Guidelines:
       }
     };
     document.addEventListener('keydown', handleModalKeydown);
-    window.addEventListener('keydown', handleModalKeydown);
 
     // Hero Dual Action CTAs (FF-10)
     document.getElementById('hero-primary-cta')?.addEventListener('click', () => {
@@ -9948,10 +10072,10 @@ Guidelines:
     if (!hero) return;
 
     const counters = [
-      { id: 'stat-counter-labs', target: 5, suffix: '' },
+      { id: 'stat-counter-labs', target: 6, suffix: '' },
       { id: 'stat-counter-recipes', target: 8, suffix: '' },
       { id: 'stat-counter-veg', target: 100, suffix: '%' },
-      { id: 'stat-counter-allergens', target: 100, suffix: '%' }
+      { id: 'stat-counter-allergens', target: FUSION_DISHES.filter(dish => Boolean(dish.allergens)).length, suffix: '' }
     ];
 
     counters.forEach(c => {
@@ -11667,7 +11791,7 @@ Guidelines:
     // 4. Chef Hat AR Camera & Age Scanner Header Action Button
     const cameraBtn = document.getElementById('open-camera-scanner-btn');
     if (cameraBtn) {
-      const showCamera = ver === 'v3' || (ver !== 'v1' && v2.chefHatCameraFilter !== false);
+      const showCamera = ver !== 'v1' && v2.chefHatCameraFilter !== false;
       cameraBtn.style.display = showCamera ? 'inline-flex' : 'none';
     }
 
@@ -11908,17 +12032,13 @@ Guidelines:
     if (!widget) return;
     const reviews = this.state.guestReviews || [];
     const count = reviews.length;
-    const avg = count > 0
-      ? (reviews.reduce((sum, r) => sum + (r.rating || 5), 0) / count).toFixed(1)
-      : '5.0';
+    const avg = count ? (reviews.reduce((sum, review) => sum + Number(review.rating || 0), 0) / count).toFixed(1) : null;
 
     widget.innerHTML = `
-      <div style="display:inline-flex; align-items:center; gap:0.6rem; background:var(--bg-card); border:1.5px solid var(--border-color); border-radius:var(--radius-full); padding:0.4rem 1.1rem; box-shadow:0 4px 16px rgba(0,0,0,0.06); cursor:pointer;" id="main-feedback-chip-btn">
-        <span style="color:#F59E0B; font-size:1.1rem;">★★★★★</span>
-        <strong style="font-size:0.85rem; color:var(--text-main);">★ ${avg} / 5.0</strong>
-        <span style="font-size:0.78rem; color:var(--text-muted);">(${count} Verified Family Reviews)</span>
-        <span style="font-size:0.75rem; color:var(--primary); font-weight:700;">Explore Reviews →</span>
-      </div>
+      <button type="button" class="review-summary-chip" id="main-feedback-chip-btn" aria-label="${count ? `${avg} out of 5 from ${count} community reviews` : 'No reviews yet. Open community feedback.'}">
+        ${count ? `<span class="review-summary-stars" aria-hidden="true">★★★★★</span><strong>${avg} / 5</strong><span class="review-summary-count">${count} community ${count === 1 ? 'review' : 'reviews'}</span>` : `<span class="review-summary-empty">Community feedback</span><strong>No reviews yet</strong>`}
+        <span class="review-summary-action">Explore feedback <span aria-hidden="true">→</span></span>
+      </button>
     `;
 
     widget.querySelector('#main-feedback-chip-btn')?.addEventListener('click', () => {
@@ -12140,9 +12260,7 @@ Guidelines:
 
     const reviews = this.state.guestReviews || [];
     const count = reviews.length;
-    const avg = count > 0
-      ? (reviews.reduce((sum, r) => sum + (r.rating || 5), 0) / count).toFixed(1)
-      : '5.0';
+    const avg = count ? (reviews.reduce((sum, review) => sum + Number(review.rating || 0), 0) / count).toFixed(1) : null;
 
     section.innerHTML = `
       <div class="feedback-container-card" style="background:var(--bg-card); border:2px solid var(--border-color); border-radius:var(--radius-lg); padding:1.75rem; box-shadow:0 8px 30px rgba(0,0,0,0.05);">
@@ -12153,12 +12271,12 @@ Guidelines:
               <h3 style="margin:0; font-size:1.35rem;">Community Guest Reviews & Family Feedback</h3>
             </div>
             <p style="margin:0.25rem 0 0; font-size:0.85rem; color:var(--text-muted);">
-              Read authentic feedback from families, mentors, and master chefs around the world.
+              Share your experience and read feedback submitted by other visitors.
             </p>
           </div>
           <div style="text-align:right;">
-            <div style="font-size:1.4rem; font-weight:900; color:#F59E0B;">★ ${avg} / 5.0</div>
-            <div style="font-size:0.78rem; color:var(--text-muted);">${count} Verified Culinary Critiques</div>
+            <div style="font-size:1.4rem; font-weight:900; color:#F59E0B;">${count ? `★ ${avg} / 5.0` : 'No reviews yet'}</div>
+            <div style="font-size:0.78rem; color:var(--text-muted);">${count} community ${count === 1 ? 'review' : 'reviews'}</div>
           </div>
         </div>
 
@@ -12231,7 +12349,7 @@ Guidelines:
       }
 
       // Sync to /api/feedback without blocking
-      if (typeof window !== 'undefined' && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {
+      if (typeof window !== 'undefined' && !isGitHubPagesStaticHost() && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {
         fetch('/api/feedback', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

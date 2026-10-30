@@ -6,13 +6,38 @@ Welcome to the **Fusion Food Family Lab**! This interactive web platform brings 
 
 ---
 
+### 5. Hot Potato Rush
+- **60-second session:** the timer is visible while playing in the native arena and fullscreen arcade.
+- **Pause / resume:** the standard arena freezes the remaining time on pause and continues it on resume.
+- **Round end:** when the timer reaches zero, the game stops and presents the final score.
+
+## 🌐 Host on GitHub Pages
+
+This repository includes a GitHub Actions workflow that publishes a static edition of Fusion Food Lab.
+
+**One-time setup**
+1. Open the repository's **Settings → Pages**.
+2. Under **Build and deployment → Source**, select **GitHub Actions**.
+3. Save the setting. The workflow `.github/workflows/github-pages.yml` will publish automatically on pushes to `main`.
+
+**Site address:** `https://shivanktoper.github.io/fusionfood/`
+
+The classic, modern and AI/Vision presets are also available at:
+- `https://shivanktoper.github.io/fusionfood/v1/`
+- `https://shivanktoper.github.io/fusionfood/v2/`
+- `https://shivanktoper.github.io/fusionfood/v3/`
+
+**Static-host limitations:** GitHub Pages serves static HTML, CSS and JavaScript; it does not run the Cloudflare Functions or D1 database used by the original hosted backend. On the GitHub Pages hostname, profiles, progress, reviews and scores stay in the visitor's own browser (local storage/IndexedDB). They do not sync between visitors or devices, and server API-key management is disabled. For a shared global leaderboard, shared feedback or server-backed API features, keep using a backend host such as the existing Cloudflare deployment.
+
+The Pages workflow deliberately publishes only `index.html`, `bundle.js`, `styles.css`, `.nojekyll` and the three version-route wrappers. It does not publish the Cloudflare Worker, Functions, database schema, scripts or repository maintenance files.
+
 ## 🚀 Quick Start
 1. Double-click **`Start-FusionFood.bat`** or open **`index.html`** in any web browser (Chrome, Edge, Opera, Firefox, Safari).
-2. Works completely **offline** with zero npm/node installations, zero build steps, and zero external API dependencies.
+2. The core app runs without a build step. Google Fonts and optional Three.js visuals load from external CDNs and therefore require an internet connection; core recipes and game fallbacks should remain usable if those assets fail.
 
 ---
 
-## 🎮 5 Admin-Toggleable Interactive Games
+## 🎮 6 Admin-Toggleable Interactive Games
 
 ### 1. 🥘 Build-a-Dish (Pantry Rush & Recipe Simulation)
 * **Step-by-Step Cooking Lab**: Observe real ingredient transformations through Base Prep, Marinade, Sizzle/Bake, and Garnish phases.
@@ -31,9 +56,9 @@ Welcome to the **Fusion Food Family Lab**! This interactive web platform brings 
 * **"Parent Hint" Button**: Brainstorm together with helpful real-world cooking hints.
 
 ### 4. 🗺️ India Availability Map & City Quest
-* **Interactive SVG Map**: Explore regional fusion adoption across 6 key metro hubs (Mumbai, Delhi-NCR, Bengaluru, Goa, Pune, Hyderabad).
+* **Interactive SVG Map**: Explore regional fusion adoption across the cities represented in the map.
 * **Availability Matrix**: Filter dishes by *Emerging/Niche*, *Moderate*, and *High* availability.
-* **Bazaar Quests**: Discover authentic local markets (Crawford Market, INA Market, Russell Market) that stock replacement ingredients!
+* **Bazaar Quests**: Discover authentic local markets that stock replacement ingredients.
 
 ### 5. 🎡 Spin the Wheel & Culinary Food Science
 * **Dynamic Physics Wheel**: Spin across 6 core food chemistry concepts:
@@ -44,6 +69,11 @@ Welcome to the **Fusion Food Family Lab**! This interactive web platform brings 
   * *Alkaline Starch Chemistry* (Why kansui makes ramen noodles bouncy)
   * *Fat-Soluble Spice Volatiles* (Why tadka in hot oil/ghee awakens spices)
 * **Rapid Science Challenge**: Answer an instant food chemistry mini-question to win +50 Bonus XP!
+
+### 6. 🥔 Hot Potato Rush
+* **60-second round**: A fixed countdown is visible during both the standard arena and fullscreen arcade.
+* **Round controls**: Start and replay begin a fresh 60-second session; pausing freezes the standard arena clock and resume continues from the remaining time.
+* **Timed finish**: When the countdown reaches zero, gameplay stops and the final score is presented.
 
 ---
 
@@ -74,11 +104,11 @@ Every fusion dish includes a full Indian kitchen adaptation:
 
 ---
 
-## 🔒 Secret Admin Controls
-* Click the **Lock Icon (🔒)** in the site header or footer.
-* Enter Secret Admin PIN (configured by admin).
-* Toggle any of the 5 games on or off.
-* Reset family high scores or streak records.
+## Admin Controls
+* Open **Tools → Admin Settings** from the site header.
+* On first use, create a browser-local PIN of at least 8 characters. The PIN is stored as a salted PBKDF2-derived hash.
+* This is a **local interface lock only**. It does not secure Cloudflare D1 data, API routes, or other server-side operations.
+* Toggle which of the 6 games appear and manage local family settings.
 
 ---
 
@@ -88,78 +118,12 @@ Every fusion dish includes a full Indian kitchen adaptation:
 * **Web Audio API Synthesizer**: Chimes, clicks, wheel ticks, error buzzes, and victory fanfares generated via native code (with master mute toggle 🔇).
 * **Celebration Confetti**: Full-screen particle physics celebrations on game completions and tier rank-ups!
 
+## Admin and trust notes
 
----
+The application no longer ships a default administrator PIN or seeded API-token examples. On first use, an administrator creates a browser-local PIN; it is stored as a salted PBKDF2-derived hash. This is a **local interface lock only**, not server-side authentication and not a security boundary for server data or API operations. Do not store production secrets in browser code or local storage.
 
-## ☁️ Cloudflare Production Deployment
+The sample family testimonials and sample score-verification entries have been removed. Ratings now show an empty state until visitors post real feedback.
 
-Fusion Food uses **Cloudflare Pages for the website and Pages Functions**, with an optional standalone **API-only Worker**. Both API deployments use the D1 binding named `DB`.
+## Hot Potato round duration
 
-### Production build
-
-This project has no frontend package manager or bundler. Prepare a clean allowlisted output directory:
-
-```bash
-node scripts/build-pages.mjs
-node scripts/validate-cloudflare.mjs
-```
-
-Deploy Pages from `dist/`, never from the repository root:
-
-```bash
-npx wrangler@4 pages deploy dist --project-name=fusionfood --branch=main
-```
-
-The Pages Functions source stays in the top-level `functions/` directory for Wrangler to bundle. The `dist/` directory contains only `index.html`, `styles.css`, `bundle.js`, `_headers`, and `_redirects`. Database schemas, Worker source, tests, scripts and Wrangler configuration are not public assets.
-
-When configuring Cloudflare Pages Git integration, set the build command to `node scripts/build-pages.mjs` and build output directory to `dist`. Do not use the repository root as the output directory.
-
-### Required secrets
-
-The Admin PIN is not shipped in browser JavaScript. Before using the online Admin panel, set both secrets on the Pages project:
-
-```bash
-npx wrangler@4 pages secret put ADMIN_PIN --project-name=fusionfood
-npx wrangler@4 pages secret put ADMIN_SESSION_SECRET --project-name=fusionfood
-```
-
-Use a new private PIN (do not reuse the old hardcoded demo PIN) and a random `ADMIN_SESSION_SECRET` of at least 32 characters. Generate a session secret with:
-
-```bash
-node -e "console.log(require('node:crypto').randomBytes(48).toString('base64url'))"
-```
-
-For the standalone API Worker, set the same secrets for that Worker too:
-
-```bash
-npx wrangler@4 secret put ADMIN_PIN --config=wrangler.worker.toml
-npx wrangler@4 secret put ADMIN_SESSION_SECRET --config=wrangler.worker.toml
-npx wrangler@4 deploy --config=wrangler.worker.toml
-```
-
-Admin sessions use a signed two-hour `HttpOnly`, `Secure`, `SameSite=Strict` cookie. The PIN is not saved in local browser storage. Offline `file://` mode keeps local-only admin controls, which do not authenticate to the deployed API.
-
-### D1 setup
-
-The existing D1 database is configured by ID in both Wrangler files. For a **new, empty** database only, initialize it once:
-
-```bash
-npx wrangler@4 d1 execute foodfusionweb --remote --file=./schema.sql
-```
-
-Do not run this against a database containing production data without a verified backup. The GitHub workflow does not automatically reinitialize or seed D1.
-
-### GitHub Actions
-
-Configure repository secrets:
-
-- `CLOUDFLARE_API_TOKEN` — scoped to the account with Pages and Workers deployment permissions.
-- `CLOUDFLARE_ACCOUNT_ID` — the target Cloudflare account ID.
-
-Pushes and pull requests run the build, parity check, regression suite and Wrangler Worker dry run. Only pushes to `main` deploy Pages and the API Worker. Deployment errors are not ignored.
-
-### CORS and custom domains
-
-The current Pages project URL assigned by Cloudflare is `https://fusionfood-383.pages.dev`. Keep the `CORS_ORIGIN` values in both Wrangler configurations aligned with the actual Pages production origin. The Pages middleware also permits this project's preview subdomains.
-
-`CORS_ORIGIN` is the primary Pages origin. For a custom domain, add its exact HTTPS origin to the `CORS_ALLOWED_ORIGINS` Pages/Worker variable (comma-separated when there are multiple origins). Do not use wildcard origins. CORS is not a substitute for authentication.
+Both the native and fullscreen Hot Potato modes use a fixed 60-second round. The countdown is deadline-based rather than tied to animation-frame count, so device refresh rate does not change the session length.
