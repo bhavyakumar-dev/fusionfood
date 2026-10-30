@@ -7,6 +7,7 @@ import * as profileHandler from '../functions/api/profile.js';
 import * as syncHandler from '../functions/api/sync.js';
 import * as leaderboardHandler from '../functions/api/leaderboard.js';
 import * as submitScoreHandler from '../functions/api/submit-score.js';
+import * as feedbackHandler from '../functions/api/feedback.js';
 
 function getCorsHeaders(request) {
   const origin = request.headers.get('Origin') || '*';
@@ -80,12 +81,22 @@ export default {
       } else if (pathname === '/api/leaderboard') {
         if (request.method === 'GET') {
           response = await leaderboardHandler.onRequestGet(context);
+        } else if (request.method === 'POST') {
+          response = await leaderboardHandler.onRequestPost(context);
         } else {
           response = jsonResponse({ success: false, error: 'Method Not Allowed' }, 405);
         }
       } else if (pathname === '/api/submit-score') {
         if (request.method === 'POST') {
           response = await submitScoreHandler.onRequestPost(context);
+        } else {
+          response = jsonResponse({ success: false, error: 'Method Not Allowed' }, 405);
+        }
+      } else if (pathname === '/api/feedback') {
+        if (request.method === 'GET') {
+          response = await feedbackHandler.onRequestGet(context);
+        } else if (request.method === 'POST') {
+          response = await feedbackHandler.onRequestPost(context);
         } else {
           response = jsonResponse({ success: false, error: 'Method Not Allowed' }, 405);
         }

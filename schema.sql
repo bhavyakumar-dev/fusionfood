@@ -57,7 +57,27 @@ CREATE INDEX IF NOT EXISTS idx_leaderboard_user ON leaderboard (user_id);
 CREATE INDEX IF NOT EXISTS idx_leaderboard_game_type ON leaderboard (game_type);
 
 -- --------------------------------------------------------------------
--- 3. GLOBAL SEED DATA
+-- 3. FEEDBACK TABLE
+-- Stores ratings, comments, and community feedback on recipes and lab experience
+-- --------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS feedback (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id TEXT NOT NULL,
+  user_name TEXT NOT NULL,
+  role TEXT NOT NULL DEFAULT 'student' CHECK(role IN ('student', 'parent')),
+  rating INTEGER NOT NULL DEFAULT 5 CHECK(rating >= 1 AND rating <= 5),
+  category TEXT NOT NULL DEFAULT 'general',
+  recipe_id TEXT DEFAULT NULL,
+  comment TEXT NOT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_feedback_created_at ON feedback (created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_feedback_category ON feedback (category);
+CREATE INDEX IF NOT EXISTS idx_feedback_recipe_id ON feedback (recipe_id);
+
+-- --------------------------------------------------------------------
+-- 4. GLOBAL SEED DATA
 -- Diverse international culinary students and parent master chefs
 -- --------------------------------------------------------------------
 
