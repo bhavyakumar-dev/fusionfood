@@ -24,6 +24,13 @@ jobs:
         with:
           node-version: 20
 
+      - name: Check JavaScript syntax
+        run: |
+          node --check app.js
+          node --check bundle.js
+
+      - name: Run non-browser feature and API tests
+        run: node run_e2e_tests.js --no-chrome
       - name: Verify Binary Parity (app.js vs bundle.js)
         run: |
           APP_HASH=$(sha256sum app.js | awk '{print $1}')
