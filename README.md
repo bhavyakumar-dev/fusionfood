@@ -6,13 +6,18 @@ Welcome to the **Fusion Food Family Lab**! This interactive web platform brings 
 
 ---
 
+### 5. Hot Potato Rush
+- **60-second session:** the timer is visible while playing in the native arena and fullscreen arcade.
+- **Pause / resume:** the standard arena freezes the remaining time on pause and continues it on resume.
+- **Round end:** when the timer reaches zero, the game stops and presents the final score.
+
 ## 🚀 Quick Start
 1. Double-click **`Start-FusionFood.bat`** or open **`index.html`** in any web browser (Chrome, Edge, Opera, Firefox, Safari).
-2. Works completely **offline** with zero npm/node installations, zero build steps, and zero external API dependencies.
+2. The core app runs without a build step. Google Fonts and optional Three.js visuals load from external CDNs and therefore require an internet connection; core recipes and game fallbacks should remain usable if those assets fail.
 
 ---
 
-## 🎮 5 Admin-Toggleable Interactive Games
+## 🎮 6 Admin-Toggleable Interactive Games
 
 ### 1. 🥘 Build-a-Dish (Pantry Rush & Recipe Simulation)
 * **Step-by-Step Cooking Lab**: Observe real ingredient transformations through Base Prep, Marinade, Sizzle/Bake, and Garnish phases.
@@ -31,7 +36,7 @@ Welcome to the **Fusion Food Family Lab**! This interactive web platform brings 
 * **"Parent Hint" Button**: Brainstorm together with helpful real-world cooking hints.
 
 ### 4. 🗺️ India Availability Map & City Quest
-* **Interactive SVG Map**: Explore regional fusion adoption across 6 key metro hubs (Mumbai, Delhi-NCR, Bengaluru, Goa, Pune, Hyderabad).
+* **Interactive SVG Map**: Explore regional fusion adoption across 7 key metro hubs (Mumbai, Delhi-NCR, Bengaluru, Goa, Pune, Hyderabad).
 * **Availability Matrix**: Filter dishes by *Emerging/Niche*, *Moderate*, and *High* availability.
 * **Bazaar Quests**: Discover authentic local markets (Crawford Market, INA Market, Russell Market) that stock replacement ingredients!
 
@@ -77,7 +82,7 @@ Every fusion dish includes a full Indian kitchen adaptation:
 ## 🔒 Secret Admin Controls
 * Click the **Lock Icon (🔒)** in the site header or footer.
 * Enter Secret Admin PIN (configured by admin).
-* Toggle any of the 5 games on or off.
+* Toggle any of the 6 games on or off.
 * Reset family high scores or streak records.
 
 ---
@@ -87,3 +92,13 @@ Every fusion dish includes a full Indian kitchen adaptation:
 * **Theme Modes**: Seamless toggle between **Light Mode** (Parchment & Terracotta) and **Dark Mode** (Cast Iron Espresso & Saffron Glow).
 * **Web Audio API Synthesizer**: Chimes, clicks, wheel ticks, error buzzes, and victory fanfares generated via native code (with master mute toggle 🔇).
 * **Celebration Confetti**: Full-screen particle physics celebrations on game completions and tier rank-ups!
+
+## Admin and trust notes
+
+The application no longer ships a default administrator PIN or seeded API-token examples. On first use, an administrator creates a browser-local PIN; it is stored as a salted PBKDF2-derived hash. This is a **local interface lock only**, not server-side authentication and not a security boundary for server data or API operations. Do not store production secrets in browser code or local storage.
+
+The sample family testimonials and sample score-verification entries have been removed. Ratings now show an empty state until visitors post real feedback.
+
+## Hot Potato round duration
+
+Both the native and fullscreen Hot Potato modes use a fixed 60-second round. The countdown is deadline-based rather than tied to animation-frame count, so device refresh rate does not change the session length.
