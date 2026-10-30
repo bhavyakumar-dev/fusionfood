@@ -2331,7 +2331,6 @@ const DEFAULT_STATE = {
     hotPotato: true,
     spinScience: true
   },
-  adminPin: 'careers2026',
   appVersion: 'v2', // 'v1' (Classic), 'v2' (Modern Redesign), 'v3' (AI & AR Vision)
   v2Features: {
     leaderboardInHeader: true,
@@ -2353,80 +2352,15 @@ const DEFAULT_STATE = {
     voiceId: 'en-IN-Wavenet-D',
     elevenLabsKey: ''
   },
-  kidScoreVerifications: [
-    {
-      scoreId: 'sc_kid_01',
-      playerName: 'Aarav (Kid Chef)',
-      game: 'Hot Potato Rush',
-      score: 480,
-      timestamp: '2026-10-30T11:00:00.000Z',
-      verified: true,
-      verifiedBy: 'Chef Parent'
-    },
-    {
-      scoreId: 'sc_kid_02',
-      playerName: 'Rhea (Kid Chef)',
-      game: 'Family Trivia Quiz',
-      score: 950,
-      timestamp: '2026-10-30T11:15:00.000Z',
-      verified: false,
-      verifiedBy: null
-    }
-  ],
+  kidScoreVerifications: [],
   faceHashes: {},
-  guestReviews: [
-    {
-      id: 'rev_01',
-      author: 'Chef Ranveer B.',
-      rating: 5,
-      comment: 'Incredible fusion concepts! The paneer tikka tacos and 3D molecular spice chemistry make cooking captivating for kids.',
-      date: '2026-10-28',
-      role: 'Master Chef Mentor'
-    },
-    {
-      id: 'rev_02',
-      author: 'Ananya & Kabir',
-      rating: 5,
-      comment: 'Hot Potato Rush was a hit with our family on the weekend. The audio sizzle and coals physics feel like an authentic arcade game!',
-      date: '2026-10-29',
-      role: 'Family Chefs'
-    },
-    {
-      id: 'rev_03',
-      author: 'Dr. Meenakshi S.',
-      rating: 5,
-      comment: 'The Indian substitutes for rare global ingredients (like paneer for queso blanco) make international cooking accessible to any Indian kitchen.',
-      date: '2026-10-30',
-      role: 'Culinary Nutritionist'
-    }
-  ],
-  apiKeys: [
-    {
-      keyId: 'key_master_admin',
-      name: 'Master Admin Access Token',
-      token: 'ff_live_adm_9a82f1b04c7d6e53a2b1049c8e71fa32',
-      prefix: 'ff_live_adm_...fa32',
-      scope: 'admin',
-      status: 'active',
-      createdAt: '2026-10-30T10:00:00.000Z',
-      expiresAt: null
-    },
-    {
-      keyId: 'key_public_ro',
-      name: 'Leaderboard Public Client',
-      token: 'ff_live_ro_4b7e12c98d0f3a6e11c52b7a9e04dc18',
-      prefix: 'ff_live_ro_...dc18',
-      scope: 'read',
-      status: 'active',
-      createdAt: '2026-10-30T10:15:00.000Z',
-      expiresAt: '2027-10-30T10:15:00.000Z'
-    }
-  ],
+  guestReviews: [],
+  apiKeys: [],
   activeGameTab: 'buildDish',
   recipeFilter: 'all',
   recipeCompletedSteps: {},
   completedCityQuests: [],
-  theme: 'light',
+  theme: 'dark',
   onboarded: true
 };
 
@@ -4139,6 +4073,12 @@ class FusionApp {
   constructor() {
     this.db = new FusionDatabase();
     this.state = this.loadState();
+    const routeParams = new URLSearchParams(window.location.search);
+    const routeVersion = (routeParams.get('v') || routeParams.get('version') || '').toLowerCase();
+    const routePath = (window.location.pathname || '').toLowerCase();
+    if (['1', 'v1'].includes(routeVersion) || routePath.endsWith('/v1')) this.state.appVersion = 'v1';
+    else if (['2', 'v2'].includes(routeVersion) || routePath.endsWith('/v2')) this.state.appVersion = 'v2';
+    else if (['3', 'v3'].includes(routeVersion) || routePath.endsWith('/v3')) this.state.appVersion = 'v3';
     if (!this.state.completedCityQuests) {
       this.state.completedCityQuests = [];
     }
@@ -4171,15 +4111,17 @@ class FusionApp {
         if (parsed.gameToggles && parsed.gameToggles.indiaMap === undefined) {
           parsed.gameToggles.indiaMap = true;
         }
-        if (!parsed.apiKeys || !Array.isArray(parsed.apiKeys) || parsed.apiKeys.length === 0) {
-          parsed.apiKeys = DEFAULT_STATE.apiKeys;
-        }
+        delete parsed.adminPin;
+        parsed.apiKeys = [];
+        if (Array.isArray(parsed.guestReviews)) parsed.guestReviews = parsed.guestReviews.filter(r => !['rev_01', 'rev_02', 'rev_03'].includes(r.id));
+        else parsed.guestReviews = [];
+        if (Array.isArray(parsed.kidScoreVerifications)) parsed.kidScoreVerifications = parsed.kidScoreVerifications.filter(r => !['sc_kid_01', 'sc_kid_02'].includes(r.scoreId));
+        else parsed.kidScoreVerifications = [];
         if (!parsed.v2Features) {
           parsed.v2Features = { ...DEFAULT_STATE.v2Features };
         }
-        if (!parsed.kidScoreVerifications || !Array.isArray(parsed.kidScoreVerifications)) {
-          parsed.kidScoreVerifications = [...DEFAULT_STATE.kidScoreVerifications];
-        }
+        if (!Array.isArray(parsed.guestReviews)) parsed.guestReviews = [];
+        if (!Array.isArray(parsed.kidScoreVerifications)) parsed.kidScoreVerifications = [];
         if (!parsed.faceHashes) {
           parsed.faceHashes = {};
         }
@@ -4300,19 +4242,6 @@ class FusionApp {
 
     // 5. Re-render all views
     
-    // Detect URL version parameter or path (/v1, /v2, /v3 or ?v=1, ?v=2, ?v=3)
-    if (typeof window !== 'undefined') {
-      const urlParams = new URLSearchParams(window.location.search);
-      const vParam = urlParams.get('v') || urlParams.get('version');
-      const pathname = (window.location.pathname || '').toLowerCase();
-      if (pathname.includes('/v1') || vParam === '1' || vParam === 'v1') {
-        this.state.appVersion = 'v1';
-      } else if (pathname.includes('/v3') || vParam === '3' || vParam === 'v3') {
-        this.state.appVersion = 'v3';
-      } else if (pathname.includes('/v2') || vParam === '2' || vParam === 'v2') {
-        this.state.appVersion = 'v2';
-      }
-    }
     this.applyTheme(this.state.theme);
     this.renderHeader();
     this.renderProgressStrip();
@@ -4343,13 +4272,6 @@ class FusionApp {
     this.initScrolltideShowcase();
     this.updateNavAccessibility();
     this.applyV2FeatureVisibility();
-
-    // Auto-prompt onboarding modal on first session if not onboarded
-    if (this.state.onboarded === false) {
-      setTimeout(() => {
-        this.openProfileModal();
-      }, 400);
-    }
   }
 
   // ========================================================
@@ -5935,7 +5857,7 @@ class FusionApp {
     const profile = this.getActiveProfile();
     const highScore = profile.bests?.hotPotato || localStorage.getItem('fusion_hot_potato_high') || 0;
     const diff = this.getDifficultySettings();
-    const isItchMode = this.state.hpMode === 'itch';
+    const isItchMode = false; // Third-party embeds cannot be governed by the session timer.
 
     arena.innerHTML = `
       <div class="arena-header">
@@ -5950,6 +5872,7 @@ class FusionApp {
         </div>
         <div class="arena-badges" style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
           <span class="pill-badge" style="color:var(--primary); font-weight:800;" id="hp-score-badge">Score: 0</span>
+          <span class="pill-badge hp-timer-badge" id="hp-timer-badge" aria-live="off">01:00</span>
           <span class="pill-badge" id="hp-high-badge">Best: ${highScore}</span>
           <span class="pill-badge" style="color:#F59E0B;" id="hp-heat-badge">Heat: Raw (0%)</span>
         </div>
@@ -6049,11 +5972,24 @@ class FusionApp {
     const highBadge = arena.querySelector('#hp-high-badge');
     const meterFill = arena.querySelector('#hp-meter-fill');
     const statusText = arena.querySelector('#hp-status-text');
+    const timerBadge = arena.querySelector('#hp-timer-badge');
 
     const profile = this.getActiveProfile();
     const diff = this.getDifficultySettings();
     let isPlaying = false;
     let score = 0;
+    const ROUND_DURATION_MS = 60_000;
+    let timeRemainingMs = ROUND_DURATION_MS;
+    let roundEndsAt = 0;
+    const paintTimer = () => {
+      const seconds = Math.ceil(timeRemainingMs / 1000);
+      if (!timerBadge) return;
+      timerBadge.textContent = String(Math.floor(seconds / 60)).padStart(2, '0') + ':' + String(seconds % 60).padStart(2, '0');
+      timerBadge.classList.toggle('is-urgent', seconds <= 10);
+    };
+    const startTimer = () => { timeRemainingMs = ROUND_DURATION_MS; roundEndsAt = performance.now() + timeRemainingMs; paintTimer(); };
+    const pauseTimer = () => { if (roundEndsAt) timeRemainingMs = Math.max(0, roundEndsAt - performance.now()); roundEndsAt = 0; paintTimer(); };
+    const resumeTimer = () => { roundEndsAt = performance.now() + timeRemainingMs; paintTimer(); };
     let highScore = profile.bests?.hotPotato || parseInt(localStorage.getItem('fusion_hot_potato_high') || '0', 10);
 
     // Physics & potato object
@@ -6170,6 +6106,7 @@ class FusionApp {
 
     const pauseGame = () => {
       if (!isPlaying) return;
+      pauseTimer();
       isPlaying = false;
       sound.playClick();
       if (stopBtn) stopBtn.style.display = 'none';
@@ -6204,6 +6141,7 @@ class FusionApp {
         startOverlay.style.display = 'none';
         if (stopBtn) stopBtn.style.display = 'inline-flex';
         isPlaying = true;
+        resumeTimer();
       });
 
       arena.querySelector('#hp-finish-btn')?.addEventListener('click', () => {
@@ -6232,6 +6170,7 @@ class FusionApp {
           scoreBadge.innerText = 'Score: 0';
           resetPotato();
           isPlaying = true;
+          startTimer();
           if (stopBtn) stopBtn.style.display = 'inline-flex';
         });
       });
@@ -6243,6 +6182,7 @@ class FusionApp {
         scoreBadge.innerText = 'Score: 0';
         resetPotato();
         isPlaying = true;
+        startTimer();
         if (stopBtn) stopBtn.style.display = 'inline-flex';
       });
     };
@@ -6250,9 +6190,11 @@ class FusionApp {
     stopBtn?.addEventListener('click', () => pauseGame());
 
     const gameOver = (reason) => {
+      if (!isPlaying) return;
+      pauseTimer();
       isPlaying = false;
       if (stopBtn) stopBtn.style.display = 'none';
-      sound.playWrong();
+      if (reason !== 'time') sound.playWrong();
       if (reason === 'burnt') {
         this.deductScoreAndXP(15, 'Burnt Hot Potato (-15 XP)');
         score = Math.max(0, score - 20);
@@ -6262,20 +6204,18 @@ class FusionApp {
       startOverlay.style.display = 'flex';
       startOverlay.innerHTML = `
         <div class="hp-overlay-card">
-          <div class="hp-overlay-icon">${reason === 'burnt' ? '🔥' : '💥'}</div>
-          <h3 class="hp-overlay-title" style="color:#F43F5E;">
-            ${reason === 'burnt' ? 'Charcoal Alert! Burnt! (-15 XP / -20 pts)' : 'Dropped Potato!'}
+          <div class="hp-overlay-icon">${reason === 'time' ? '⌛' : reason === 'burnt' ? '🔥' : '•'}</div>
+          <h3 class="hp-overlay-title" style="color:var(--primary-text);">
+            ${reason === 'time' ? 'Round Complete' : reason === 'burnt' ? 'Charcoal Alert! Burnt! (-15 XP / -20 pts)' : 'Dropped Potato!'}
           </h3>
           <p style="color:var(--text-main); font-size:1.05rem; font-weight:800; margin-bottom:0.35rem;">
             Score: ${score} Potatoes Served
           </p>
           <p class="hp-overlay-desc">
-            ${reason === 'burnt' 
-              ? 'Kept on sizzling coals too long! Serve through the green window when it glows Golden.'
-              : 'Keep the potato airborne by tapping towards the green window!'}
+            ${reason === 'time' ? 'Your fixed 60-second round has ended. Your final score is shown above.' : reason === 'burnt' ? 'Kept on sizzling coals too long! Serve through the green window when it glows Golden.' : 'Keep the potato airborne by tapping towards the green window!'}
           </p>
           <button class="btn btn-primary" id="hp-restart-btn" style="padding:0.75rem 2.2rem; font-size:1.05rem;">
-            🔄 Play Again
+            ${reason === 'time' ? 'Play Another 60-Second Round' : 'Play Again'}
           </button>
         </div>
       `;
@@ -6286,6 +6226,7 @@ class FusionApp {
         scoreBadge.innerText = `Score: 0`;
         resetPotato();
         isPlaying = true;
+        startTimer();
         if (stopBtn) stopBtn.style.display = 'inline-flex';
       });
     };
@@ -6324,6 +6265,7 @@ class FusionApp {
       scoreBadge.innerText = `Score: 0`;
       resetPotato();
       isPlaying = true;
+      startTimer();
       if (stopBtn) stopBtn.style.display = 'inline-flex';
     });
 
@@ -6367,7 +6309,11 @@ class FusionApp {
 
     const updateLoop = () => {
       if (isPlaying) {
-        if (threePotato) {
+        timeRemainingMs = Math.max(0, roundEndsAt - performance.now());
+        paintTimer();
+        if (timeRemainingMs <= 0) {
+          gameOver('time');
+        } else if (threePotato) {
           threePotato.update(potato.x, potato.y, potato.vx, potato.vy, potato.cookLevel);
         }
         // Apply Gravity
@@ -6746,6 +6692,9 @@ class FusionApp {
     let gameState = 'menu';
     let score = 0, best = +(localStorage.getItem('hotpotato_best') || 0);
     let lives = 3, elapsed = 0, combo = 0, served = 0, perfects = 0;
+    let timeRemaining = 60;
+    let roundEndsAtMs = 0;
+    let endReason = 'lives';
     let shake = 0, shakeX = 0, shakeY = 0;
     let mouse = { x: W / 2, y: H / 2 };
     let whackCooldown = 0, respawnTimer = 0, hintTimer = 0;
@@ -6773,6 +6722,7 @@ class FusionApp {
 
     const resetGame = () => {
       score = 0; lives = 3; elapsed = 0; combo = 0; served = 0; perfects = 0;
+      timeRemaining = 60; roundEndsAtMs = performance.now() + 60_000; endReason = 'lives';
       particles = []; floaters = []; toppingsFalling = []; embers = [];
       emberTimer = 28; toppingTimer = 5; respawnTimer = 0; hintTimer = 0;
       serveZone = { side: 1, y: 200, h: 96, flash: 0 };
@@ -6866,6 +6816,13 @@ class FusionApp {
 
       if (gameState === 'play') {
         elapsed += dt;
+        timeRemaining = Math.max(0, (roundEndsAtMs - now) / 1000);
+        if (timeRemaining <= 0) {
+          gameState = 'over'; endReason = 'time';
+          if (score > best) { best = score; localStorage.setItem('hotpotato_best', best); }
+          sfx.gameover();
+        }
+        if (gameState === 'play') {
         whackCooldown = Math.max(0, whackCooldown - dt);
         if (flashMsg) { flashMsg.t -= dt; if (flashMsg.t <= 0) flashMsg = null; }
         serveZone.flash = Math.max(0, serveZone.flash - dt * 2);
@@ -6942,6 +6899,7 @@ class FusionApp {
             sfx.pickup();
             toppingsFalling.splice(i, 1);
           }
+        }
         }
       }
 
@@ -7034,7 +6992,11 @@ class FusionApp {
         ctx.fillStyle = '#FFF';
         ctx.textAlign = 'left';
         ctx.fillText(`Score: ${score}`, 20, 36);
-        ctx.fillText(`Lives: ${'🥔'.repeat(Math.max(0, lives))}`, W - 140, 36);
+        ctx.fillText(`Lives: ${Math.max(0, lives)}`, W - 140, 36);
+        const timerSeconds = Math.max(0, Math.ceil(timeRemaining));
+        ctx.textAlign = 'center';
+        ctx.fillStyle = timeRemaining <= 10 ? '#FF9B83' : '#FDE68A';
+        ctx.fillText(`TIME ${String(Math.floor(timerSeconds / 60)).padStart(2, '0')}:${String(timerSeconds % 60).padStart(2, '0')}`, W / 2, 36);
         if (combo > 1) {
           ctx.fillStyle = '#FFD94A';
           ctx.textAlign = 'center';
@@ -7057,10 +7019,11 @@ class FusionApp {
         ctx.font = 'bold 42px sans-serif';
         ctx.fillStyle = '#F43F5E';
         ctx.textAlign = 'center';
-        ctx.fillText('GAME OVER', W / 2, H * 0.42);
+        ctx.fillText(endReason === 'time' ? 'ROUND COMPLETE' : 'GAME OVER', W / 2, H * 0.42);
         ctx.font = '24px sans-serif';
         ctx.fillStyle = '#FFF';
         ctx.fillText(`Final Score: ${score} pts`, W / 2, H * 0.52);
+        ctx.fillText(endReason === 'time' ? '60-second session finished' : 'Session ended', W / 2, H * 0.58);
         ctx.fillText('— TAP / CLICK TO RETRY —', W / 2, H * 0.64);
       }
 
@@ -8707,29 +8670,58 @@ Guidelines:
     document.body.classList.remove('has-modal-open');
   }
 
+  async hashLocalAdminPin(pin, saltHex) {
+    const salt = Uint8Array.from((saltHex.match(/.{2}/g) || []), pair => parseInt(pair, 16));
+    const key = await window.crypto.subtle.importKey('raw', new TextEncoder().encode(pin), 'PBKDF2', false, ['deriveBits']);
+    const bits = await window.crypto.subtle.deriveBits({ name: 'PBKDF2', salt, iterations: 120000, hash: 'SHA-256' }, key, 256);
+    return Array.from(new Uint8Array(bits), byte => byte.toString(16).padStart(2, '0')).join('');
+  }
+
+  async saveLocalAdminPin(pin) {
+    const salt = Array.from(window.crypto.getRandomValues(new Uint8Array(16)), byte => byte.toString(16).padStart(2, '0')).join('');
+    const digest = await this.hashLocalAdminPin(pin, salt);
+    localStorage.setItem('fusion_admin_pin_v1', salt + ':' + digest);
+  }
+
   renderAdminModalContent(isAuthenticated = false) {
     const body = document.getElementById('admin-modal-body');
     if (!body) return;
 
     if (!isAuthenticated) {
-      body.innerHTML = `
-        <p style="font-size:0.92rem; color:var(--text-muted); margin-bottom:1.25rem; line-height:1.5;">
-          Enter your secret Admin PIN to manage game visibility toggles, change settings, or reset household scores.
-        </p>
-        <div class="pin-input-group">
-          <input type="password" id="admin-pin-field" class="pin-input" placeholder="••••••••" maxlength="16" aria-label="Enter 8-character Secret Admin PIN" />
-          <button class="btn btn-primary" id="admin-submit-pin-btn">Unlock 🔓</button>
-        </div>
-        <div id="pin-error-msg" class="admin-error-text" style="font-size:0.85rem; font-weight:700; min-height:22px;"></div>
-      `;
+      const storedPin = localStorage.getItem('fusion_admin_pin_v1');
+      const isFirstSetup = !storedPin;
+      body.innerHTML = [
+        '<div class="admin-lock-intro">',
+        '<h4>' + (isFirstSetup ? 'Create a local admin PIN' : 'Unlock local admin settings') + '</h4>',
+        '<p>' + (isFirstSetup ? 'Set a new PIN for this browser. The old default credential has been retired.' : 'Enter the PIN configured on this device.') + '</p>',
+        '<p class="admin-lock-note">This is a local interface lock only. It does not authenticate or protect server-side database operations.</p>',
+        '</div>',
+        '<div class="pin-input-group">',
+        '<label class="sr-only" for="admin-pin-field">' + (isFirstSetup ? 'Create admin PIN' : 'Admin PIN') + '</label>',
+        '<input type="password" id="admin-pin-field" class="pin-input" placeholder="' + (isFirstSetup ? 'Create an 8+ character PIN' : 'Enter local PIN') + '" minlength="8" maxlength="64" autocomplete="current-password" />',
+        '<button type="button" class="btn btn-primary" id="admin-submit-pin-btn">' + (isFirstSetup ? 'Save PIN' : 'Unlock') + '</button>',
+        '</div>',
+        '<div id="pin-error-msg" class="admin-error-text" role="status" aria-live="polite"></div>'
+      ].join('');
 
-      document.getElementById('admin-submit-pin-btn')?.addEventListener('click', () => {
-        const val = document.getElementById('admin-pin-field')?.value;
-        if (val === this.state.adminPin) {
-          sound.playChime();
-          showToast('Admin Mode Unlocked', 'success');
-          this.renderAdminModalContent(true);
-        } else {
+      document.getElementById('admin-submit-pin-btn')?.addEventListener('click', async () => {
+        const value = (document.getElementById('admin-pin-field')?.value || '').trim();
+        const message = document.getElementById('pin-error-msg');
+        if (!window.crypto?.subtle) { message.textContent = 'Secure PIN setup requires HTTPS in a modern browser.'; return; }
+        if (isFirstSetup) {
+          if (value.length < 8) { message.textContent = 'Use at least 8 characters for your new PIN.'; return; }
+          try { await this.saveLocalAdminPin(value); sound.playChime(); this.renderAdminModalContent(true); showToast('Local admin PIN created.', 'success'); }
+          catch (error) { message.textContent = 'Could not store the PIN securely in this browser.'; }
+          return;
+        }
+        try {
+          const parts = storedPin.split(':');
+          const digest = parts.length === 2 ? await this.hashLocalAdminPin(value, parts[0]) : '';
+          if (parts.length === 2 && digest === parts[1]) { sound.playChime(); this.renderAdminModalContent(true); showToast('Local admin settings unlocked.', 'success'); }
+          else { sound.playWrong(); message.textContent = 'Incorrect PIN. Please try again.'; }
+        } catch (error) { message.textContent = 'Unable to verify this local PIN in the current browser.'; }
+      });
+    } else {
           sound.playWrong();
           document.getElementById('pin-error-msg').innerText = '❌ Incorrect PIN. Please try again.';
         }
@@ -8925,10 +8917,10 @@ Guidelines:
           <!-- Secret Admin PIN -->
           <div style="background:var(--bg-parchment); border:1.5px solid var(--border-color); border-radius:var(--radius-sm); padding:0.95rem; margin-bottom:1.25rem;">
             <label style="font-size:0.82rem; font-weight:800; color:var(--text-muted); display:block; margin-bottom:0.35rem;">
-              🔑 Update Secret Admin PIN:
+              Change local admin PIN:
             </label>
             <div style="display:flex; gap:0.5rem;">
-              <input type="password" id="new-admin-pin" class="pin-input" style="padding:0.45rem 0.75rem; font-size:0.9rem;" placeholder="New PIN" />
+              <input type="password" id="new-admin-pin" class="pin-input" style="padding:0.45rem 0.75rem; font-size:0.9rem;" placeholder="New PIN (8+ characters)" minlength="8" maxlength="64" />
               <button class="btn btn-secondary" id="save-new-pin-btn" style="padding:0.45rem 0.85rem; font-size:0.82rem;">Update PIN</button>
             </div>
           </div>
@@ -9195,18 +9187,21 @@ Guidelines:
           }
         });
 
-        // Update PIN
-        document.getElementById('save-new-pin-btn')?.addEventListener('click', () => {
+        // Change the browser-local interface PIN.
+        document.getElementById('save-new-pin-btn')?.addEventListener('click', async () => {
           const newPin = document.getElementById('new-admin-pin')?.value.trim();
-          if (newPin && newPin.length >= 4) {
-            this.state.adminPin = newPin;
-            this.saveState();
-            sound.playCorrect();
-            showToast('Admin PIN updated securely!', 'success');
-            document.getElementById('new-admin-pin').value = '';
+          if (newPin && newPin.length >= 8) {
+            try {
+              await this.saveLocalAdminPin(newPin);
+              sound.playCorrect();
+              showToast('Local admin PIN updated.', 'success');
+              document.getElementById('new-admin-pin').value = '';
+            } catch (error) {
+              showToast('Secure local PIN storage is unavailable in this browser.', 'error');
+            }
           } else {
             sound.playWrong();
-            showToast('Please enter a PIN with at least 4 characters.', 'error');
+            showToast('Please use at least 8 characters.', 'error');
           }
         });
 
@@ -9315,9 +9310,9 @@ Guidelines:
 
         // Reset Admin Defaults
         document.getElementById('reset-admin-btn')?.addEventListener('click', () => {
-          if (confirm('Reset Admin PIN back to default and enable all features?')) {
+          if (confirm('Clear the local admin PIN and restore all feature defaults?')) {
             sound.playCorrect();
-            this.state.adminPin = 'careers2026';
+            localStorage.removeItem('fusion_admin_pin_v1');
             this.state.gameToggles = {
               buildDish: true,
               pronunciation: true,
@@ -9331,7 +9326,7 @@ Guidelines:
             this.renderGameTabs();
             this.renderActiveGame();
             this.renderAdminModalContent(true);
-            showToast('Admin PIN and Game Toggles reset to default!', 'success');
+            showToast('Local admin PIN cleared and feature defaults restored.', 'success');
           }
         });
       } else if (this.adminSubTab === 'api') {
@@ -9954,10 +9949,10 @@ Guidelines:
     if (!hero) return;
 
     const counters = [
-      { id: 'stat-counter-labs', target: 5, suffix: '' },
+      { id: 'stat-counter-labs', target: 6, suffix: '' },
       { id: 'stat-counter-recipes', target: 8, suffix: '' },
       { id: 'stat-counter-veg', target: 100, suffix: '%' },
-      { id: 'stat-counter-allergens', target: 100, suffix: '%' }
+      { id: 'stat-counter-allergens', target: FUSION_DISHES.filter(dish => Boolean(dish.allergens)).length, suffix: '' }
     ];
 
     counters.forEach(c => {
@@ -11673,7 +11668,7 @@ Guidelines:
     // 4. Chef Hat AR Camera & Age Scanner Header Action Button
     const cameraBtn = document.getElementById('open-camera-scanner-btn');
     if (cameraBtn) {
-      const showCamera = ver === 'v3' || (ver !== 'v1' && v2.chefHatCameraFilter !== false);
+      const showCamera = ver !== 'v1' && v2.chefHatCameraFilter !== false;
       cameraBtn.style.display = showCamera ? 'inline-flex' : 'none';
     }
 
@@ -11914,17 +11909,13 @@ Guidelines:
     if (!widget) return;
     const reviews = this.state.guestReviews || [];
     const count = reviews.length;
-    const avg = count > 0
-      ? (reviews.reduce((sum, r) => sum + (r.rating || 5), 0) / count).toFixed(1)
-      : '5.0';
+    const avg = count ? (reviews.reduce((sum, review) => sum + Number(review.rating || 0), 0) / count).toFixed(1) : null;
 
     widget.innerHTML = `
-      <div style="display:inline-flex; align-items:center; gap:0.6rem; background:var(--bg-card); border:1.5px solid var(--border-color); border-radius:var(--radius-full); padding:0.4rem 1.1rem; box-shadow:0 4px 16px rgba(0,0,0,0.06); cursor:pointer;" id="main-feedback-chip-btn">
-        <span style="color:#F59E0B; font-size:1.1rem;">★★★★★</span>
-        <strong style="font-size:0.85rem; color:var(--text-main);">★ ${avg} / 5.0</strong>
-        <span style="font-size:0.78rem; color:var(--text-muted);">(${count} Verified Family Reviews)</span>
-        <span style="font-size:0.75rem; color:var(--primary); font-weight:700;">Explore Reviews →</span>
-      </div>
+      <button type="button" class="review-summary-chip" id="main-feedback-chip-btn" aria-label="${count ? `${avg} out of 5 from ${count} community reviews` : 'No reviews yet. Open community feedback.'}">
+        ${count ? `<span class="review-summary-stars" aria-hidden="true">★★★★★</span><strong>${avg} / 5</strong><span class="review-summary-count">${count} community ${count === 1 ? 'review' : 'reviews'}</span>` : `<span class="review-summary-empty">Community feedback</span><strong>No reviews yet</strong>`}
+        <span class="review-summary-action">Explore feedback <span aria-hidden="true">→</span></span>
+      </button>
     `;
 
     widget.querySelector('#main-feedback-chip-btn')?.addEventListener('click', () => {
@@ -12146,9 +12137,7 @@ Guidelines:
 
     const reviews = this.state.guestReviews || [];
     const count = reviews.length;
-    const avg = count > 0
-      ? (reviews.reduce((sum, r) => sum + (r.rating || 5), 0) / count).toFixed(1)
-      : '5.0';
+    const avg = count ? (reviews.reduce((sum, review) => sum + Number(review.rating || 0), 0) / count).toFixed(1) : null;
 
     section.innerHTML = `
       <div class="feedback-container-card" style="background:var(--bg-card); border:2px solid var(--border-color); border-radius:var(--radius-lg); padding:1.75rem; box-shadow:0 8px 30px rgba(0,0,0,0.05);">
@@ -12159,12 +12148,12 @@ Guidelines:
               <h3 style="margin:0; font-size:1.35rem;">Community Guest Reviews & Family Feedback</h3>
             </div>
             <p style="margin:0.25rem 0 0; font-size:0.85rem; color:var(--text-muted);">
-              Read authentic feedback from families, mentors, and master chefs around the world.
+              Share your experience and read feedback submitted by other visitors.
             </p>
           </div>
           <div style="text-align:right;">
-            <div style="font-size:1.4rem; font-weight:900; color:#F59E0B;">★ ${avg} / 5.0</div>
-            <div style="font-size:0.78rem; color:var(--text-muted);">${count} Verified Culinary Critiques</div>
+            <div style="font-size:1.4rem; font-weight:900; color:#F59E0B;">${count ? `★ ${avg} / 5.0` : 'No reviews yet'}</div>
+            <div style="font-size:0.78rem; color:var(--text-muted);">${count} community ${count === 1 ? 'review' : 'reviews'}</div>
           </div>
         </div>
 
