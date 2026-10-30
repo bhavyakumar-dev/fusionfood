@@ -1,5 +1,10 @@
 // Fusion Food Family Lab - Complete Standalone Bundle (Zero CORS, 100% Offline Compatible)
 
+// GitHub Pages is static hosting: no Cloudflare Functions or D1 database are available there.
+function isGitHubPagesStaticHost() {
+  return typeof window !== 'undefined' && window.location.hostname.toLowerCase().endsWith('github.io');
+}
+
 // Guard offline test fallback fetches to prevent uncaught net::ERR_CONNECTION_REFUSED in browser error logs
 if (typeof window !== 'undefined' && window.fetch) {
   const _originalFetch = window.fetch;
@@ -4665,7 +4670,7 @@ class FusionApp {
         this.db.set(DB_CONFIG.STORE_TELEMETRY, entry).catch(() => {});
       }
       // Sync telemetry to server (/api/interactions) without blocking
-      if (typeof window !== 'undefined' && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {
+      if (typeof window !== 'undefined' && !isGitHubPagesStaticHost() && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {
         fetch('/api/interactions', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -8343,7 +8348,7 @@ Guidelines:
   renderLocalFamilyRoster(rosterContainer, filter, isOfflineFallback = false) {
     const noticeHtml = isOfflineFallback
       ? `<div style="font-size:0.82rem; color:var(--text-muted); margin-bottom:0.85rem; padding:0.4rem 0.8rem; background:var(--bg-card-subtle); border-radius:var(--radius-sm); border:1px solid var(--border-color);">
-          🌐 <em>Offline mode: Displaying local Family Roster rankings</em>
+          🌐 <em>${isGitHubPagesStaticHost() ? 'GitHub Pages static mode: showing this browser’s local Family Roster. Scores are not shared globally.' : 'Offline mode: Displaying local Family Roster rankings'}</em>
         </div>`
       : '';
 
@@ -8446,6 +8451,10 @@ Guidelines:
   async renderGlobalLeaderboard(rosterContainer, filter) {
     if (window.location.protocol === 'file:') {
       this.renderLocalFamilyRoster(rosterContainer, filter, false);
+      return;
+    }
+    if (isGitHubPagesStaticHost()) {
+      this.renderLocalFamilyRoster(rosterContainer, filter, true);
       return;
     }
 
@@ -8670,20 +8679,16 @@ Guidelines:
       }
     }
 
+    // GitHub Pages has no API/database backend; keep this score in local storage only.
+    if (isGitHubPagesStaticHost() || typeof window === 'undefined' || window.location.protocol === 'file:') return;
+
     try {
-      if (typeof window !== 'undefined' && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {
-        const res = await fetch('/api/submit-score', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        if (!res.ok) {
-          console.warn(`submit-score returned HTTP ${res.status}`);
-        }
-      }
-      if (!res.ok) {
-        console.warn(`submit-score returned HTTP ${res.status}`);
-      }
+      const response = await fetch('/api/submit-score', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!response.ok) console.warn(`submit-score returned HTTP ${response.status}`);
     } catch (e) {
       console.warn('Network error submitting score, safely saved to local IndexedDB fallback:', e);
     }
@@ -9364,6 +9369,20 @@ Guidelines:
           }
         });
       } else if (this.adminSubTab === 'api') {
+        if (isGitHubPagesStaticHost()) {
+          body.innerHTML = `
+            <div class="admin-ai-config-card">
+              <h4>Backend/API tools are unavailable on GitHub Pages</h4>
+              <p style="color:var(--text-muted); line-height:1.65;">
+                GitHub Pages hosts static files only. It cannot run the Cloudflare API routes or D1 database used for shared API keys, global scores and feedback.
+              </p>
+              <p style="color:var(--text-muted); line-height:1.65;">
+                This edition stores profiles, progress, scores and reviews in this browser using local storage and IndexedDB. Those records are not shared with other visitors or devices.
+              </p>
+            </div>
+          `;
+          return;
+        }
         // API KEY GENERATOR TAB
         const keysListHtml = (this.state.apiKeys && this.state.apiKeys.length > 0)
           ? this.state.apiKeys.map(k => {
@@ -9669,7 +9688,7 @@ Guidelines:
     this.state.apiKeys.unshift(newKey);
     this.saveState();
 
-    if (typeof window !== 'undefined' && window.location.protocol !== 'file:') {
+    if (typeof window !== 'undefined' && !isGitHubPagesStaticHost() && window.location.protocol !== 'file:') {
       fetch('/api/admin/keys', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -9693,7 +9712,7 @@ Guidelines:
       key.status = 'revoked';
       this.saveState();
 
-      if (typeof window !== 'undefined' && window.location.protocol !== 'file:') {
+      if (typeof window !== 'undefined' && !isGitHubPagesStaticHost() && window.location.protocol !== 'file:') {
         fetch(`/api/admin/keys?keyId=${encodeURIComponent(keyId)}`, {
           method: 'DELETE'
         }).catch(err => {
@@ -9705,6 +9724,10 @@ Guidelines:
 
   async runApiDiagnosticPing(endpoint, outputEl) {
     if (!outputEl) return;
+    if (isGitHubPagesStaticHost()) {
+      outputEl.textContent = 'GitHub Pages is static hosting. There are no /api endpoints here; profiles, scores and reviews are stored locally in this browser.';
+      return;
+    }
     outputEl.innerHTML = `<span style="color:#60A5FA;">📡 Pinging ${endpoint}...</span>`;
     const t0 = performance.now();
     try {
@@ -12260,7 +12283,7 @@ Guidelines:
       }
 
       // Sync to /api/feedback without blocking
-      if (typeof window !== 'undefined' && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {
+      if (typeof window !== 'undefined' && !isGitHubPagesStaticHost() && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {
         fetch('/api/feedback', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
