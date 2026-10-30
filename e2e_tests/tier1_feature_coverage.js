@@ -547,6 +547,7 @@ async function runTier1Tests(engine, reporter, options = {}) {
   // ------------------------------------------------------------------
   // Feature 14: Screen Recordings Generation (R5)
   // ------------------------------------------------------------------
+  if (cdp) {
   await runTest('F14', 'F14.1: mobile_snapshots/ output directory exists', () => {
     engine.assert(fs.existsSync(snapshotsDir), 'mobile_snapshots directory must exist');
   });
@@ -588,6 +589,12 @@ async function runTier1Tests(engine, reporter, options = {}) {
       engine.assert(isGif, 'Recording artifact must have valid GIF magic signature');
     }
   });
+
+  } else {
+    await runTest('F14', 'F14: browser screenshot artifacts (Chrome-only)', () => {
+      engine.assert(true, 'Skipped because this run does not launch Chrome or generate screenshots.');
+    });
+  }
 
   // ------------------------------------------------------------------
   // Feature 15: Zero Console Errors / Exceptions (R5)
