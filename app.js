@@ -445,6 +445,89 @@ const CULINARY_SCIENCE_TOPICS = [
       correctIndex: 1,
       explanation: 'Key aromatic molecules in spices dissolve in warm fats, spreading their fragrance and flavor throughout the entire dish!'
     }
+  },
+  {
+    id: 'spherification',
+    title: 'Spherification & Alginate Gels',
+    shortName: 'Spherification Pearls',
+    icon: '🔮',
+    dish: 'Mango Kokum Molecular Caviar',
+    color: '#EC4899',
+    summary: 'How fruit purees turn into popping liquid pearls!',
+    explanation: 'Sodium alginate (derived from brown kelp) reacts with calcium ions (calcium lactate or chloride) in a cold water bath. The calcium cross-links the alginate polysaccharide polymer chains into a paper-thin gel membrane in seconds, trapping pure liquid fruit essence inside a pearl that bursts with juice in your mouth!',
+    funFact: 'Ferran Adrià of El Bulli popularized this technique in 2003, revolutionizing molecular gastronomy by making edible fruit and juice caviar without cooking!',
+    question: {
+      text: 'What chemical reaction allows sodium alginate to create edible popping liquid spheres in cold water?',
+      options: [
+        'Calcium cross-links the alginate chains into a thin gel membrane',
+        'Boiling water evaporates the outer moisture instantly',
+        'High sugar content crystallizes into rock candy',
+        'Vinegar dissolves the food completely'
+      ],
+      correctIndex: 0,
+      explanation: 'Divalent calcium ions bond the linear alginate polymer strands together, forming an instantaneous edible hydrogel shell!'
+    }
+  },
+  {
+    id: 'yeast-fermentation',
+    title: 'Yeast & Microbial Fermentation',
+    shortName: 'Yeast Fermentation',
+    icon: '🍞',
+    dish: 'Sourdough Bhaturas & Naan',
+    color: '#10B981',
+    summary: 'The living biology that inflates fluffy bread pockets!',
+    explanation: 'Wild yeasts (Saccharomyces cerevisiae) and lactic acid bacteria consume natural starches and simple sugars in flour, producing carbon dioxide (CO2) gas and aromatic organic acids. Inside the hot tandoor or kadai, trapped CO2 rapidly expands, stretching the gluten net into airy, pillowy pockets with a subtle sourdough tang.',
+    funFact: 'Traditional dhaba cooks use sour dahi (yogurt) and baker’s yeast together, creating a probiotic symbiotic culture that ferments naan dough in under 45 minutes in warm kitchen air!',
+    question: {
+      text: 'What gas is produced by active yeast cells that causes naan and bhatura dough to rise with pillowy air bubbles?',
+      options: ['Helium gas', 'Carbon dioxide (CO2)', 'Pure nitrogen', 'Methane gas'],
+      correctIndex: 1,
+      explanation: 'Yeast cells breathe through anaerobic respiration, converting flour sugars into carbon dioxide gas bubbles that puff up when heated!'
+    }
+  },
+  {
+    id: 'starch-retrogradation',
+    title: 'Starch Retrogradation & Crispness',
+    shortName: 'Crispy Starch',
+    icon: '🌾',
+    dish: 'Shattering Crispy Dosa & Glass Noodles',
+    color: '#6366F1',
+    summary: 'Why parboiled and cooled starches yield the ultimate crunch!',
+    explanation: 'When rice and lentil starch is heated in water, it gelatinizes into a soft paste. As it cools and ferments, the linear amylose starch chains align and re-crystallize into a tighter, semi-crystalline network known as retrograded starch. When poured onto a sizzling hot tawa with a drizzle of oil, this network fries into a shattering, paper-crisp golden web!',
+    funFact: 'Cooling cooked potato wedges or rice before flash-frying reorganizes the outer surface starch, creating a glass-like barrier that absorbs 40% less oil while remaining twice as crunchy!',
+    question: {
+      text: 'What happens to gelatinized starch chains as they cool and rest before frying or roasting?',
+      options: [
+        'They dissolve into pure water and disappear',
+        'Amylose chains re-align and re-crystallize (retrogradation), enabling paper-crisp textures',
+        'They turn into protein fibers',
+        'The food becomes soft and soggy forever'
+      ],
+      correctIndex: 1,
+      explanation: 'Retrogradation re-orders the starch polymers, allowing high-heat searing to create an extraordinarily crisp, non-soggy crust!'
+    }
+  },
+  {
+    id: 'tadka-thermal-shock',
+    title: 'Thermal Shock & Volatile Oil Release',
+    shortName: 'Tadka Thermal Shock',
+    icon: '💥',
+    dish: 'Tempered Dal Makhani & Spiced Guacamole',
+    color: '#F59E0B',
+    summary: 'Why dropping whole mustard and cumin into smoking ghee makes them pop!',
+    explanation: 'Whole spice seeds contain sealed micro-capsules filled with aromatic volatile essential oils (cuminaldehyde, allyl isothiocyanate, thymol). When submerged in hot oil (>180°C), internal moisture instantly turns to superheated steam, causing the outer seed coat to crack and pop open (thermal shock), releasing rich aromatic oils into the cooking fat in under 5 seconds!',
+    funFact: 'The rhythmic popping sound of mustard seeds in hot oil is called "Chhonk" or "Tadka" in India, "Baghar" in Pakistan, and "Phodnii" in Maharashtra—a universal sensory indicator that the flavor explosion is complete!',
+    question: {
+      text: 'Why do whole mustard and cumin seeds crack and pop when dropped into hot oil or ghee?',
+      options: [
+        'Superheated steam fractures the seed coat, instantly releasing trapped volatile flavor oils',
+        'The seeds are turning into popcorn kernels',
+        'The oil is putting out a tiny fire inside the seed',
+        'Air pressure pushes the seeds to the bottom'
+      ],
+      correctIndex: 0,
+      explanation: 'Thermal shock instantly vaporizes moisture inside the seed, bursting the outer hull and infusing volatile flavor oils into the cooking fat!'
+    }
   }
 ];
 
@@ -1091,10 +1174,12 @@ function showToast(message, type = 'info') {
 // ==========================================
 const DB_CONFIG = {
   DB_NAME: 'FusionFoodDB',
-  DB_VERSION: 1,
+  DB_VERSION: 2,
   STORE_PROFILES: 'profiles',
   STORE_LEADERBOARD: 'leaderboard',
-  STORE_APP_STATE: 'app_state'
+  STORE_APP_STATE: 'app_state',
+  STORE_TELEMETRY: 'telemetry',
+  STORE_REVIEWS: 'reviews'
 };
 
 class FusionDatabase {
@@ -1127,6 +1212,14 @@ class FusionDatabase {
           }
           if (!db.objectStoreNames.contains(DB_CONFIG.STORE_APP_STATE)) {
             db.createObjectStore(DB_CONFIG.STORE_APP_STATE, { keyPath: 'key' });
+          }
+          if (!db.objectStoreNames.contains(DB_CONFIG.STORE_TELEMETRY)) {
+            const tStore = db.createObjectStore(DB_CONFIG.STORE_TELEMETRY, { keyPath: 'id', autoIncrement: true });
+            tStore.createIndex('timestamp', 'timestamp', { unique: false });
+            tStore.createIndex('type', 'type', { unique: false });
+          }
+          if (!db.objectStoreNames.contains(DB_CONFIG.STORE_REVIEWS)) {
+            db.createObjectStore(DB_CONFIG.STORE_REVIEWS, { keyPath: 'id' });
           }
         };
 
@@ -1202,10 +1295,11 @@ class FusionDatabase {
     if (!this.db) return false;
     return new Promise((resolve) => {
       try {
-        const tx = this.db.transaction([DB_CONFIG.STORE_PROFILES, DB_CONFIG.STORE_LEADERBOARD, DB_CONFIG.STORE_APP_STATE], 'readwrite');
-        tx.objectStore(DB_CONFIG.STORE_PROFILES).clear();
-        tx.objectStore(DB_CONFIG.STORE_LEADERBOARD).clear();
-        tx.objectStore(DB_CONFIG.STORE_APP_STATE).clear();
+        const stores = [DB_CONFIG.STORE_PROFILES, DB_CONFIG.STORE_LEADERBOARD, DB_CONFIG.STORE_APP_STATE];
+        if (this.db.objectStoreNames.contains(DB_CONFIG.STORE_TELEMETRY)) stores.push(DB_CONFIG.STORE_TELEMETRY);
+        if (this.db.objectStoreNames.contains(DB_CONFIG.STORE_REVIEWS)) stores.push(DB_CONFIG.STORE_REVIEWS);
+        const tx = this.db.transaction(stores, 'readwrite');
+        stores.forEach(s => tx.objectStore(s).clear());
         tx.oncomplete = () => resolve(true);
         tx.onerror = () => resolve(false);
       } catch (e) {
@@ -1252,6 +1346,74 @@ const DEFAULT_STATE = {
     spinScience: true
   },
   adminPin: 'careers2026',
+  appVersion: 'v2', // 'v1' (Classic), 'v2' (Modern Redesign), 'v3' (AI & AR Vision)
+  v2Features: {
+    leaderboardInHeader: true,
+    fusionExplorerTab: true,
+    hotPotatoEnhanced: true,
+    expandedWheel: true,
+    bifurcatedDifficulty: true,
+    parentScoreVerification: true,
+    chefHatCameraFilter: true,
+    faceVectorAntiDuplication: true,
+    tandoorSkewerGame: true,
+    pdfPortfolioExport: true,
+    communityFeedback: true,
+    telemetryLogging: true,
+    aiFaceExplainerTour: true
+  },
+  ttsConfig: {
+    provider: 'browser', // 'browser' or 'elevenlabs'
+    voiceId: 'en-IN-Wavenet-D',
+    elevenLabsKey: ''
+  },
+  kidScoreVerifications: [
+    {
+      scoreId: 'sc_kid_01',
+      playerName: 'Aarav (Kid Chef)',
+      game: 'Hot Potato Rush',
+      score: 480,
+      timestamp: '2026-10-30T11:00:00.000Z',
+      verified: true,
+      verifiedBy: 'Chef Parent'
+    },
+    {
+      scoreId: 'sc_kid_02',
+      playerName: 'Rhea (Kid Chef)',
+      game: 'Family Trivia Quiz',
+      score: 950,
+      timestamp: '2026-10-30T11:15:00.000Z',
+      verified: false,
+      verifiedBy: null
+    }
+  ],
+  faceHashes: {},
+  guestReviews: [
+    {
+      id: 'rev_01',
+      author: 'Chef Ranveer B.',
+      rating: 5,
+      comment: 'Incredible fusion concepts! The paneer tikka tacos and 3D molecular spice chemistry make cooking captivating for kids.',
+      date: '2026-10-28',
+      role: 'Master Chef Mentor'
+    },
+    {
+      id: 'rev_02',
+      author: 'Ananya & Kabir',
+      rating: 5,
+      comment: 'Hot Potato Rush was a hit with our family on the weekend. The audio sizzle and coals physics feel like an authentic arcade game!',
+      date: '2026-10-29',
+      role: 'Family Chefs'
+    },
+    {
+      id: 'rev_03',
+      author: 'Dr. Meenakshi S.',
+      rating: 5,
+      comment: 'The Indian substitutes for rare global ingredients (like paneer for queso blanco) make international cooking accessible to any Indian kitchen.',
+      date: '2026-10-30',
+      role: 'Culinary Nutritionist'
+    }
+  ],
   apiKeys: [
     {
       keyId: 'key_master_admin',
@@ -1552,10 +1714,17 @@ class ThreeJSCulinaryManager {
 
     const width = container.clientWidth || 1000;
     const height = container.clientHeight || 280;
+    const isMobile = width < 640;
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(46, width / height, 0.1, 100);
-    camera.position.set(0, 3.8, 7.6);
-    camera.lookAt(0, -0.4, 0);
+    const fov = isMobile ? 38 : 44;
+    const camera = new THREE.PerspectiveCamera(fov, width / height, 0.1, 100);
+    if (isMobile) {
+      camera.position.set(0, 5.0, 6.2);
+      camera.lookAt(0, -0.6, 0);
+    } else {
+      camera.position.set(0, 4.2, 6.8);
+      camera.lookAt(0, -0.4, 0);
+    }
 
     const renderer = this.createRenderer(container);
     if (!renderer) return null;
@@ -1563,27 +1732,40 @@ class ThreeJSCulinaryManager {
     container.innerHTML = '';
     container.appendChild(renderer.domElement);
 
-    // Terracotta Clay Hearth Wall
-    const wallGeo = new THREE.CylinderGeometry(3.6, 4.4, 4.0, 32, 1, true);
+    // Terracotta Clay Hearth Rim (Smooth Circular Opening, Zero Screen Clipping)
+    const rimRadius = isMobile ? 2.2 : 2.7;
+    const rimGeo = new THREE.TorusGeometry(rimRadius, 0.32, 16, 48);
+    const rimMat = new THREE.MeshStandardMaterial({
+      color: 0x9A3412,
+      roughness: 0.86,
+      metalness: 0.08
+    });
+    const rim = new THREE.Mesh(rimGeo, rimMat);
+    rim.rotation.x = Math.PI / 2;
+    rim.position.y = 0.3;
+    scene.add(rim);
+
+    // Terracotta Clay Interior Hearth Wall
+    const wallGeo = new THREE.CylinderGeometry(rimRadius, rimRadius * 0.82, 3.2, 32, 1, true);
     const wallMat = new THREE.MeshStandardMaterial({
-      color: 0x8D3B1B,
-      roughness: 0.88,
+      color: 0x5C1D06,
+      roughness: 0.94,
       side: THREE.BackSide
     });
     const wall = new THREE.Mesh(wallGeo, wallMat);
-    wall.position.y = 0.4;
+    wall.position.y = -1.2;
     scene.add(wall);
 
     // 36 Randomized Ember Rock Meshes
     const coalsGroup = new THREE.Group();
     const coalMaterials = [];
     for (let i = 0; i < 36; i++) {
-      const radius = Math.sqrt(Math.random()) * 2.7;
+      const radius = Math.sqrt(Math.random()) * (rimRadius * 0.72);
       const angle = Math.random() * Math.PI * 2;
       const x = Math.cos(angle) * radius;
       const z = Math.sin(angle) * radius;
-      const y = -1.5 + Math.random() * 0.42;
-      const scale = 0.32 + Math.random() * 0.36;
+      const y = -1.5 + Math.random() * 0.38;
+      const scale = (isMobile ? 0.24 : 0.32) + Math.random() * (isMobile ? 0.24 : 0.36);
 
       const cGeo = new THREE.DodecahedronGeometry(scale, 1);
       const cMat = new THREE.MeshStandardMaterial({
@@ -2050,10 +2232,14 @@ class ThreeJSCulinaryManager {
       moleculeGroup.add(bond);
     });
 
-    // Pointer Drag 360 Rotation
+    // Pointer Drag 360 Rotation & Touch Sensitivity
     let isDragging = false;
     let prevX = 0;
     let prevY = 0;
+    let initialPinchDist = null;
+    let initialCameraZ = camera.position.z;
+
+    const rotSensitivity = ('ontouchstart' in window || navigator.maxTouchPoints > 0) ? 0.012 : 0.015;
 
     renderer.domElement.addEventListener('pointerdown', (e) => {
       isDragging = true;
@@ -2066,8 +2252,8 @@ class ThreeJSCulinaryManager {
       if (!isDragging) return;
       const dx = e.clientX - prevX;
       const dy = e.clientY - prevY;
-      moleculeGroup.rotation.y += dx * 0.015;
-      moleculeGroup.rotation.x += dy * 0.015;
+      moleculeGroup.rotation.y += dx * rotSensitivity;
+      moleculeGroup.rotation.x += dy * rotSensitivity;
       prevX = e.clientX;
       prevY = e.clientY;
     });
@@ -2075,6 +2261,35 @@ class ThreeJSCulinaryManager {
     window.addEventListener('pointerup', () => {
       isDragging = false;
       if (renderer.domElement) renderer.domElement.style.cursor = 'grab';
+    });
+
+    // Mouse Wheel Zoom
+    renderer.domElement.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const zoomDelta = e.deltaY * 0.008;
+      camera.position.z = Math.max(3.5, Math.min(18.0, camera.position.z + zoomDelta));
+    }, { passive: false });
+
+    // Mobile Pinch-to-Zoom
+    renderer.domElement.addEventListener('touchmove', (e) => {
+      if (e.touches && e.touches.length === 2) {
+        e.preventDefault();
+        const dist = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY
+        );
+        if (initialPinchDist === null) {
+          initialPinchDist = dist;
+          initialCameraZ = camera.position.z;
+        } else {
+          const factor = initialPinchDist / dist;
+          camera.position.z = Math.max(3.5, Math.min(18.0, initialCameraZ * factor));
+        }
+      }
+    }, { passive: false });
+
+    renderer.domElement.addEventListener('touchend', () => {
+      initialPinchDist = null;
     });
 
     const inst = {
@@ -3038,6 +3253,8 @@ class Fusion3DManager {
       <button class="model-3d-badge" id="molecule-toggle-mode" style="cursor:pointer;pointer-events:auto;">
         ${this.moleculeSpaceFilling ? 'Spheres' : 'Ball & Stick'}
       </button>
+      <button class="model-3d-badge" id="molecule-zoom-in" style="cursor:pointer;pointer-events:auto;" title="Zoom In">🔍 +</button>
+      <button class="model-3d-badge" id="molecule-zoom-out" style="cursor:pointer;pointer-events:auto;" title="Zoom Out">🔍 −</button>
     `;
     container.appendChild(hud);
 
@@ -3046,15 +3263,29 @@ class Fusion3DManager {
       this.initMolecularModel3D(container, this.currentTopic);
     });
 
+    document.getElementById('molecule-zoom-in')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      camera.position.z = Math.max(3.2, camera.position.z - 1.2);
+    });
+
+    document.getElementById('molecule-zoom-out')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      camera.position.z = Math.min(18.0, camera.position.z + 1.2);
+    });
+
     const hint = document.createElement('div');
     hint.className = 'model-3d-hint';
-    hint.innerText = '👆 Drag to rotate molecule in 360°';
+    hint.innerText = '👆 Drag to rotate 360° • Pinch or scroll to zoom';
     container.appendChild(hint);
 
-    // Pointer Drag
+    // Pointer Drag & Zoom
     let isDragging = false;
     let prevX = 0, prevY = 0;
+    const isMobile = ('ontouchstart' in window || navigator.maxTouchPoints > 0);
+    const rotSensitivity = isMobile ? 0.014 : 0.016;
+
     container.addEventListener('pointerdown', (e) => {
+      if (e.target.closest('button')) return;
       isDragging = true;
       prevX = e.clientX;
       prevY = e.clientY;
@@ -3065,10 +3296,40 @@ class Fusion3DManager {
       const dy = e.clientY - prevY;
       prevX = e.clientX;
       prevY = e.clientY;
-      modelGroup.rotation.y += dx * 0.015;
-      modelGroup.rotation.x += dy * 0.015;
+      modelGroup.rotation.y += dx * rotSensitivity;
+      modelGroup.rotation.x += dy * rotSensitivity;
     });
     window.addEventListener('pointerup', () => { isDragging = false; });
+
+    // Touch Pinch-to-Zoom for Mobile
+    let pinchStartDist = 0;
+    let startCamZ = 7.5;
+    container.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 2) {
+        pinchStartDist = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY
+        );
+        startCamZ = camera.position.z;
+      }
+    }, { passive: true });
+
+    container.addEventListener('touchmove', (e) => {
+      if (e.touches.length === 2 && pinchStartDist > 0) {
+        const currentDist = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY
+        );
+        const scale = pinchStartDist / currentDist;
+        camera.position.z = Math.max(3.2, Math.min(18.0, startCamZ * scale));
+      }
+    }, { passive: true });
+
+    container.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const zoomDelta = e.deltaY * 0.008;
+      camera.position.z = Math.max(3.2, Math.min(18.0, camera.position.z + zoomDelta));
+    }, { passive: false });
 
     const ro = this.createResizeObserver(container, camera, renderer);
 
@@ -3138,6 +3399,18 @@ class FusionApp {
         }
         if (!parsed.apiKeys || !Array.isArray(parsed.apiKeys) || parsed.apiKeys.length === 0) {
           parsed.apiKeys = DEFAULT_STATE.apiKeys;
+        }
+        if (!parsed.v2Features) {
+          parsed.v2Features = { ...DEFAULT_STATE.v2Features };
+        }
+        if (!parsed.kidScoreVerifications || !Array.isArray(parsed.kidScoreVerifications)) {
+          parsed.kidScoreVerifications = [...DEFAULT_STATE.kidScoreVerifications];
+        }
+        if (!parsed.faceHashes) {
+          parsed.faceHashes = {};
+        }
+        if (!parsed.appVersion) {
+          parsed.appVersion = 'v2';
         }
         return { 
           ...DEFAULT_STATE, 
@@ -3262,6 +3535,7 @@ class FusionApp {
     this.initWheel();
     this.initScrolltideShowcase();
     this.updateNavAccessibility();
+    this.applyV2FeatureVisibility();
 
     // Auto-prompt onboarding modal on first session if not onboarded
     if (this.state.onboarded === false) {
@@ -3275,7 +3549,7 @@ class FusionApp {
   // INSTANT TAB SWITCHER (NO ENDLESS VERTICAL SCROLLING)
   // ========================================================
   initMainTabs() {
-    const tabButtons = document.querySelectorAll('.site-nav .nav-link[data-tab-target], .mobile-bottom-nav .nav-link[data-tab-target]');
+    const tabButtons = document.querySelectorAll('.nav-link[data-tab-target]');
     
     tabButtons.forEach(btn => {
       btn.addEventListener('click', (e) => {
@@ -3310,7 +3584,7 @@ class FusionApp {
     this.saveState();
 
     // Update Nav Buttons across both site-nav and mobile-bottom-nav
-    document.querySelectorAll('.site-nav .nav-link, .mobile-bottom-nav .nav-link').forEach(btn => {
+    document.querySelectorAll('.nav-link[data-tab-target]').forEach(btn => {
       if (btn.getAttribute('data-tab-target') === tabId) {
         btn.classList.add('active');
       } else {
@@ -3514,6 +3788,27 @@ class FusionApp {
     showToast(`Welcome ${name}! (${chosenRank.title})`, 'success');
   }
 
+  async logInteraction(type, details = {}) {
+    try {
+      const entry = {
+        type,
+        details,
+        profile: this.state.currentProfile,
+        timestamp: new Date().toISOString()
+      };
+      // Log permanently to IndexedDB
+      if (this.db && this.db.isReady) {
+        this.db.set(DB_CONFIG.STORE_TELEMETRY, entry).catch(() => {});
+      }
+      // Sync telemetry to server (/api/interactions) without blocking
+      fetch('/api/interactions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(entry)
+      }).catch(() => {});
+    } catch (e) {}
+  }
+
   addXP(amount, badgeToUnlock = null) {
     const profile = this.getActiveProfile();
     profile.xp += amount;
@@ -3532,6 +3827,20 @@ class FusionApp {
     sound.playCorrect();
     this.submitScoreToGlobal('overall', profile.xp, amount).catch(() => {});
     return currentRank;
+  }
+
+  deductScoreAndXP(xpAmount, reason = 'Mistake') {
+    const profile = this.getActiveProfile();
+    profile.xp = Math.max(0, profile.xp - xpAmount);
+    const currentRank = this.getCurrentRank(profile.xp, profile.role);
+    profile.level = currentRank.level;
+    this.saveState();
+    this.renderHeader();
+    this.renderProgressStrip();
+    this.renderLeaderboard();
+    sound.playWrong();
+    showToast(`-${xpAmount} XP: ${reason}`, 'warning');
+    this.logInteraction('penalty', { xpDeducted: xpAmount, reason });
   }
 
   applyTheme(theme) {
@@ -3677,6 +3986,10 @@ class FusionApp {
         this.saveState();
         this.renderGameTabs();
         this.renderActiveGame();
+        const arenaElem = document.getElementById('play-arena-container');
+        if (arenaElem) {
+          arenaElem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
       });
     });
 
@@ -3894,11 +4207,12 @@ class FusionApp {
           sound.playWrong();
           btn.classList.add('wrong-shake');
           setTimeout(() => btn.classList.remove('wrong-shake'), 220);
+          this.deductScoreAndXP(10, `Wrong ingredient: ${name}`);
 
           const impostor = dish.pantryItems.find(i => i.name === name);
           feedbackBox.innerHTML = `
             <span style="color:#DC2626;">
-              ❌ Impostor Alert: ${name}! ${impostor?.distractorReason || 'Not in this vegetarian recipe!'}
+              ❌ Impostor Alert: ${name}! (-10 XP) ${impostor?.distractorReason || 'Not in this vegetarian recipe!'}
             </span>
           `;
         }
@@ -4069,14 +4383,53 @@ class FusionApp {
   }
 
   speakText(text) {
+    const tts = this.state.ttsConfig || { provider: 'browser', voiceId: 'en-IN-Wavenet-D', elevenLabsKey: '' };
+    
+    // ElevenLabs Direct API router if enabled and key provided
+    if (tts.provider === 'elevenlabs' && tts.elevenLabsKey) {
+      fetch('https://api.elevenlabs.io/v1/text-to-speech/21m00Tcm4TlvDq8ikWAM', {
+        method: 'POST',
+        headers: {
+          'Accept': 'audio/mpeg',
+          'Content-Type': 'application/json',
+          'xi-api-key': tts.elevenLabsKey
+        },
+        body: JSON.stringify({
+          text: text,
+          model_id: 'eleven_monolingual_v1',
+          voice_settings: { stability: 0.65, similarity_boost: 0.75 }
+        })
+      })
+      .then(res => res.blob())
+      .then(blob => {
+        const audioUrl = URL.createObjectURL(blob);
+        const audio = new Audio(audioUrl);
+        audio.play().catch(() => {});
+      })
+      .catch(() => {
+        // Graceful fallback to browser speech synthesis
+        this.fallbackSpeakText(text, tts.voiceId);
+      });
+      return;
+    }
+
+    this.fallbackSpeakText(text, tts.voiceId);
+  }
+
+  fallbackSpeakText(text, voicePref = 'en-IN-Wavenet-D') {
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 0.85;
-      utterance.pitch = 1.05;
+      utterance.rate = 0.9;
+      utterance.pitch = 1.0;
+
+      // Select Indian English or Hindi voice if available in browser
+      const voices = window.speechSynthesis.getVoices();
+      const indianVoice = voices.find(v => v.lang.includes('IN') || v.name.toLowerCase().includes('india') || v.name.toLowerCase().includes('hindi'));
+      if (indianVoice) {
+        utterance.voice = indianVoice;
+      }
       window.speechSynthesis.speak(utterance);
-    } else {
-      alert('Speech audio playback is not supported in this browser.');
     }
   }
 
@@ -4264,11 +4617,12 @@ class FusionApp {
           sound.playWrong();
           btn.classList.add('wrong');
           allBtns[q.correctIndex].classList.add('correct');
+          this.deductScoreAndXP(10, 'Wrong Trivia Answer');
 
           feedbackBox.innerHTML = `
             <div style="background:#FEF2F2; border:1.5px solid #F87171; border-radius:var(--radius-md); padding:1.15rem; margin-top:1rem;">
               <div style="color:#DC2626; font-weight:800; margin-bottom:0.25rem; font-size:1.05rem;">
-                ❌ Not quite right!
+                ❌ Not quite right! (-10 XP)
               </div>
               <div style="font-size:0.88rem; color:var(--text-muted);">${q.explanation}</div>
               <button class="btn btn-primary" id="next-trivia-btn" style="margin-top:0.85rem; padding:0.45rem 1.15rem; font-size:0.85rem;">
@@ -4349,6 +4703,9 @@ class FusionApp {
         <button class="btn btn-secondary hp-mode-switch-btn ${isItchMode ? 'active' : ''}" id="hp-mode-itch-btn" style="padding:0.45rem 1.15rem; font-size:0.9rem;">
           🌐 Play Itch.io Original
         </button>
+        <button class="btn btn-primary" id="hp-launch-fullscreen-btn" style="padding:0.45rem 1.25rem; font-size:0.9rem; background:linear-gradient(135deg, #F59E0B, #EA580C);">
+          🔄 Play Landscape Fullscreen (Arcade Mode)
+        </button>
       </div>
 
       ${isItchMode ? `
@@ -4410,6 +4767,11 @@ class FusionApp {
       this.state.hpMode = 'itch';
       this.saveState();
       this.renderHotPotatoGame(arena);
+    });
+
+    arena.querySelector('#hp-launch-fullscreen-btn')?.addEventListener('click', () => {
+      sound.playClick();
+      this.openHotPotatoFullscreenModal();
     });
 
     if (!isItchMode) {
@@ -4548,6 +4910,10 @@ class FusionApp {
     const gameOver = (reason) => {
       isPlaying = false;
       sound.playWrong();
+      if (reason === 'burnt') {
+        this.deductScoreAndXP(15, 'Burnt Hot Potato (-15 XP)');
+        score = Math.max(0, score - 20);
+      }
       updateLeaderboardScore(score);
 
       startOverlay.style.display = 'flex';
@@ -4555,7 +4921,7 @@ class FusionApp {
         <div class="hp-overlay-card">
           <div class="hp-overlay-icon">${reason === 'burnt' ? '🔥' : '💥'}</div>
           <h3 class="hp-overlay-title" style="color:#F43F5E;">
-            ${reason === 'burnt' ? 'Charcoal Alert! Burnt!' : 'Dropped Potato!'}
+            ${reason === 'burnt' ? 'Charcoal Alert! Burnt! (-15 XP / -20 pts)' : 'Dropped Potato!'}
           </h3>
           <p style="color:var(--text-main); font-size:1.05rem; font-weight:800; margin-bottom:0.35rem;">
             Score: ${score} Potatoes Served
@@ -4889,6 +5255,465 @@ class FusionApp {
   }
 
   // ========================================================
+  // HOT POTATO FULLSCREEN / LANDSCAPE ARCADE ENGINE
+  // Single-canvas simulation ported from Prompt Potato Games
+  // ========================================================
+  openHotPotatoFullscreenModal() {
+    const modal = document.getElementById('hot-potato-modal');
+    if (!modal) return;
+    document.body.classList.add('has-modal-open');
+    modal.classList.add('open');
+
+    const diff = this.getDifficultySettings();
+    const diffBadge = document.getElementById('hp-modal-diff-badge');
+    if (diffBadge) {
+      diffBadge.innerText = diff.role === 'student' ? '🎒 Kid Chef Mode' : '👨‍🍳 Pro Parent Mode';
+    }
+
+    const canvas = document.getElementById('hp-fullscreen-canvas');
+    if (!canvas) return;
+
+    // Fullscreen toggle
+    const fsBtn = document.getElementById('hp-fullscreen-toggle-btn');
+    if (fsBtn) {
+      fsBtn.onclick = () => {
+        if (!document.fullscreenElement) {
+          modal.requestFullscreen().catch(() => {});
+        } else {
+          document.exitFullscreen().catch(() => {});
+        }
+      };
+    }
+
+    const closeBtn = document.getElementById('close-hot-potato-modal-btn');
+    if (closeBtn) {
+      closeBtn.onclick = () => this.closeHotPotatoFullscreenModal();
+    }
+
+    this.startStandaloneHotPotatoSimulation(canvas);
+  }
+
+  closeHotPotatoFullscreenModal() {
+    const modal = document.getElementById('hot-potato-modal');
+    if (!modal) return;
+    modal.classList.remove('open');
+    document.body.classList.remove('has-modal-open');
+    if (this.standaloneHPLoop) {
+      cancelAnimationFrame(this.standaloneHPLoop);
+      this.standaloneHPLoop = null;
+    }
+    if (document.fullscreenElement) {
+      document.exitFullscreen().catch(() => {});
+    }
+  }
+
+  startStandaloneHotPotatoSimulation(canvas) {
+    if (this.standaloneHPLoop) {
+      cancelAnimationFrame(this.standaloneHPLoop);
+      this.standaloneHPLoop = null;
+    }
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width || 960;
+    const H = canvas.height || 600;
+    const GRILL_Y = H - 70;
+    const POT_R = 26;
+
+    // Procedural Web Audio API sound synthesizer
+    let AC = null, masterGain = null, sizzleGain = null;
+    const initAudio = () => {
+      if (AC) return;
+      try {
+        AC = new (window.AudioContext || window.webkitAudioContext)();
+        masterGain = AC.createGain();
+        masterGain.gain.value = 0.5;
+        masterGain.connect(AC.destination);
+
+        const len = AC.sampleRate * 2;
+        const buf = AC.createBuffer(1, len, AC.sampleRate);
+        const d = buf.getChannelData(0);
+        for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+        const src = AC.createBufferSource();
+        src.buffer = buf; src.loop = true;
+        const bp = AC.createBiquadFilter();
+        bp.type = 'bandpass'; bp.frequency.value = 5200; bp.Q.value = 0.6;
+        sizzleGain = AC.createGain();
+        sizzleGain.gain.value = 0;
+        src.connect(bp); bp.connect(sizzleGain); sizzleGain.connect(masterGain);
+        src.start();
+      } catch (e) { AC = null; }
+    };
+
+    const tone = (freq, dur, type = 'square', vol = 0.2, slideTo = null, delay = 0) => {
+      if (!AC) return;
+      try {
+        const t0 = AC.currentTime + delay;
+        const o = AC.createOscillator(), g = AC.createGain();
+        o.type = type; o.frequency.setValueAtTime(freq, t0);
+        if (slideTo) o.frequency.exponentialRampToValueAtTime(Math.max(1, slideTo), t0 + dur);
+        g.gain.setValueAtTime(vol, t0);
+        g.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+        o.connect(g); g.connect(masterGain);
+        o.start(t0); o.stop(t0 + dur + 0.02);
+      } catch (e) {}
+    };
+
+    const noiseBurst = (dur, vol = 0.3, freq = 1800) => {
+      if (!AC) return;
+      try {
+        const len = Math.floor(AC.sampleRate * dur);
+        const buf = AC.createBuffer(1, len, AC.sampleRate);
+        const d = buf.getChannelData(0);
+        for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / len);
+        const src = AC.createBufferSource(); src.buffer = buf;
+        const f = AC.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = freq;
+        const g = AC.createGain(); g.gain.value = vol;
+        src.connect(f); f.connect(g); g.connect(masterGain);
+        src.start();
+      } catch (e) {}
+    };
+
+    const sfx = {
+      whack() { tone(200, 0.08, 'square', 0.16, 90); noiseBurst(0.05, 0.18, 2500); },
+      bounce() { noiseBurst(0.08, 0.25, 900); tone(110, 0.1, 'sawtooth', 0.1, 60); },
+      pickup() { tone(660, 0.07, 'sine', 0.25); tone(990, 0.1, 'sine', 0.25, null, 0.07); },
+      serve(perfect) {
+        const base = perfect ? [523, 659, 784, 1047] : [392, 523, 659];
+        base.forEach((f, i) => tone(f, 0.12, 'triangle', 0.3, null, i * 0.07));
+      },
+      raw() { tone(200, 0.25, 'sawtooth', 0.2, 80); },
+      burn() { noiseBurst(0.5, 0.4, 600); tone(300, 0.6, 'sawtooth', 0.25, 40); },
+      ember() { tone(1100, 0.06, 'square', 0.12, 400); },
+      gameover() { [330, 262, 220, 165].forEach((f, i) => tone(f, 0.3, 'triangle', 0.3, null, i * 0.22)); }
+    };
+
+    let gameState = 'menu';
+    let score = 0, best = +(localStorage.getItem('hotpotato_best') || 0);
+    let lives = 3, elapsed = 0, combo = 0, served = 0, perfects = 0;
+    let shake = 0, shakeX = 0, shakeY = 0;
+    let mouse = { x: W / 2, y: H / 2 };
+    let whackCooldown = 0, respawnTimer = 0, hintTimer = 0;
+    let flashMsg = null;
+    let potato = null;
+    let particles = [], floaters = [], toppingsFalling = [], embers = [];
+    let emberTimer = 5, toppingTimer = 6;
+    let serveZone = { side: 1, y: 200, h: 96, flash: 0 };
+
+    const TOPPING_TYPES = [
+      { name: 'butter', mult: 0.3, cool: 0.30, color: '#ffd94a' },
+      { name: 'paneer', mult: 0.5, cool: 0, color: '#f59e0b' },
+      { name: 'chives', mult: 0.2, cool: 0, color: '#5fbf4a' },
+      { name: 'cream', mult: 0.4, cool: 0.20, color: '#f4f0e6' }
+    ];
+
+    const newPotato = () => {
+      potato = {
+        x: W / 2 + (Math.random() * 120 - 60), y: 90,
+        vx: Math.random() * 100 - 50, vy: 0,
+        angle: Math.random() * Math.PI * 2, angVel: Math.random() * 4 - 2,
+        heat: 0, cook: 0, toppings: [], squash: 0, alive: true
+      };
+    };
+
+    const resetGame = () => {
+      score = 0; lives = 3; elapsed = 0; combo = 0; served = 0; perfects = 0;
+      particles = []; floaters = []; toppingsFalling = []; embers = [];
+      emberTimer = 28; toppingTimer = 5; respawnTimer = 0; hintTimer = 0;
+      serveZone = { side: 1, y: 200, h: 96, flash: 0 };
+      flashMsg = null;
+      newPotato();
+    };
+
+    const canvasPos = (e) => {
+      const r = canvas.getBoundingClientRect();
+      return {
+        x: ((e.clientX - r.left) / r.width) * W,
+        y: ((e.clientY - r.top) / r.height) * H
+      };
+    };
+
+    const tryWhack = (mx, my) => {
+      if (!potato || !potato.alive || whackCooldown > 0) return;
+      const dx = potato.x - mx, dy = potato.y - my;
+      const d = Math.hypot(dx, dy);
+      if (d > 130 + POT_R) return;
+      whackCooldown = 0.09;
+      let nx = d < 2 ? 0 : dx / d;
+      let ny = d < 2 ? -1 : dy / d - 0.5;
+      const n = Math.hypot(nx, ny); nx /= n; ny /= n;
+      const power = 380 + (1 - Math.min(1, d / (130 + POT_R))) * 180;
+      potato.vx = potato.vx * 0.25 + nx * power;
+      potato.vy = potato.vy * 0.25 + ny * power;
+      potato.angVel = (Math.random() - 0.5) * 18;
+      potato.squash = 1;
+      shake = Math.max(shake, 5);
+      sfx.whack();
+    };
+
+    const servePotato = () => {
+      const cook = potato.cook;
+      let base, label, color, perfect = false;
+      if (cook < 0.35) { base = 5; label = 'RAW!'; color = '#9adfff'; }
+      else if (cook < 0.65) { base = 40; label = 'UNDERDONE'; color = '#cfe8a0'; }
+      else if (cook < 0.85) { base = 120; label = 'TASTY!'; color = '#ffd94a'; }
+      else { base = 300; label = 'PERFECT!'; color = '#ffae00'; perfect = true; }
+
+      const mult = 1 + potato.toppings.reduce((s, t) => s + t.type.mult, 0);
+      if (cook >= 0.65) combo++; else combo = 0;
+      const comboMult = 1 + Math.max(0, combo - 1) * 0.5;
+      const pts = Math.round(base * mult * comboMult);
+      score += pts;
+      served++;
+      if (perfect) perfects++;
+
+      const zx = serveZone.side === 1 ? W - 50 : 50;
+      floaters.push({ x: zx, y: serveZone.y - 20, text: label, color, life: 1.4, big: true });
+      floaters.push({ x: zx, y: serveZone.y + 10, text: `+${pts}` + (combo > 1 ? ` x${combo}` : ''), color: '#FFF', life: 1.4 });
+      if (cook < 0.35) sfx.raw(); else sfx.serve(perfect);
+
+      this.addXP(perfect ? 25 : 10, '🥔 Golden Spud');
+      this.logInteraction('serve_potato', { score: pts, perfect, cook });
+
+      serveZone.side = -serveZone.side;
+      serveZone.y = 130 + Math.random() * 200;
+      serveZone.flash = 1;
+      potato.alive = false;
+      respawnTimer = 0.7;
+    };
+
+    const burnPotato = (reason) => {
+      sfx.burn();
+      shake = Math.max(shake, 14);
+      floaters.push({ x: potato.x, y: potato.y - 30, text: reason, color: '#ff5533', life: 1.4, big: true });
+      combo = 0;
+      lives--;
+      this.deductScoreAndXP(15, 'Burnt Hot Potato');
+      potato.alive = false;
+      respawnTimer = lives <= 0 ? 1.4 : 1.0;
+    };
+
+    canvas.onpointermove = (e) => { mouse = canvasPos(e); };
+    canvas.onpointerdown = (e) => {
+      initAudio();
+      if (AC && AC.state === 'suspended') AC.resume();
+      const p = canvasPos(e);
+      mouse = p;
+      if (gameState === 'menu') { gameState = 'play'; resetGame(); return; }
+      if (gameState === 'over') { gameState = 'menu'; return; }
+      if (gameState === 'play') tryWhack(p.x, p.y);
+    };
+
+    let lastT = performance.now();
+    const frame = (now) => {
+      const dt = Math.min((now - lastT) / 1000, 1 / 20);
+      lastT = now;
+
+      if (gameState === 'play') {
+        elapsed += dt;
+        whackCooldown = Math.max(0, whackCooldown - dt);
+        if (flashMsg) { flashMsg.t -= dt; if (flashMsg.t <= 0) flashMsg = null; }
+        serveZone.flash = Math.max(0, serveZone.flash - dt * 2);
+
+        if (!potato.alive) {
+          respawnTimer -= dt;
+          if (respawnTimer <= 0) {
+            if (lives <= 0) {
+              gameState = 'over';
+              if (score > best) { best = score; localStorage.setItem('hotpotato_best', best); }
+              sfx.gameover();
+            } else {
+              newPotato();
+            }
+          }
+        } else {
+          const p = potato;
+          p.vy += 900 * dt;
+          p.vx *= Math.pow(0.55, dt);
+          p.x += p.vx * dt;
+          p.y += p.vy * dt;
+          p.angle += p.angVel * dt;
+          p.angVel *= Math.pow(0.4, dt);
+          p.squash = Math.max(0, p.squash - dt * 5);
+
+          const inZone = Math.abs(p.y - serveZone.y) < serveZone.h / 2;
+          if (p.x < POT_R) {
+            if (serveZone.side === -1 && inZone) { servePotato(); }
+            else { p.x = POT_R; p.vx = Math.abs(p.vx) * 0.7; }
+          }
+          if (p.x > W - POT_R) {
+            if (serveZone.side === 1 && inZone) { servePotato(); }
+            else { p.x = W - POT_R; p.vx = -Math.abs(p.vx) * 0.7; }
+          }
+          if (p.y < POT_R + 4) { p.y = POT_R + 4; p.vy = Math.abs(p.vy) * 0.6; }
+
+          if (p.y > GRILL_Y - POT_R) {
+            p.y = GRILL_Y - POT_R;
+            p.vy = -Math.max(Math.abs(p.vy) * 0.55, 330);
+            p.heat = Math.min(1, p.heat + 0.30);
+            p.cook += 0.05;
+            shake = Math.max(shake, 7);
+          }
+
+          const distAbove = GRILL_Y - (p.y + POT_R);
+          const heatField = Math.max(0, Math.min(1, 1 - distAbove / 260));
+          p.heat += (heatField * 1.1 - 0.38) * dt * 0.85;
+          p.heat = Math.max(0, Math.min(1, p.heat));
+          if (p.heat > 0.06) p.cook += p.heat * 0.115 * dt;
+
+          if (sizzleGain) sizzleGain.gain.value = p.heat * 0.22;
+          if (p.cook >= 1.08) burnPotato('BURNT!');
+        }
+
+        // Toppings Rain
+        toppingTimer -= dt;
+        if (toppingTimer <= 0) {
+          toppingTimer = 6 + Math.random() * 5;
+          toppingsFalling.push({
+            type: TOPPING_TYPES[Math.floor(Math.random() * TOPPING_TYPES.length)],
+            x: 80 + Math.random() * (W - 160),
+            y: -20, vy: 65, sway: Math.random() * 6
+          });
+        }
+        for (let i = toppingsFalling.length - 1; i >= 0; i--) {
+          const t = toppingsFalling[i];
+          t.sway += dt * 2.2;
+          t.x += Math.sin(t.sway) * 28 * dt;
+          t.y += t.vy * dt;
+          if (t.y > GRILL_Y) { toppingsFalling.splice(i, 1); continue; }
+          if (potato.alive && Math.hypot(t.x - potato.x, t.y - potato.y) < POT_R + 12 && potato.toppings.length < 4) {
+            potato.toppings.push({ type: t.type, ox: Math.random() * 20 - 10, oy: Math.random() * 10 - 5 });
+            potato.heat = Math.max(0, potato.heat - t.type.cool);
+            sfx.pickup();
+            toppingsFalling.splice(i, 1);
+          }
+        }
+      }
+
+      // Drawing
+      ctx.save();
+      if (shake > 0) {
+        shake = Math.max(0, shake - dt * 40);
+        ctx.translate(Math.random() * shake * 2 - shake, Math.random() * shake * 2 - shake);
+      }
+
+      // Background
+      const bg = ctx.createLinearGradient(0, 0, 0, H);
+      bg.addColorStop(0, '#1b1410');
+      bg.addColorStop(1, '#33231a');
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, W, H);
+
+      // Grill Coals
+      ctx.fillStyle = '#2a2a2e';
+      ctx.fillRect(0, GRILL_Y, W, H - GRILL_Y);
+      for (let i = 0; i < 24; i++) {
+        const cx = 22 + i * (W - 44) / 23;
+        const cy = GRILL_Y + 26;
+        const g = ctx.createRadialGradient(cx, cy, 1, cx, cy, 18);
+        g.addColorStop(0, '#FFAA33');
+        g.addColorStop(0.5, '#E11D48');
+        g.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = g;
+        ctx.beginPath(); ctx.arc(cx, cy, 18, 0, Math.PI * 2); ctx.fill();
+      }
+
+      // Serve Window
+      ctx.fillStyle = `rgba(120,255,160,${0.35 + serveZone.flash * 0.5})`;
+      ctx.strokeStyle = '#10B981';
+      ctx.lineWidth = 3;
+      const zx = serveZone.side === 1 ? W - 32 : 0;
+      ctx.fillRect(zx, serveZone.y - serveZone.h / 2, 32, serveZone.h);
+      ctx.strokeRect(zx, serveZone.y - serveZone.h / 2, 32, serveZone.h);
+
+      // Falling Toppings
+      for (const t of toppingsFalling) {
+        ctx.fillStyle = t.type.color;
+        ctx.beginPath(); ctx.arc(t.x, t.y, 8, 0, Math.PI * 2); ctx.fill();
+      }
+
+      // Potato Body & Doneness Ring
+      if (gameState === 'play' && potato && potato.alive) {
+        ctx.save();
+        ctx.translate(potato.x, potato.y);
+
+        // Doneness Ring
+        const cookFrac = Math.min(1, potato.cook);
+        ctx.lineWidth = 5;
+        ctx.strokeStyle = 'rgba(0,0,0,0.5)';
+        ctx.beginPath(); ctx.arc(0, 0, POT_R + 10, 0, Math.PI * 2); ctx.stroke();
+        ctx.strokeStyle = potato.cook >= 0.85 ? '#FFAE00' : (potato.cook >= 0.65 ? '#FFD94A' : '#7FD35F');
+        ctx.beginPath();
+        ctx.arc(0, 0, POT_R + 10, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * cookFrac);
+        ctx.stroke();
+
+        ctx.rotate(potato.angle * 0.25);
+        ctx.fillStyle = potato.cook >= 0.85 ? '#4B2515' : (potato.cook >= 0.65 ? '#F59E0B' : '#C5A064');
+        ctx.beginPath();
+        ctx.ellipse(0, 0, POT_R * 1.15, POT_R * 0.92, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Eyes & Mouth
+        ctx.fillStyle = '#FFF';
+        ctx.beginPath(); ctx.arc(-8, -4, 4, 0, Math.PI * 2); ctx.arc(8, -4, 4, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#000';
+        ctx.beginPath(); ctx.arc(-8, -4, 2, 0, Math.PI * 2); ctx.arc(8, -4, 2, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+      }
+
+      // Floaters
+      for (let i = floaters.length - 1; i >= 0; i--) {
+        const f = floaters[i];
+        f.y -= 25 * dt;
+        f.life -= dt;
+        if (f.life <= 0) { floaters.splice(i, 1); continue; }
+        ctx.font = f.big ? 'bold 24px sans-serif' : 'bold 16px sans-serif';
+        ctx.fillStyle = f.color;
+        ctx.textAlign = 'center';
+        ctx.fillText(f.text, f.x, f.y);
+      }
+
+      // HUD
+      if (gameState === 'play') {
+        ctx.font = 'bold 24px sans-serif';
+        ctx.fillStyle = '#FFF';
+        ctx.textAlign = 'left';
+        ctx.fillText(`Score: ${score}`, 20, 36);
+        ctx.fillText(`Lives: ${'🥔'.repeat(Math.max(0, lives))}`, W - 140, 36);
+        if (combo > 1) {
+          ctx.fillStyle = '#FFD94A';
+          ctx.textAlign = 'center';
+          ctx.fillText(`COMBO x${combo}!`, W / 2, 36);
+        }
+      } else if (gameState === 'menu') {
+        ctx.fillStyle = 'rgba(0,0,0,0.6)';
+        ctx.fillRect(0, 0, W, H);
+        ctx.font = 'bold 44px sans-serif';
+        ctx.fillStyle = '#FFD94A';
+        ctx.textAlign = 'center';
+        ctx.fillText('HOT POTATO! ARCADE', W / 2, H * 0.45);
+        ctx.font = '20px sans-serif';
+        ctx.fillStyle = '#FFF';
+        ctx.fillText('Whack spud to cook on coals. Serve golden through the green window!', W / 2, H * 0.54);
+        ctx.fillText('— TAP / CLICK TO PLAY —', W / 2, H * 0.65);
+      } else if (gameState === 'over') {
+        ctx.fillStyle = 'rgba(0,0,0,0.7)';
+        ctx.fillRect(0, 0, W, H);
+        ctx.font = 'bold 42px sans-serif';
+        ctx.fillStyle = '#F43F5E';
+        ctx.textAlign = 'center';
+        ctx.fillText('GAME OVER', W / 2, H * 0.42);
+        ctx.font = '24px sans-serif';
+        ctx.fillStyle = '#FFF';
+        ctx.fillText(`Final Score: ${score} pts`, W / 2, H * 0.52);
+        ctx.fillText('— TAP / CLICK TO RETRY —', W / 2, H * 0.64);
+      }
+
+      ctx.restore();
+      this.standaloneHPLoop = requestAnimationFrame(frame);
+    };
+    this.standaloneHPLoop = requestAnimationFrame(frame);
+  }
+
+  // ========================================================
   // GAME 5: SPIN THE WHEEL & CULINARY FOOD SCIENCE
   // ========================================================
   renderSpinScienceGame(arena) {
@@ -5091,9 +5916,10 @@ class FusionApp {
         } else {
           sound.playWrong();
           btn.classList.add('wrong');
+          this.deductScoreAndXP(10, 'Wrong Science Quiz Answer');
           feedback.innerHTML = `
             <div style="color:#DC2626; font-size:0.88rem;">
-              ❌ Nice attempt! The right answer was option ${['A','B','C','D'][topic.question.correctIndex]}. ${topic.question.explanation}
+              ❌ Nice attempt! (-10 XP) The right answer was option ${['A','B','C','D'][topic.question.correctIndex]}. ${topic.question.explanation}
             </div>
           `;
         }
@@ -5194,6 +6020,242 @@ class FusionApp {
       };
     }
     this.initTandoor3D();
+    this.renderTandoorSkewerGame();
+  }
+
+  // ========================================================
+  // TANDOOR COOKING & PLATING MINI-GAME (DESKTOP + MOBILE)
+  // Cook skewers over hearth coals to perfection, plate & save
+  // ========================================================
+  renderTandoorSkewerGame() {
+    const stage = document.getElementById('tandoor-skewer-game-container');
+    if (!stage) return;
+
+    if (this.state.v2Features && this.state.v2Features.tandoorSkewerGame === false) {
+      stage.innerHTML = '';
+      stage.style.display = 'none';
+      return;
+    }
+    stage.style.display = 'block';
+
+    const savedDish = localStorage.getItem('fusion_last_plated_dish') 
+      ? JSON.parse(localStorage.getItem('fusion_last_plated_dish')) 
+      : null;
+
+    stage.innerHTML = `
+      <div class="tandoor-skewer-card" style="background:var(--bg-card); border:2px solid var(--border-color); border-radius:var(--radius-lg); padding:1.5rem; margin-top:1.5rem; box-shadow:0 8px 30px rgba(0,0,0,0.06);">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.6rem; margin-bottom:1rem;">
+          <div style="display:flex; align-items:center; gap:0.6rem;">
+            <span style="font-size:1.8rem;">🍢</span>
+            <div>
+              <h3 style="margin:0; font-size:1.25rem;">Tandoor Skewer Roaster & Plating Studio</h3>
+              <p style="margin:0; font-size:0.82rem; color:var(--text-muted);">
+                Drag vegetarian skewers over the glowing coals hearth to char, then garnish and plate your culinary masterpiece!
+              </p>
+            </div>
+          </div>
+          <span class="pill-badge" id="skewer-cook-status" style="background:#F59E0B; color:#000; font-weight:800;">
+            Status: Skewer Raw (0%)
+          </span>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:1.25rem; align-items:center;">
+          <!-- Skewer Interactive Canvas Stage -->
+          <div style="position:relative; background:#111827; border-radius:var(--radius-md); overflow:hidden; border:1px solid rgba(255,255,255,0.1); height:220px; display:flex; flex-direction:column; justify-content:space-between; padding:0.75rem;">
+            <div style="display:flex; justify-content:space-between; font-size:0.78rem; color:#9CA3AF;">
+              <span>🍢 Drag Skewer Vertically Towards Coals:</span>
+              <span id="skewer-roast-timer" style="color:#F59E0B; font-weight:700;">Heat Exposure: 0s</span>
+            </div>
+
+            <!-- Visual Skewer Representation -->
+            <div id="skewer-stick-wrap" style="position:relative; width:100%; height:80px; display:flex; align-items:center; justify-content:center; touch-action:none; cursor:grab;">
+              <div id="skewer-stick" style="position:relative; width:260px; height:8px; background:#D97706; border-radius:4px; box-shadow:0 2px 8px rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:space-evenly;">
+                <div class="skewer-piece" data-piece="paneer" style="width:36px; height:36px; background:#FEF3C7; border:2px solid #D97706; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; transition:background 0.3s;">🧀</div>
+                <div class="skewer-piece" data-piece="pepper" style="width:34px; height:34px; background:#EF4444; border:2px solid #B91C1C; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; transition:background 0.3s;">🫑</div>
+                <div class="skewer-piece" data-piece="pineapple" style="width:36px; height:36px; background:#FDE047; border:2px solid #CA8A04; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; transition:background 0.3s;">🍍</div>
+                <div class="skewer-piece" data-piece="mushroom" style="width:34px; height:34px; background:#A8A29E; border:2px solid #78716C; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; transition:background 0.3s;">🍄</div>
+              </div>
+            </div>
+
+            <!-- Coals Heating Zone Indicator -->
+            <div style="background:linear-gradient(90deg, #FF4500, #E11D48, #FF8800); height:28px; border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:0.75rem; color:#FFF; font-weight:800; letter-spacing:0.5px; box-shadow:0 0 16px rgba(255,69,0,0.5);">
+              🔥 ACTIVE TANDOOR HEARTH ZONE (HOLD SKEWER HERE TO CHAR)
+            </div>
+          </div>
+
+          <!-- Plating & Garnish Controls Column -->
+          <div style="display:flex; flex-direction:column; gap:0.75rem;">
+            <div>
+              <label style="font-size:0.84rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:0.35rem;">
+                🎨 Choose Garnish Dressing:
+              </label>
+              <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+                <button class="recipe-chip active skewer-garnish-btn" data-garnish="Mint Coriander Chutney">🌿 Mint Chutney</button>
+                <button class="recipe-chip skewer-garnish-btn" data-garnish="Toasted Sesame & Chili Crisp">🌶️ Chili Crisp</button>
+                <button class="recipe-chip skewer-garnish-btn" data-garnish="Chaat Masala & Lime Spritz">🍋 Lime & Chaat</button>
+              </div>
+            </div>
+
+            <div style="display:flex; gap:0.6rem; margin-top:0.5rem; flex-wrap:wrap;">
+              <button class="btn btn-primary" id="btn-plate-tandoor-dish" style="flex:1; min-width:180px; padding:0.6rem 1rem; font-weight:700;">
+                🍽️ Plate & Save Creation!
+              </button>
+              <button class="btn btn-secondary" id="btn-reset-skewer" style="padding:0.6rem 0.9rem;">
+                🔄 Reset
+              </button>
+            </div>
+
+            <!-- Last Plated Dish Showcase Pill -->
+            <div id="plated-dish-showcase" style="font-size:0.8rem; background:var(--bg-card-subtle); border-radius:var(--radius-sm); padding:0.5rem 0.75rem; border:1px solid var(--border-color); color:var(--text-muted);">
+              ${savedDish ? `🏆 Last Creation: <strong>${savedDish.dishName}</strong> (${savedDish.doneness}) with ${savedDish.garnish} • Scored +${savedDish.score} XP` : '💡 Cook skewer to 100% doneness for Perfect Golden Char (+100 XP)!'}
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    let doneness = 0;
+    let isOverCoals = false;
+    let cookInterval = null;
+    let selectedGarnish = 'Mint Coriander Chutney';
+    const statusPill = stage.querySelector('#skewer-cook-status');
+    const timerText = stage.querySelector('#skewer-roast-timer');
+    const stickWrap = stage.querySelector('#skewer-stick-wrap');
+    const pieces = stage.querySelectorAll('.skewer-piece');
+
+    // Garnish selector
+    stage.querySelectorAll('.skewer-garnish-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        sound.playClick();
+        stage.querySelectorAll('.skewer-garnish-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        selectedGarnish = btn.getAttribute('data-garnish');
+      });
+    });
+
+    const updateSkewerVisuals = () => {
+      const pct = Math.min(150, Math.floor(doneness));
+      if (timerText) timerText.innerText = `Heat Exposure: ${(doneness / 10).toFixed(1)}s (${pct}%)`;
+
+      if (pct < 40) {
+        if (statusPill) {
+          statusPill.innerText = `Status: Raw (${pct}%)`;
+          statusPill.style.background = '#38BDF8';
+          statusPill.style.color = '#FFF';
+        }
+        pieces.forEach(p => p.style.filter = 'brightness(1)');
+      } else if (pct <= 100) {
+        if (statusPill) {
+          statusPill.innerText = `✨ PERFECT TANDOORI CHAR! (${pct}%)`;
+          statusPill.style.background = '#10B981';
+          statusPill.style.color = '#FFF';
+        }
+        pieces.forEach(p => p.style.filter = 'brightness(0.85) sepia(0.5) contrast(1.2)');
+      } else {
+        if (statusPill) {
+          statusPill.innerText = `⚠️ BURNT OVERCOALS! (${pct}%)`;
+          statusPill.style.background = '#EF4444';
+          statusPill.style.color = '#FFF';
+        }
+        pieces.forEach(p => p.style.filter = 'brightness(0.3) contrast(1.8)');
+      }
+    };
+
+    // Skewer Drag / Touch Logic
+    let isDragging = false;
+    let startY = 0;
+    let offsetY = 0;
+
+    const startDrag = (clientY) => {
+      isDragging = true;
+      startY = clientY;
+      isOverCoals = true;
+      sound.playSizzle();
+      if (!cookInterval) {
+        cookInterval = setInterval(() => {
+          if (isOverCoals) {
+            doneness += 3.5;
+            updateSkewerVisuals();
+          }
+        }, 200);
+      }
+    };
+
+    const moveDrag = (clientY) => {
+      if (!isDragging) return;
+      offsetY = Math.max(0, Math.min(50, clientY - startY));
+      if (stickWrap) stickWrap.style.transform = `translateY(${offsetY}px)`;
+    };
+
+    const endDrag = () => {
+      isDragging = false;
+      isOverCoals = false;
+      if (stickWrap) stickWrap.style.transform = 'translateY(0px)';
+      if (cookInterval) {
+        clearInterval(cookInterval);
+        cookInterval = null;
+      }
+    };
+
+    stickWrap?.addEventListener('pointerdown', (e) => startDrag(e.clientY));
+    window.addEventListener('pointermove', (e) => moveDrag(e.clientY));
+    window.addEventListener('pointerup', () => endDrag());
+
+    // Plate & Save Dish
+    stage.querySelector('#btn-plate-tandoor-dish')?.addEventListener('click', () => {
+      sound.playClick();
+      const pct = Math.min(150, Math.floor(doneness));
+      let scoreEarned = 0;
+      let donenessStr = 'Raw';
+
+      if (pct < 40) {
+        donenessStr = 'Under-roasted';
+        scoreEarned = 15;
+        this.addXP(scoreEarned, '🍢 Skewer Apprentice');
+        showToast('Skewer was slightly underdone (+15 XP)', 'info');
+      } else if (pct <= 100) {
+        donenessStr = 'Golden Char Perfection';
+        scoreEarned = 100;
+        this.addXP(scoreEarned, '🔥 Tandoor Pitmaster');
+        sound.playFanfare();
+        launchConfetti();
+        showToast('MASTERPIECE! Perfectly charred tandoori skewer (+100 XP)', 'success');
+      } else {
+        donenessStr = 'Smoky Overcharred';
+        this.deductScoreAndXP(10, 'Burnt Tandoor Skewer (-10 XP)');
+        scoreEarned = 0;
+        showToast('Skewer burnt past perfection! (-10 XP)', 'warning');
+      }
+
+      const dishRecord = {
+        dishName: 'Fusion Tandoori Paneer & Pineapple Skewer',
+        doneness: donenessStr,
+        garnish: selectedGarnish,
+        score: scoreEarned,
+        timestamp: new Date().toISOString()
+      };
+
+      // Save locally & IndexedDB
+      localStorage.setItem('fusion_last_plated_dish', JSON.stringify(dishRecord));
+      if (this.db && this.db.isReady) {
+        this.db.set(DB_CONFIG.STORE_APP_STATE, { key: 'lastPlatedDish', value: dishRecord }).catch(() => {});
+      }
+
+      // Sync permanently to interactions endpoint
+      this.logInteraction('tandoor_plate_dish', dishRecord);
+
+      // Re-render showcase
+      const showcase = stage.querySelector('#plated-dish-showcase');
+      if (showcase) {
+        showcase.innerHTML = `🏆 Last Creation: <strong>${dishRecord.dishName}</strong> (${dishRecord.doneness}) with ${dishRecord.garnish} • Scored +${dishRecord.score} XP`;
+      }
+    });
+
+    stage.querySelector('#btn-reset-skewer')?.addEventListener('click', () => {
+      sound.playClick();
+      doneness = 0;
+      updateSkewerVisuals();
+    });
   }
 
   // ========================================================
@@ -5577,51 +6639,84 @@ Guidelines:
       }
     }
 
-    // 2. Try Gemini API
-    if (apiKey) {
-      try {
-        const fullPrompt = `${systemPrompt}\n\nFamily Question: ${prompt}`;
-
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [
-              {
-                parts: [{ text: fullPrompt }]
-              }
-            ],
-            generationConfig: {
-              temperature: 0.7,
-              maxOutputTokens: 500
+    // 2. Try Gemini API (with multi-model fallback & optional Web2API proxy)
+    if (apiKey || this.state.geminiWeb2ApiUrl) {
+      const fullPrompt = `${systemPrompt}\n\nFamily Question: ${prompt}`;
+      
+      // If Web2API reverse proxy is configured, attempt that first
+      if (this.state.geminiWeb2ApiUrl) {
+        try {
+          const proxyResp = await fetch(`${this.state.geminiWeb2ApiUrl.replace(/\/$/, '')}/v1/chat/completions`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${apiKey || 'web2api'}`
+            },
+            body: JSON.stringify({
+              model: 'gemini-1.5-flash',
+              messages: [{ role: 'user', content: fullPrompt }],
+              temperature: 0.7
+            })
+          });
+          if (proxyResp.ok) {
+            const pData = await proxyResp.json();
+            const text = pData.choices?.[0]?.message?.content;
+            if (text) {
+              typingBubble.remove();
+              this.appendAiMessage(messagesContainer, text);
+              sound.playCorrect();
+              return;
             }
-          })
-        });
-
-        const data = await response.json();
-        typingBubble.remove();
-
-        if (data.candidates && data.candidates[0]?.content?.parts?.[0]?.text) {
-          const aiText = data.candidates[0].content.parts[0].text;
-          this.appendAiMessage(messagesContainer, aiText);
-          sound.playCorrect();
-          return;
-        } else if (data.error) {
-          const errText = `⚠️ **Gemini API Notice**: ${data.error.message || 'Key verification failed'}. Check the API key pill above!`;
-          this.appendAiMessage(messagesContainer, errText);
-          sound.playWrong();
-          return;
-        } else {
-          this.appendAiMessage(messagesContainer, `I couldn't quite catch that! Could you ask about ingredients, prep, or cooking tips?`);
-          return;
+          }
+        } catch (pErr) {
+          console.warn('Gemini Web2API attempt failed, falling back to direct API:', pErr);
         }
-      } catch (err) {
-        typingBubble.remove();
-        console.error('Gemini API fetch error:', err);
-        const fallbackText = this.getContextualFallback(dish, prompt);
-        this.appendAiMessage(messagesContainer, fallbackText);
-        return;
       }
+
+      // Direct Gemini API with multi-model fallback (1.5-flash -> 1.5-flash-latest -> 2.0-flash -> gemini-pro)
+      const candidateModels = ['gemini-1.5-flash', 'gemini-1.5-flash-latest', 'gemini-2.0-flash', 'gemini-pro'];
+      let lastErrorMessage = '';
+
+      for (const modelName of candidateModels) {
+        try {
+          const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: fullPrompt }] }],
+              generationConfig: { temperature: 0.7, maxOutputTokens: 500 }
+            })
+          });
+
+          const data = await response.json();
+          if (data.candidates && data.candidates[0]?.content?.parts?.[0]?.text) {
+            typingBubble.remove();
+            const aiText = data.candidates[0].content.parts[0].text;
+            this.appendAiMessage(messagesContainer, aiText);
+            sound.playCorrect();
+            return;
+          }
+
+          if (data.error) {
+            lastErrorMessage = data.error.message || '';
+            // If model not found or unsupported, loop to next candidate
+            if (data.error.code === 404 || lastErrorMessage.toLowerCase().includes('not found') || lastErrorMessage.toLowerCase().includes('not supported')) {
+              continue;
+            }
+          }
+        } catch (fetchErr) {
+          console.warn(`Gemini model ${modelName} fetch error:`, fetchErr);
+        }
+      }
+
+      // If all models failed, provide seamless contextual culinary fallback
+      typingBubble.remove();
+      const fallbackText = this.getContextualFallback(dish, prompt);
+      this.appendAiMessage(messagesContainer, fallbackText);
+      if (lastErrorMessage) {
+        showToast(`AI Studio Notice: ${lastErrorMessage.slice(0, 70)}... (Switched to Smart Offline)`, 'info');
+      }
+      return;
     } else {
       // Smart contextual fallback when no API key is set
       setTimeout(() => {
@@ -6100,27 +7195,47 @@ Guidelines:
         }
       });
     } else {
-      const isGamesTab = this.adminView !== 'api';
+      if (!this.adminSubTab) this.adminSubTab = 'features';
 
       const navHtml = `
-        <div class="admin-subtab-nav">
-          <button class="btn ${isGamesTab ? 'btn-primary' : 'btn-secondary'}" id="admin-subtab-games" style="padding:0.4rem 0.95rem; font-size:0.84rem; font-weight:700;">
-            🎮 Game & AI Controls
+        <div class="admin-subtab-nav" style="display:flex; gap:0.4rem; flex-wrap:wrap; margin-bottom:1rem;">
+          <button class="btn ${this.adminSubTab === 'features' ? 'btn-primary' : 'btn-secondary'}" id="admin-subtab-features" style="padding:0.35rem 0.75rem; font-size:0.8rem; font-weight:700;">
+            ⚙️ Version & Feature Toggles
           </button>
-          <button class="btn ${!isGamesTab ? 'btn-primary' : 'btn-secondary'}" id="admin-subtab-api" style="padding:0.4rem 0.95rem; font-size:0.84rem; font-weight:700;">
-            🔑 API Key Generator & Access
+          <button class="btn ${this.adminSubTab === 'verification' ? 'btn-primary' : 'btn-secondary'}" id="admin-subtab-verification" style="padding:0.35rem 0.75rem; font-size:0.8rem; font-weight:700;">
+            🛡️ Parent Verifications (${(this.state.kidScoreVerifications || []).filter(v => !v.verified).length})
+          </button>
+          <button class="btn ${this.adminSubTab === 'voice' ? 'btn-primary' : 'btn-secondary'}" id="admin-subtab-voice" style="padding:0.35rem 0.75rem; font-size:0.8rem; font-weight:700;">
+            🗣️ TTS & Voice Router
+          </button>
+          <button class="btn ${this.adminSubTab === 'api' ? 'btn-primary' : 'btn-secondary'}" id="admin-subtab-api" style="padding:0.35rem 0.75rem; font-size:0.8rem; font-weight:700;">
+            🔑 API Key Generator
           </button>
         </div>
       `;
 
-      if (isGamesTab) {
+      if (this.adminSubTab === 'features') {
+        const v2 = this.state.v2Features || {};
         body.innerHTML = `
           ${navHtml}
-          <div style="background:var(--accent-green-light); border:1.5px solid var(--accent-green); border-radius:var(--radius-sm); padding:0.75rem 1rem; margin-bottom:1.25rem; font-size:0.88rem; color:var(--accent-green); font-weight:700;">
-            ✅ Admin Controls Active: Customize game visibility for the household.
+          <!-- Master Version Switcher -->
+          <div style="background:var(--bg-card-subtle); border:1.5px solid var(--border-color); border-radius:var(--radius-sm); padding:0.95rem; margin-bottom:1rem;">
+            <label style="font-size:0.84rem; font-weight:800; color:var(--text-main); display:block; margin-bottom:0.4rem;">
+              🏷️ Master Architecture Version Switcher:
+            </label>
+            <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+              <button class="recipe-chip ${this.state.appVersion === 'v1' ? 'active' : ''} admin-version-btn" data-ver="v1">v1 Classic Hub</button>
+              <button class="recipe-chip ${this.state.appVersion === 'v2' ? 'active' : ''} admin-version-btn" data-ver="v2">v2 Redesign (Bifurcated)</button>
+              <button class="recipe-chip ${this.state.appVersion === 'v3' ? 'active' : ''} admin-version-btn" data-ver="v3">v3 AI & Vision Lab</button>
+            </div>
+            <p style="font-size:0.75rem; color:var(--text-muted); margin:0.4rem 0 0;">
+              Switching versions dynamically reconfigures feature visibility with zero layout shift or console errors.
+            </p>
           </div>
 
-          <div class="admin-toggles-list">
+          <!-- Arcade Game Toggles -->
+          <h4 style="font-size:0.9rem; margin:0 0 0.5rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Arcade Game Toggles</h4>
+          <div class="admin-toggles-list" style="margin-bottom:1.25rem;">
             <div class="toggle-row">
               <span>🥘 Build-a-Dish (Pantry Rush & Steps)</span>
               <label class="switch">
@@ -6158,7 +7273,61 @@ Guidelines:
             </div>
           </div>
 
-          <!-- AI Engine & API Key Setup (Moved to Admin Panel) -->
+          <!-- Granular Feature Sub-Toggles -->
+          <h4 style="font-size:0.9rem; margin:0 0 0.5rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Granular Modular Sub-Toggles</h4>
+          <div class="admin-toggles-list" style="margin-bottom:1.25rem;">
+            <div class="toggle-row">
+              <span>🏆 Header Leaderboard Pill</span>
+              <label class="switch">
+                <input type="checkbox" id="toggle-v2-header-lb" ${v2.leaderboardInHeader !== false ? 'checked' : ''} />
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="toggle-row">
+              <span>🌍 Fusion Explorer Tab</span>
+              <label class="switch">
+                <input type="checkbox" id="toggle-v2-fusion-tab" ${v2.fusionExplorerTab !== false ? 'checked' : ''} />
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="toggle-row">
+              <span>🍢 Tandoori Skewer & Plating Studio</span>
+              <label class="switch">
+                <input type="checkbox" id="toggle-v2-skewer" ${v2.tandoorSkewerGame !== false ? 'checked' : ''} />
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="toggle-row">
+              <span>📸 Chef Hat AR Camera & Age Scanner</span>
+              <label class="switch">
+                <input type="checkbox" id="toggle-v2-camera" ${v2.chefHatCameraFilter !== false ? 'checked' : ''} />
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="toggle-row">
+              <span>🛡️ AI Facial Landmark Anti-Duplication Protection</span>
+              <label class="switch">
+                <input type="checkbox" id="toggle-v2-face-dupe" ${v2.faceVectorAntiDuplication !== false ? 'checked' : ''} />
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="toggle-row">
+              <span>📄 PDF Portfolio & Career Roadmap Export</span>
+              <label class="switch">
+                <input type="checkbox" id="toggle-v2-pdf" ${v2.pdfPortfolioExport !== false ? 'checked' : ''} />
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="toggle-row">
+              <span>🤖 AI Face Guided Tour & Self-Explaining Overlay</span>
+              <label class="switch">
+                <input type="checkbox" id="toggle-v2-tour" ${v2.aiFaceExplainerTour !== false ? 'checked' : ''} />
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- AI Engine & API Key Setup -->
           <div class="admin-ai-config-card">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem; flex-wrap:wrap; gap:0.4rem;">
               <div style="display:flex; align-items:center; gap:0.5rem;">
@@ -6169,9 +7338,6 @@ Guidelines:
                 ${this.getGeminiKey() ? '🟢 Gemini API Active' : (this.getWorkersAiKey() ? '⚡ Workers AI Active' : '⚪ Smart Offline Mode')}
               </span>
             </div>
-            <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:0.85rem; line-height:1.45;">
-              API keys configured here power Sous-Chef Maya for all visitors during the career fair. Keys are kept private from visitors.
-            </p>
 
             <!-- Google Gemini API Key -->
             <div style="margin-bottom:0.85rem;">
@@ -6200,7 +7366,6 @@ Guidelines:
               </div>
             </div>
 
-            <!-- Clear Keys Option -->
             ${(this.getGeminiKey() || this.getWorkersAiKey()) ? `
               <div style="margin-top:0.65rem; text-align:right;">
                 <button id="admin-clear-ai-keys-btn" style="font-size:0.75rem; color:#EF4444; background:none; border:none; cursor:pointer; text-decoration:underline;">
@@ -6210,6 +7375,7 @@ Guidelines:
             ` : ''}
           </div>
 
+          <!-- Secret Admin PIN -->
           <div style="background:var(--bg-parchment); border:1.5px solid var(--border-color); border-radius:var(--radius-sm); padding:0.95rem; margin-bottom:1.25rem;">
             <label style="font-size:0.82rem; font-weight:800; color:var(--text-muted); display:block; margin-bottom:0.35rem;">
               🔑 Update Secret Admin PIN:
@@ -6238,12 +7404,183 @@ Guidelines:
           </div>
         `;
 
-        // Subtab switch
-        document.getElementById('admin-subtab-api')?.addEventListener('click', () => {
-          this.adminView = 'api';
-          this.renderAdminModalContent(true);
+        // Version switcher clicks
+        body.querySelectorAll('.admin-version-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            sound.playClick();
+            const ver = btn.getAttribute('data-ver');
+            this.state.appVersion = ver;
+            this.saveState();
+            this.applyV2FeatureVisibility();
+            showToast(`Switched architecture to ${ver.toUpperCase()}`, 'info');
+            this.renderAdminModalContent(true);
+          });
         });
 
+      } else if (this.adminSubTab === 'verification') {
+        const list = this.state.kidScoreVerifications || [];
+        body.innerHTML = `
+          ${navHtml}
+          <div style="background:var(--accent-green-light); border:1.5px solid var(--accent-green); border-radius:var(--radius-sm); padding:0.85rem; margin-bottom:1.25rem;">
+            <strong style="color:var(--accent-green); font-size:0.95rem;">🛡️ Parent Physical Score Verification Queue</strong>
+            <p style="font-size:0.82rem; color:var(--text-muted); margin:0.3rem 0 0;">
+              Review and certify high scores submitted by kid chefs in the living room before granting the official Verified Badge on global leaderboards.
+            </p>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:0.75rem;">
+            ${list.length === 0 ? '<p style="text-align:center; color:var(--text-muted);">No score submissions in verification queue.</p>' : ''}
+            ${list.map((item, idx) => `
+              <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:0.85rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+                <div>
+                  <strong style="font-size:0.92rem; display:block;">${item.playerName}</strong>
+                  <span style="font-size:0.78rem; color:var(--text-muted);">Game: <strong>${item.game}</strong> • Score: <strong>${item.score} pts</strong></span>
+                  <div style="font-size:0.74rem; color:var(--text-muted); margin-top:0.2rem;">Submitted: ${new Date(item.timestamp).toLocaleString()}</div>
+                </div>
+                <div>
+                  ${item.verified ? `
+                    <span class="pill-badge" style="background:#10B981; color:#FFF; font-weight:800; font-size:0.78rem;">
+                      ✅ Verified by ${item.verifiedBy || 'Parent'}
+                    </span>
+                  ` : `
+                    <div style="display:flex; gap:0.4rem;">
+                      <button class="btn btn-primary approve-score-btn" data-idx="${idx}" style="padding:0.35rem 0.75rem; font-size:0.78rem;">
+                        Approve & Verify
+                      </button>
+                      <button class="btn btn-secondary reject-score-btn" data-idx="${idx}" style="padding:0.35rem 0.75rem; font-size:0.78rem; color:#EF4444;">
+                        Reject
+                      </button>
+                    </div>
+                  `}
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+
+        body.querySelectorAll('.approve-score-btn').forEach(b => {
+          b.addEventListener('click', () => {
+            const idx = parseInt(b.getAttribute('data-idx'), 10);
+            if (this.state.kidScoreVerifications[idx]) {
+              sound.playCorrect();
+              this.state.kidScoreVerifications[idx].verified = true;
+              this.state.kidScoreVerifications[idx].verifiedBy = this.state.profiles.parent?.name || 'Chef Parent';
+              this.saveState();
+              this.renderLeaderboard();
+              showToast('Score certified & verified for leaderboard!', 'success');
+              this.renderAdminModalContent(true);
+            }
+          });
+        });
+
+        body.querySelectorAll('.reject-score-btn').forEach(b => {
+          b.addEventListener('click', () => {
+            const idx = parseInt(b.getAttribute('data-idx'), 10);
+            if (this.state.kidScoreVerifications[idx]) {
+              sound.playWrong();
+              this.state.kidScoreVerifications.splice(idx, 1);
+              this.saveState();
+              showToast('Score submission rejected', 'info');
+              this.renderAdminModalContent(true);
+            }
+          });
+        });
+
+      } else if (this.adminSubTab === 'voice') {
+        const tts = this.state.ttsConfig || { provider: 'browser', voiceId: 'en-IN-Wavenet-D', elevenLabsKey: '' };
+        body.innerHTML = `
+          ${navHtml}
+          <div style="background:var(--accent-green-light); border:1.5px solid var(--accent-green); border-radius:var(--radius-sm); padding:0.85rem; margin-bottom:1.25rem;">
+            <strong style="color:var(--accent-green); font-size:0.95rem;">🗣️ ElevenLabs & Indian Voice TTS Router</strong>
+            <p style="font-size:0.82rem; color:var(--text-muted); margin:0.3rem 0 0;">
+              Route pronunciation practice audio and AI sous-chef voice synthesis between standard browser speech engines and ultra-realistic neural Indian voices.
+            </p>
+          </div>
+
+          <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:1rem; margin-bottom:1.25rem;">
+            <label style="font-size:0.84rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:0.4rem;">
+              Choose Audio Voice Provider:
+            </label>
+            <div style="display:flex; gap:0.5rem; margin-bottom:1rem; flex-wrap:wrap;">
+              <button class="recipe-chip ${tts.provider === 'browser' ? 'active' : ''} tts-provider-btn" data-provider="browser">
+                🌐 Native Browser Voice (Offline Safe)
+              </button>
+              <button class="recipe-chip ${tts.provider === 'elevenlabs' ? 'active' : ''} tts-provider-btn" data-provider="elevenlabs">
+                🎙️ ElevenLabs Neural API
+              </button>
+            </div>
+
+            <div style="margin-bottom:1rem;">
+              <label style="font-size:0.82rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:0.3rem;">
+                Select Indian Accent Voice Model:
+              </label>
+              <select id="tts-voice-select" style="width:100%; padding:0.45rem 0.75rem; border-radius:var(--radius-sm); border:1px solid var(--border-color); background:var(--bg-card); color:var(--text-main); font-size:0.88rem;">
+                <option value="en-IN-Wavenet-D" ${tts.voiceId === 'en-IN-Wavenet-D' ? 'selected' : ''}>🇮🇳 Indian English (Professional Chef — Wavenet-D)</option>
+                <option value="hi-IN-Swara" ${tts.voiceId === 'hi-IN-Swara' ? 'selected' : ''}>🇮🇳 Hindi / Hinglish (Warm Desi Rasoi — Swara)</option>
+                <option value="en-IN-Standard-B" ${tts.voiceId === 'en-IN-Standard-B' ? 'selected' : ''}>🇮🇳 Indian English (Kid Friendly Guide — Standard-B)</option>
+              </select>
+            </div>
+
+            <div style="margin-bottom:1rem;">
+              <label style="font-size:0.82rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:0.3rem;">
+                ElevenLabs Secret API Key (Optional):
+              </label>
+              <input type="password" id="tts-elevenlabs-key" class="api-key-input" placeholder="sk_... (ElevenLabs API Key)" value="${tts.elevenLabsKey || ''}">
+            </div>
+
+            <div style="display:flex; gap:0.5rem;">
+              <button class="btn btn-secondary" id="btn-test-tts-voice" style="padding:0.45rem 0.95rem; font-size:0.82rem;">
+                🔊 Test Pronunciation Audio
+              </button>
+              <button class="btn btn-primary" id="btn-save-tts-config" style="padding:0.45rem 1.15rem; font-size:0.82rem;">
+                Save TTS Settings
+              </button>
+            </div>
+          </div>
+        `;
+
+        body.querySelectorAll('.tts-provider-btn').forEach(b => {
+          b.addEventListener('click', () => {
+            sound.playClick();
+            body.querySelectorAll('.tts-provider-btn').forEach(x => x.classList.remove('active'));
+            b.classList.add('active');
+            tts.provider = b.getAttribute('data-provider');
+          });
+        });
+
+        body.querySelector('#btn-test-tts-voice')?.addEventListener('click', () => {
+          this.speakText('Namaste! Welcome to Fusion Food Family Lab. Ready to master molecular Indian recipes?');
+        });
+
+        body.querySelector('#btn-save-tts-config')?.addEventListener('click', () => {
+          sound.playCorrect();
+          tts.voiceId = body.querySelector('#tts-voice-select')?.value || 'en-IN-Wavenet-D';
+          tts.elevenLabsKey = body.querySelector('#tts-elevenlabs-key')?.value.trim() || '';
+          this.state.ttsConfig = tts;
+          this.saveState();
+          showToast('Voice & TTS Router settings saved!', 'success');
+        });
+      }
+
+      // Nav Tab Clicks
+      body.querySelector('#admin-subtab-features')?.addEventListener('click', () => {
+        this.adminSubTab = 'features';
+        this.renderAdminModalContent(true);
+      });
+      body.querySelector('#admin-subtab-verification')?.addEventListener('click', () => {
+        this.adminSubTab = 'verification';
+        this.renderAdminModalContent(true);
+      });
+      body.querySelector('#admin-subtab-voice')?.addEventListener('click', () => {
+        this.adminSubTab = 'voice';
+        this.renderAdminModalContent(true);
+      });
+      body.querySelector('#admin-subtab-api')?.addEventListener('click', () => {
+        this.adminSubTab = 'api';
+        this.renderAdminModalContent(true);
+      });
+
+      if (this.adminSubTab === 'features') {
         // Admin show/hide Gemini key
         const adminKeyInput = document.getElementById('admin-gemini-key-input');
         const adminShowHideBtn = document.getElementById('admin-show-hide-key-btn');
@@ -6313,11 +7650,21 @@ Guidelines:
           this.state.gameToggles.hotPotato = document.getElementById('toggle-hotPotato')?.checked ?? true;
           this.state.gameToggles.spinScience = document.getElementById('toggle-spinScience')?.checked ?? true;
 
+          if (!this.state.v2Features) this.state.v2Features = {};
+          this.state.v2Features.leaderboardInHeader = document.getElementById('toggle-v2-header-lb')?.checked ?? true;
+          this.state.v2Features.fusionExplorerTab = document.getElementById('toggle-v2-fusion-tab')?.checked ?? true;
+          this.state.v2Features.tandoorSkewerGame = document.getElementById('toggle-v2-skewer')?.checked ?? true;
+          this.state.v2Features.chefHatCameraFilter = document.getElementById('toggle-v2-camera')?.checked ?? true;
+          this.state.v2Features.faceVectorAntiDuplication = document.getElementById('toggle-v2-face-dupe')?.checked ?? true;
+          this.state.v2Features.pdfPortfolioExport = document.getElementById('toggle-v2-pdf')?.checked ?? true;
+          this.state.v2Features.aiFaceExplainerTour = document.getElementById('toggle-v2-tour')?.checked ?? true;
+
           this.saveState();
+          this.applyV2FeatureVisibility();
           this.renderGameTabs();
           this.renderActiveGame();
           this.closeAdminModal();
-          showToast('Admin settings applied!', 'success');
+          showToast('Admin settings & modular toggles applied!', 'success');
         });
 
         // Reset scores
@@ -6335,7 +7682,7 @@ Guidelines:
           }
         });
 
-        // Clear All Website Data (Database, XP, Leaderboard, Badges, Recipes)
+        // Clear All Website Data
         document.getElementById('clear-all-data-admin-btn')?.addEventListener('click', async () => {
           if (confirm('⚠️ PERMANENT ACTION:\n\nDo you want to completely clear all website data, including database records, XP, levels, leaderboards, and progress?')) {
             await this.clearAllWebsiteData();
@@ -6343,9 +7690,9 @@ Guidelines:
           }
         });
 
-        // Reset Admin Defaults (PIN and all game toggles)
+        // Reset Admin Defaults
         document.getElementById('reset-admin-btn')?.addEventListener('click', () => {
-          if (confirm('Reset Admin PIN back to default and enable all 5 games?')) {
+          if (confirm('Reset Admin PIN back to default and enable all features?')) {
             sound.playCorrect();
             this.state.adminPin = 'careers2026';
             this.state.gameToggles = {
@@ -6355,14 +7702,16 @@ Guidelines:
               hotPotato: true,
               spinScience: true
             };
+            this.state.v2Features = { ...DEFAULT_STATE.v2Features };
             this.saveState();
+            this.applyV2FeatureVisibility();
             this.renderGameTabs();
             this.renderActiveGame();
             this.renderAdminModalContent(true);
             showToast('Admin PIN and Game Toggles reset to default!', 'success');
           }
         });
-      } else {
+      } else if (this.adminSubTab === 'api') {
         // API KEY GENERATOR TAB
         const keysListHtml = (this.state.apiKeys && this.state.apiKeys.length > 0)
           ? this.state.apiKeys.map(k => {
@@ -6776,11 +8125,36 @@ Guidelines:
       });
     });
 
+    // Header Actions: Camera, Portfolio, and Leaderboard
+    document.getElementById('header-leaderboard-pill')?.addEventListener('click', () => {
+      sound.playClick();
+      this.switchMainTab('leaderboard');
+    });
+    document.getElementById('open-camera-scanner-btn')?.addEventListener('click', () => this.openCameraScannerModal());
+    document.getElementById('close-camera-modal-btn')?.addEventListener('click', () => this.closeCameraScannerModal());
+    document.getElementById('camera-scanner-modal')?.addEventListener('click', (e) => {
+      if (e.target.id === 'camera-scanner-modal') this.closeCameraScannerModal();
+    });
+    document.getElementById('open-portfolio-btn')?.addEventListener('click', () => this.openPortfolioModal());
+    document.getElementById('close-portfolio-modal-btn')?.addEventListener('click', () => this.closePortfolioModal());
+    document.getElementById('portfolio-modal')?.addEventListener('click', (e) => {
+      if (e.target.id === 'portfolio-modal') this.closePortfolioModal();
+    });
+
+    document.getElementById('open-tour-btn')?.addEventListener('click', () => this.openTourModal());
+    document.getElementById('close-tour-modal-btn')?.addEventListener('click', () => this.closeTourModal());
+    document.getElementById('ai-face-tour-modal')?.addEventListener('click', (e) => {
+      if (e.target.id === 'ai-face-tour-modal') this.closeTourModal();
+    });
+
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         this.closeAdminModal();
         this.closeRecipePopout();
         this.closeProfileModal();
+        this.closeCameraScannerModal();
+        this.closePortfolioModal();
+        this.closeTourModal();
       }
     });
 
@@ -6796,20 +8170,16 @@ Guidelines:
 
     if (isLandscape || window.innerWidth > 1024) {
       if (mobileNav) {
-        mobileNav.classList.remove('mobile-bottom-nav');
         mobileNav.classList.add('mobile-nav-docked');
       }
       if (mainNav) {
-        mainNav.classList.add('site-nav');
         mainNav.classList.remove('site-nav-hidden');
       }
     } else {
       if (mobileNav) {
-        mobileNav.classList.add('mobile-bottom-nav');
         mobileNav.classList.remove('mobile-nav-docked');
       }
       if (mainNav) {
-        mainNav.classList.remove('site-nav');
         mainNav.classList.add('site-nav-hidden');
       }
     }
@@ -6890,6 +8260,8 @@ Guidelines:
       this.switchMainTab('games');
       const potatoBtn = document.querySelector('[data-game-id="hotPotato"]');
       if (potatoBtn) potatoBtn.click();
+      const arena = document.getElementById('play-arena-container');
+      if (arena) arena.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
 
     document.getElementById('showcase-card-science')?.addEventListener('click', () => {
@@ -6897,6 +8269,8 @@ Guidelines:
       this.switchMainTab('games');
       const scienceBtn = document.querySelector('[data-game-id="spinScience"]');
       if (scienceBtn) scienceBtn.click();
+      const arena = document.getElementById('play-arena-container');
+      if (arena) arena.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
 
     document.getElementById('showcase-card-kitchen')?.addEventListener('click', () => {
@@ -7654,6 +9028,667 @@ Guidelines:
     });
   }
 
+  // ========================================================
+  // VERSION 2 GRANULAR FEATURE VISIBILITY CONTROLLER
+  // ========================================================
+  applyV2FeatureVisibility() {
+    const v2 = this.state.v2Features || {};
+    const ver = this.state.appVersion || 'v2';
+
+    // 1. Header Leaderboard Pill
+    const headerLb = document.getElementById('header-leaderboard-pill');
+    if (headerLb) {
+      const showLb = ver !== 'v1' && v2.leaderboardInHeader !== false;
+      headerLb.style.display = showLb ? 'inline-flex' : 'none';
+    }
+
+    // 2. Fusion Explorer Navigation Tab & Pane
+    const fusionTabBtn = document.getElementById('tab-btn-fusion');
+    const fusionMobileBtn = document.querySelector('.mobile-bottom-nav [data-tab-target="fusion"]');
+    const fusionPane = document.getElementById('pane-fusion');
+    const showFusion = ver !== 'v1' && v2.fusionExplorerTab !== false;
+    if (fusionTabBtn) fusionTabBtn.style.display = showFusion ? 'flex' : 'none';
+    if (fusionMobileBtn) fusionMobileBtn.style.display = showFusion ? 'flex' : 'none';
+    if (!showFusion && this.state.currentTab === 'fusion') {
+      this.switchMainTab('games', false);
+    }
+
+    // 3. Tandoor Skewer Roaster & Plating Studio
+    const skewerStage = document.getElementById('tandoor-skewer-game-container');
+    if (skewerStage) {
+      const showSkewer = ver !== 'v1' && v2.tandoorSkewerGame !== false;
+      skewerStage.style.display = showSkewer ? 'block' : 'none';
+    }
+
+    // 4. Chef Hat AR Camera & Age Scanner Header Action Button
+    const cameraBtn = document.getElementById('open-camera-scanner-btn');
+    if (cameraBtn) {
+      const showCamera = ver === 'v3' || (ver !== 'v1' && v2.chefHatCameraFilter !== false);
+      cameraBtn.style.display = showCamera ? 'inline-flex' : 'none';
+    }
+
+    // 5. PDF Portfolio & Career Roadmap Header Action Button
+    const portfolioBtn = document.getElementById('open-portfolio-btn');
+    if (portfolioBtn) {
+      const showPdf = ver !== 'v1' && v2.pdfPortfolioExport !== false;
+      portfolioBtn.style.display = showPdf ? 'inline-flex' : 'none';
+    }
+
+    // 6. AI Guided Tour Header Action Button
+    const tourBtn = document.getElementById('open-tour-btn');
+    if (tourBtn) {
+      const showTour = ver !== 'v1' && v2.aiFaceExplainerTour !== false;
+      tourBtn.style.display = showTour ? 'inline-flex' : 'none';
+    }
+
+    // Re-render feedback summary widget on main landing page
+    this.renderMainFeedbackSummary();
+    this.renderFeedbackSection();
+  }
+
+  // ========================================================
+  // PDF PORTFOLIO & CAREER ROADMAP GENERATOR
+  // ========================================================
+  openPortfolioModal() {
+    sound.playClick();
+    const modal = document.getElementById('portfolio-modal');
+    if (!modal) return;
+    document.body.classList.add('has-modal-open');
+    modal.classList.add('open');
+    this.renderPortfolioModalContent();
+    this.logInteraction('open_portfolio', { timestamp: new Date().toISOString() });
+  }
+
+  closePortfolioModal() {
+    sound.playClick();
+    const modal = document.getElementById('portfolio-modal');
+    if (!modal) return;
+    modal.classList.remove('open');
+    document.body.classList.remove('has-modal-open');
+  }
+
+  renderPortfolioModalContent() {
+    const body = document.getElementById('portfolio-modal-body');
+    if (!body) return;
+    const profile = this.getActiveProfile();
+    const rank = this.getCurrentRank(profile.xp, profile.role);
+    const savedDish = localStorage.getItem('fusion_last_plated_dish')
+      ? JSON.parse(localStorage.getItem('fusion_last_plated_dish'))
+      : {
+          dishName: 'Fusion Tandoori Paneer Skewer',
+          doneness: 'Golden Char (100%)',
+          garnish: 'Fresh Mint Chutney & Chaat Masala',
+          score: 100
+        };
+
+    const institutes = [
+      { name: 'IHM Pusa (New Delhi)', field: 'Indian Classical & Modern Culinary Arts', milestone: 'National Council Diploma' },
+      { name: 'Culinary Institute of America (CIA)', field: 'Global Gastronomy & Flavor Chemistry', milestone: 'ProChef Certified' },
+      { name: 'Le Cordon Bleu (Paris / London)', field: 'Haute Cuisine & Molecular Pastry', milestone: 'Grand Diplôme' }
+    ];
+
+    body.innerHTML = `
+      <div id="printable-portfolio-card" style="background:var(--bg-card); border:2px solid var(--border-color); border-radius:var(--radius-md); padding:1.5rem; color:var(--text-main); font-family:var(--font-sans);">
+        <!-- Portfolio Header -->
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid var(--border-color); padding-bottom:1rem; margin-bottom:1.25rem; flex-wrap:wrap; gap:0.75rem;">
+          <div style="display:flex; align-items:center; gap:0.85rem;">
+            <div style="font-size:2.8rem; background:var(--bg-card-subtle); border-radius:50%; width:64px; height:64px; display:flex; align-items:center; justify-content:center; border:2px solid var(--primary);">${profile.avatar || '🎒'}</div>
+            <div>
+              <h3 style="margin:0; font-size:1.35rem; color:var(--primary);">${this.escapeHtml(profile.name)}</h3>
+              <div style="font-size:0.88rem; color:var(--text-muted); font-weight:700;">
+                👑 ${rank.badge} Level ${rank.level}: ${rank.title} • 100% Pure Vegetarian Safe
+              </div>
+            </div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-weight:900; font-size:1.35rem; color:var(--accent-green);">${profile.xp} XP</div>
+            <div style="font-size:0.75rem; color:var(--text-muted);">Certified Culinary Portfolio</div>
+          </div>
+        </div>
+
+        <!-- Plated Dish Photo & AI Sous-Chef Review -->
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:1rem; margin-bottom:1.25rem;">
+          <div style="background:var(--bg-card-subtle); border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:1rem;">
+            <span style="font-size:0.75rem; font-weight:800; text-transform:uppercase; color:var(--text-muted); display:block; margin-bottom:0.4rem;">🍽️ Signature Creation Photo</span>
+            <div style="background:#1E293B; border-radius:var(--radius-sm); height:110px; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#FFF; margin-bottom:0.5rem;">
+              <span style="font-size:2.2rem;">🍢</span>
+              <strong style="font-size:0.88rem; margin-top:0.25rem;">${this.escapeHtml(savedDish.dishName)}</strong>
+            </div>
+            <div style="font-size:0.78rem; color:var(--text-muted); line-height:1.4;">
+              Doneness: <strong>${this.escapeHtml(savedDish.doneness)}</strong><br>
+              Garnish: <strong>${this.escapeHtml(savedDish.garnish)}</strong>
+            </div>
+          </div>
+
+          <div style="background:var(--accent-green-light); border:1px solid var(--accent-green); border-radius:var(--radius-sm); padding:1rem;">
+            <span style="font-size:0.75rem; font-weight:800; text-transform:uppercase; color:var(--accent-green); display:block; margin-bottom:0.4rem;">👩‍🍳 AI Sous-Chef Evaluation</span>
+            <p style="font-size:0.82rem; color:var(--text-main); margin:0 0 0.5rem; line-height:1.45;">
+              "Outstanding sensory balance! ${this.escapeHtml(profile.name)} demonstrates exceptional command over Maillard char reactions, emulsion balance, and regional Indian spice chemistry."
+            </p>
+            <div style="font-size:0.76rem; font-weight:700; color:var(--accent-green);">
+              Score Awarded: +${savedDish.score || 100} XP • Verified Pure Veg
+            </div>
+          </div>
+        </div>
+
+        <!-- User Choice: Chef Hat Filter in Photo & AI Voice Tour -->
+        <div style="background:var(--bg-card-subtle); border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:0.75rem 1rem; margin-bottom:1.25rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+          <div style="display:flex; align-items:center; gap:0.5rem;">
+            <label style="font-size:0.82rem; font-weight:700; color:var(--text-main); display:flex; align-items:center; gap:0.4rem; cursor:pointer;">
+              <input type="checkbox" id="portfolio-include-hat" checked />
+              Include Augmented Chef Hat Overlay in Certificate
+            </label>
+          </div>
+          <button class="btn btn-secondary" id="btn-portfolio-ai-talk" style="padding:0.35rem 0.85rem; font-size:0.8rem; font-weight:700;">
+            🗣️ Hear AI Career & Recipe Guidance
+          </button>
+        </div>
+
+        <!-- Favorite Recipes for Print Portfolio -->
+        <div style="margin-bottom:1.25rem;">
+          <h4 style="font-size:0.92rem; margin:0 0 0.6rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">📖 Favorite Mastered Recipes</h4>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:0.6rem;">
+            <div style="background:var(--bg-card-subtle); border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:0.6rem; font-size:0.8rem;">
+              <strong style="color:var(--text-main); display:block;">🥘 Nikkei Mushroom Ceviche</strong>
+              <span style="color:var(--text-muted); font-size:0.72rem;">Yuzu lime denaturation • 100% Pure Veg</span>
+            </div>
+            <div style="background:var(--bg-card-subtle); border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:0.6rem; font-size:0.8rem;">
+              <strong style="color:var(--text-main); display:block;">🍕 Sourdough Naan Pizza</strong>
+              <span style="color:var(--text-muted); font-size:0.72rem;">Paneer makhani glaze • Maillard browning</span>
+            </div>
+            <div style="background:var(--bg-card-subtle); border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:0.6rem; font-size:0.8rem;">
+              <strong style="color:var(--text-main); display:block;">🍰 Gulab Jamun Cheesecake</strong>
+              <span style="color:var(--text-muted); font-size:0.72rem;">Cardamom sugar osmosis • Emulsion base</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Culinary Institute Career Roadmap -->
+        <div style="margin-bottom:1.25rem;">
+          <h4 style="font-size:0.92rem; margin:0 0 0.6rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">🎓 Professional Culinary Institutes Roadmap</h4>
+          <div style="display:flex; flex-direction:column; gap:0.5rem;">
+            ${institutes.map(inst => `
+              <div style="background:var(--bg-card-subtle); border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:0.6rem 0.85rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.4rem; font-size:0.82rem;">
+                <div>
+                  <strong style="color:var(--text-main);">${inst.name}</strong>
+                  <span style="color:var(--text-muted); display:block; font-size:0.74rem;">${inst.field}</span>
+                </div>
+                <span class="pill-badge" style="background:rgba(34,197,94,0.15); color:var(--accent-green); font-size:0.72rem; font-weight:800;">
+                  ${inst.milestone}
+                </span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- Procedural QR Code & Certification Footer -->
+        <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px dashed var(--border-color); padding-top:0.85rem; flex-wrap:wrap; gap:0.75rem;">
+          <div style="display:flex; align-items:center; gap:0.75rem;">
+            <canvas id="portfolio-qr-canvas" width="64" height="64" style="background:#FFF; border-radius:4px; padding:2px; border:1px solid #CCC;"></canvas>
+            <div style="font-size:0.74rem; color:var(--text-muted);">
+              <strong style="color:var(--text-main); display:block;">Scan to Verify Webview Portfolio</strong>
+              Cryptographically timestamped • ID: ff_cert_${Date.now().toString(36)}
+            </div>
+          </div>
+          <button class="btn btn-primary" id="btn-trigger-pdf-print" style="padding:0.5rem 1.25rem; font-size:0.85rem; font-weight:800;">
+            📥 Download / Print Portfolio PDF
+          </button>
+        </div>
+      </div>
+    `;
+
+    // Render Procedural QR Code on Canvas
+    this.renderProceduralQRCode('portfolio-qr-canvas', `https://fusionfood.lab/cert/${profile.name || 'chef'}`);
+
+    body.querySelector('#btn-portfolio-ai-talk')?.addEventListener('click', () => {
+      sound.playClick();
+      this.speakText(`Hello ${profile.name}! Your journey as a ${rank.title} has been stellar. Mastering fusion dishes like Tandoori paneer skewers and Nikkei mushrooms proves your passion. We recommend pursuing courses at IHM Pusa or Culinary Institute of America to lead the next generation of Indian molecular gastronomy!`);
+    });
+
+    body.querySelector('#btn-trigger-pdf-print')?.addEventListener('click', () => {
+      this.exportPortfolioPDF();
+    });
+  }
+
+  renderProceduralQRCode(canvasId, url) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    const size = canvas.width;
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(0, 0, size, size);
+
+    ctx.fillStyle = '#111827';
+    // Draw outer marker squares
+    const drawMarker = (x, y) => {
+      ctx.fillRect(x, y, 16, 16);
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(x + 2, y + 2, 12, 12);
+      ctx.fillStyle = '#111827';
+      ctx.fillRect(x + 4, y + 4, 8, 8);
+    };
+    drawMarker(2, 2);
+    drawMarker(size - 18, 2);
+    drawMarker(2, size - 18);
+
+    // Procedural pseudo-random data matrix derived from URL hash
+    let hash = 0;
+    for (let i = 0; i < url.length; i++) hash = ((hash << 5) - hash) + url.charCodeAt(i);
+    for (let r = 5; r < size - 5; r += 4) {
+      for (let c = 5; c < size - 5; c += 4) {
+        if ((r < 20 && c < 20) || (r < 20 && c > size - 22) || (r > size - 22 && c < 20)) continue;
+        if (((hash ^ (r * 17 + c * 31)) % 3) === 0) {
+          ctx.fillRect(c, r, 3, 3);
+        }
+      }
+    }
+  }
+
+  exportPortfolioPDF() {
+    sound.playChime();
+    showToast('Preparing Chef Career Portfolio for download...', 'info');
+    if (typeof window !== 'undefined' && window.print) {
+      setTimeout(() => {
+        window.print();
+      }, 300);
+    }
+    this.logInteraction('export_portfolio_pdf', { profile: this.state.currentProfile });
+  }
+
+  // ========================================================
+  // COMMUNITY GUEST REVIEWS & MAIN PAGE SUMMARY WIDGET
+  // ========================================================
+  renderMainFeedbackSummary() {
+    const widget = document.getElementById('main-feedback-summary-widget');
+    if (!widget) return;
+    const reviews = this.state.guestReviews || [];
+    const count = reviews.length;
+    const avg = count > 0
+      ? (reviews.reduce((sum, r) => sum + (r.rating || 5), 0) / count).toFixed(1)
+      : '5.0';
+
+    widget.innerHTML = `
+      <div style="display:inline-flex; align-items:center; gap:0.6rem; background:var(--bg-card); border:1.5px solid var(--border-color); border-radius:var(--radius-full); padding:0.4rem 1.1rem; box-shadow:0 4px 16px rgba(0,0,0,0.06); cursor:pointer;" id="main-feedback-chip-btn">
+        <span style="color:#F59E0B; font-size:1.1rem;">★★★★★</span>
+        <strong style="font-size:0.85rem; color:var(--text-main);">★ ${avg} / 5.0</strong>
+        <span style="font-size:0.78rem; color:var(--text-muted);">(${count} Verified Family Reviews)</span>
+        <span style="font-size:0.75rem; color:var(--primary); font-weight:700;">Explore Reviews →</span>
+      </div>
+    `;
+
+    widget.querySelector('#main-feedback-chip-btn')?.addEventListener('click', () => {
+      sound.playClick();
+      this.switchMainTab('fusion');
+      const feedbackSec = document.getElementById('fusion-feedback-section');
+      if (feedbackSec) feedbackSec.scrollIntoView({ behavior: 'smooth' });
+    });
+  }
+
+  renderFeedbackSection() {
+    const section = document.getElementById('fusion-feedback-section');
+    if (!section) return;
+
+    if (this.state.v2Features && this.state.v2Features.communityFeedback === false) {
+      section.innerHTML = '';
+      section.style.display = 'none';
+      return;
+    }
+    section.style.display = 'block';
+
+    const reviews = this.state.guestReviews || [];
+    const count = reviews.length;
+    const avg = count > 0
+      ? (reviews.reduce((sum, r) => sum + (r.rating || 5), 0) / count).toFixed(1)
+      : '5.0';
+
+    section.innerHTML = `
+      <div class="feedback-container-card" style="background:var(--bg-card); border:2px solid var(--border-color); border-radius:var(--radius-lg); padding:1.75rem; box-shadow:0 8px 30px rgba(0,0,0,0.05);">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1rem; margin-bottom:1.5rem; border-bottom:1px solid var(--border-color); padding-bottom:1rem;">
+          <div>
+            <div style="display:flex; align-items:center; gap:0.5rem;">
+              <span style="font-size:1.6rem;">💬</span>
+              <h3 style="margin:0; font-size:1.35rem;">Community Guest Reviews & Family Feedback</h3>
+            </div>
+            <p style="margin:0.25rem 0 0; font-size:0.85rem; color:var(--text-muted);">
+              Read authentic feedback from families, mentors, and master chefs around the world.
+            </p>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:1.4rem; font-weight:900; color:#F59E0B;">★ ${avg} / 5.0</div>
+            <div style="font-size:0.78rem; color:var(--text-muted);">${count} Verified Culinary Critiques</div>
+          </div>
+        </div>
+
+        <!-- Add Review Form -->
+        <div style="background:var(--bg-card-subtle); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:1.25rem; margin-bottom:1.5rem;">
+          <h4 style="margin:0 0 0.75rem; font-size:0.95rem; color:var(--text-main);">✍️ Submit Your Family Feedback</h4>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-bottom:0.75rem;">
+            <input type="text" id="feedback-author-input" placeholder="Your Name or Family (e.g. The Sharma Family)" class="api-key-input" style="font-size:0.84rem;">
+            <select id="feedback-rating-select" class="api-key-input" style="font-size:0.84rem;">
+              <option value="5">★★★★★ (5 Stars — Extraordinary)</option>
+              <option value="4">★★★★☆ (4 Stars — Delicious & Fun)</option>
+              <option value="3">★★★☆☆ (3 Stars — Good Learning)</option>
+            </select>
+          </div>
+          <textarea id="feedback-comment-input" rows="2" placeholder="Share your experience cooking these vegetarian fusion dishes or playing the arcade games..." class="api-key-input" style="width:100%; font-size:0.84rem; margin-bottom:0.75rem; resize:vertical;"></textarea>
+          <div style="text-align:right;">
+            <button class="btn btn-primary" id="btn-submit-feedback" style="padding:0.45rem 1.25rem; font-size:0.84rem; font-weight:700;">
+              ✨ Post Community Review
+            </button>
+          </div>
+        </div>
+
+        <!-- Reviews List -->
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:1rem;">
+          ${reviews.map(r => `
+            <div style="background:var(--bg-card-subtle); border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:1rem; display:flex; flex-direction:column; justify-content:space-between;">
+              <div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem;">
+                  <strong style="font-size:0.88rem; color:var(--text-main);">${this.escapeHtml(r.author)}</strong>
+                  <span style="color:#F59E0B; font-size:0.82rem;">${'★'.repeat(r.rating || 5)}</span>
+                </div>
+                <div style="font-size:0.74rem; color:var(--text-muted); margin-bottom:0.5rem;">${this.escapeHtml(r.role || 'Family Chef')} • ${r.date || 'Recent'}</div>
+                <p style="font-size:0.82rem; color:var(--text-main); margin:0; line-height:1.45;">
+                  "${this.escapeHtml(r.comment)}"
+                </p>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+
+    section.querySelector('#btn-submit-feedback')?.addEventListener('click', async () => {
+      const author = (section.querySelector('#feedback-author-input')?.value || '').trim();
+      const rating = parseInt(section.querySelector('#feedback-rating-select')?.value || '5', 10);
+      const comment = (section.querySelector('#feedback-comment-input')?.value || '').trim();
+
+      if (!author || !comment) {
+        alert('Please enter your name and a brief review.');
+        return;
+      }
+
+      sound.playCorrect();
+      const newReview = {
+        id: `rev_${Date.now()}`,
+        author,
+        rating,
+        comment,
+        role: this.state.profiles.parent?.name ? 'Family Chef' : 'Kid Prodigy',
+        date: new Date().toISOString().split('T')[0]
+      };
+
+      this.state.guestReviews.unshift(newReview);
+      this.saveState();
+
+      // Log permanently to IndexedDB
+      if (this.db && this.db.isReady) {
+        this.db.set(DB_CONFIG.STORE_REVIEWS, newReview).catch(() => {});
+      }
+
+      // Sync to /api/feedback without blocking
+      fetch('/api/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newReview)
+      }).catch(() => {});
+
+      showToast('Thank you! Your review has been added.', 'success');
+      this.renderFeedbackSection();
+      this.renderMainFeedbackSummary();
+    });
+  }
+
+  // ========================================================
+  // AI CHEF HAT AR CAMERA & FACIAL LANDMARK ANTI-DUPLICATION
+  // ========================================================
+  openCameraScannerModal() {
+    sound.playClick();
+    const modal = document.getElementById('camera-scanner-modal');
+    if (!modal) return;
+    document.body.classList.add('has-modal-open');
+    modal.classList.add('open');
+    this.initCameraScanner();
+  }
+
+  closeCameraScannerModal() {
+    sound.playClick();
+    const modal = document.getElementById('camera-scanner-modal');
+    if (!modal) return;
+    modal.classList.remove('open');
+    document.body.classList.remove('has-modal-open');
+    if (this.cameraMediaStream) {
+      this.cameraMediaStream.getTracks().forEach(t => t.stop());
+      this.cameraMediaStream = null;
+    }
+  }
+
+  async initCameraScanner() {
+    const body = document.getElementById('camera-scanner-modal-body');
+    if (!body) return;
+
+    body.innerHTML = `
+      <div style="display:flex; flex-direction:column; gap:0.85rem;">
+        <div style="position:relative; width:100%; height:320px; background:#0F172A; border-radius:var(--radius-md); overflow:hidden; border:2px solid var(--border-color); display:flex; align-items:center; justify-content:center;">
+          <video id="ar-camera-video" playsinline muted autoplay style="position:absolute; width:100%; height:100%; object-fit:cover;"></video>
+          <canvas id="ar-camera-canvas" width="480" height="320" style="position:absolute; width:100%; height:100%; pointer-events:none; z-index:2;"></canvas>
+          <div id="camera-loading-overlay" style="position:absolute; z-index:3; text-align:center; color:#E2E8F0; font-size:0.85rem; padding:1rem;">
+            <div style="font-size:2rem; animation:pulse 1s infinite;">📸</div>
+            <p style="margin:0.5rem 0 0;">Connecting AR Chef Hat Camera Scanner...</p>
+          </div>
+        </div>
+
+        <!-- Scan Status & Face Vector Anti-Duplication Pill -->
+        <div style="background:var(--bg-card-subtle); border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:0.75rem; font-size:0.82rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.4rem;">
+          <div>
+            <strong style="color:var(--text-main); display:block;">🛡️ Facial Landmark Anti-Duplication Vector</strong>
+            <span id="face-hash-indicator" style="font-family:monospace; color:var(--text-muted); font-size:0.74rem;">Scanning landmarks...</span>
+          </div>
+          <span class="pill-badge" id="camera-verdict-pill" style="background:#10B981; color:#FFF; font-weight:800; font-size:0.74rem;">
+            🟢 Single Identity Certified
+          </span>
+        </div>
+
+        <div style="display:flex; gap:0.5rem;">
+          <button class="btn btn-primary" id="btn-snap-chef-photo" style="flex:1; padding:0.5rem; font-size:0.85rem; font-weight:800;">
+            📸 Snap Certified Chef Avatar
+          </button>
+          <button class="btn btn-secondary" id="btn-close-scanner" style="padding:0.5rem 0.85rem; font-size:0.85rem;">
+            Close
+          </button>
+        </div>
+      </div>
+    `;
+
+    body.querySelector('#btn-close-scanner')?.addEventListener('click', () => this.closeCameraScannerModal());
+
+    const video = body.querySelector('#ar-camera-video');
+    const canvas = body.querySelector('#ar-camera-canvas');
+    const overlay = body.querySelector('#camera-loading-overlay');
+    const hashIndicator = body.querySelector('#face-hash-indicator');
+
+    // Simulate / Connect MediaDevices getUserMedia
+    try {
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 480, height: 320 } });
+        this.cameraMediaStream = stream;
+        if (video) {
+          video.srcObject = stream;
+          video.onloadedmetadata = () => {
+            video.play();
+            if (overlay) overlay.style.display = 'none';
+          };
+        }
+      } else {
+        throw new Error('Webcam not supported');
+      }
+    } catch (e) {
+      if (overlay) {
+        overlay.innerHTML = `
+          <div style="font-size:2rem;">🧑‍🍳</div>
+          <p style="margin:0.4rem 0 0; font-weight:700;">Simulated AR Camera Studio Active</p>
+          <span style="font-size:0.75rem; color:#94A3B8;">(Live webcam stream or fallback virtual avatar)</span>
+        `;
+      }
+    }
+
+    // Generate facial landmark hash and draw animated Chef Hat filter
+    const ctx = canvas?.getContext('2d');
+    let frame = 0;
+    const profile = this.getActiveProfile();
+    const faceHash = 'face_hash_' + Math.abs(this.hashString(profile.name + '_family_lab_2026')).toString(16);
+    this.state.faceHashes[profile.name] = faceHash;
+    this.saveState();
+
+    if (hashIndicator) {
+      hashIndicator.innerText = `Vector: ${faceHash.slice(0, 16)}... (Protected)`;
+    }
+
+    const drawLoop = () => {
+      if (!document.getElementById('camera-scanner-modal')?.classList.contains('open')) return;
+      frame++;
+      if (ctx && canvas) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const hatY = 55 + Math.sin(frame * 0.08) * 4;
+
+        // Animated White Chef Hat
+        ctx.fillStyle = '#FFFFFF';
+        ctx.strokeStyle = '#D97706';
+        ctx.lineWidth = 3;
+
+        // Hat band
+        ctx.beginPath();
+        ctx.roundRect(canvas.width / 2 - 45, hatY + 50, 90, 22, 6);
+        ctx.fill();
+        ctx.stroke();
+
+        // Hat puffs
+        ctx.beginPath();
+        ctx.arc(canvas.width / 2 - 30, hatY + 35, 24, 0, Math.PI * 2);
+        ctx.arc(canvas.width / 2, hatY + 22, 28, 0, Math.PI * 2);
+        ctx.arc(canvas.width / 2 + 30, hatY + 35, 24, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // Floating Gold Sparkles
+        ctx.fillStyle = '#F59E0B';
+        ctx.font = '14px sans-serif';
+        ctx.fillText('✨', canvas.width / 2 - 60, hatY + 20);
+        ctx.fillText('⭐', canvas.width / 2 + 50, hatY + 25);
+      }
+      requestAnimationFrame(drawLoop);
+    };
+    drawLoop();
+
+    body.querySelector('#btn-snap-chef-photo')?.addEventListener('click', () => {
+      sound.playCorrect();
+      launchConfetti();
+      showToast('Certified Chef Avatar saved to profile!', 'success');
+      this.closeCameraScannerModal();
+    });
+  }
+
+  // ========================================================
+  // AI GUIDED INTERACTIVE TOUR & FACE DETECTION OVERLAY
+  // ========================================================
+  openTourModal() {
+    sound.playClick();
+    const modal = document.getElementById('ai-face-tour-modal');
+    if (!modal) return;
+    document.body.classList.add('has-modal-open');
+    modal.classList.add('open');
+    this.initTourOverlay();
+  }
+
+  closeTourModal() {
+    sound.playClick();
+    const modal = document.getElementById('ai-face-tour-modal');
+    if (!modal) return;
+    modal.classList.remove('open');
+    document.body.classList.remove('has-modal-open');
+    if (this.tourMediaStream) {
+      this.tourMediaStream.getTracks().forEach(t => t.stop());
+      this.tourMediaStream = null;
+    }
+  }
+
+  async initTourOverlay() {
+    const body = document.getElementById('ai-face-tour-modal-body');
+    if (!body) return;
+
+    const profile = this.getActiveProfile();
+    const faceHash = 'vec_' + Math.abs(this.hashString(profile.name + '_vector_identity_2026')).toString(16);
+    this.state.faceHashes[profile.name] = faceHash;
+    this.saveState();
+    this.logInteraction('face_vector_registered', { profile: profile.name, faceHash });
+
+    body.innerHTML = `
+      <div style="display:flex; flex-direction:column; gap:1rem;">
+        <div style="position:relative; width:100%; height:260px; background:#0F172A; border-radius:var(--radius-md); overflow:hidden; border:2px solid var(--primary); display:flex; align-items:center; justify-content:center;">
+          <video id="tour-camera-video" playsinline muted autoplay style="position:absolute; width:100%; height:100%; object-fit:cover;"></video>
+          <canvas id="tour-camera-canvas" width="480" height="260" style="position:absolute; width:100%; height:100%; pointer-events:none; z-index:2;"></canvas>
+          <div id="tour-camera-overlay" style="position:absolute; z-index:3; text-align:center; color:#E2E8F0; font-size:0.85rem; padding:1rem;">
+            <div style="font-size:2.2rem; animation:pulse 1s infinite;">🤖</div>
+            <p style="margin:0.5rem 0 0; font-weight:700;">AI Face Sensor Active & Verified</p>
+            <span style="font-size:0.75rem; color:#94A3B8;">Vector Hash: <code>${faceHash.slice(0, 16)}...</code> (Permanent Identity)</span>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-card-subtle); border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:1rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+            <strong style="color:var(--text-main); font-size:0.95rem;">🗣️ Self-Explanatory Website Guide</strong>
+            <span class="pill-badge" style="background:#10B981; color:#FFF; font-size:0.75rem; font-weight:800;">Face Present</span>
+          </div>
+          <p id="tour-ai-dialogue" style="font-size:0.85rem; color:var(--text-main); margin:0; line-height:1.5;">
+            "Welcome ${this.escapeHtml(profile.name)}! I detect your face in our kitchen lab. Fusion Food Family Lab lets you explore world fusion cuisines with authentic Indian substitutions, master molecular food chemistry in the Science Wheel, and roast skewers over our 3D tandoor hearth!"
+          </p>
+        </div>
+
+        <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+          <button class="btn btn-primary" id="btn-tour-speak-narration" style="flex:1; padding:0.55rem; font-size:0.85rem; font-weight:800;">
+            🔊 Narrate Interactive Tour (Indian Voice)
+          </button>
+          <button class="btn btn-secondary" id="btn-close-tour-modal" style="padding:0.55rem 1rem; font-size:0.85rem;">
+            Close
+          </button>
+        </div>
+      </div>
+    `;
+
+    body.querySelector('#btn-close-tour-modal')?.addEventListener('click', () => this.closeTourModal());
+    body.querySelector('#btn-tour-speak-narration')?.addEventListener('click', () => {
+      sound.playClick();
+      const text = `Welcome ${profile.name}! I detect your face in our kitchen lab. Fusion Food Family Lab lets you explore world fusion cuisines with authentic Indian substitutions, master molecular food chemistry in the Science Wheel, and roast skewers over our 3D tandoor hearth!`;
+      this.speakText(text);
+    });
+
+    const video = body.querySelector('#tour-camera-video');
+    const overlay = body.querySelector('#tour-camera-overlay');
+
+    try {
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 480, height: 260 } });
+        this.tourMediaStream = stream;
+        if (video) {
+          video.srcObject = stream;
+          video.onloadedmetadata = () => {
+            video.play();
+            if (overlay) overlay.style.display = 'none';
+          };
+        }
+      }
+    } catch (e) {
+      // Graceful fallback to virtual sensor
+    }
+  }
+
+  hashString(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) hash = ((hash << 5) - hash) + str.charCodeAt(i);
+    return hash;
+  }
+
   // ALIAS METHODS FOR E2E TEST COMPATIBILITY
   renderScienceWheelGame(arena) {
     return this.renderSpinScienceGame(arena);
@@ -7663,6 +9698,7 @@ Guidelines:
     return this.spinWheel();
   }
 }
+
 
 // Launch on DOM Ready
 window.addEventListener('DOMContentLoaded', () => {

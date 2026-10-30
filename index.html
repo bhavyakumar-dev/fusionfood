@@ -34,12 +34,37 @@
         <button class="nav-link" data-tab-target="kitchen" id="tab-btn-kitchen">
           <span>📖</span> <span>Kitchen Lab</span>
         </button>
-        <button class="nav-link" data-tab-target="leaderboard" id="tab-btn-leaderboard">
+        <button class="nav-link" data-tab-target="fusion" id="tab-btn-fusion">
+          <span>🌍</span> <span>Fusion Explorer</span>
+        </button>
+        <button class="nav-link" data-tab-target="leaderboard" id="tab-btn-leaderboard" style="display:none;">
           <span>🏆</span> <span>Leaderboard</span>
         </button>
       </nav>
 
       <div class="header-actions">
+        <!-- Live Leaderboard Top Header Pill (Non-Intrusive, Click to View Hall of Fame) -->
+        <button id="header-leaderboard-pill" class="header-leaderboard-pill" title="View Global Hall of Fame & Leaderboard">
+          <span class="lb-trophy">🏆</span>
+          <span class="lb-title">Top Chefs</span>
+          <span class="lb-rank" id="header-lb-rank">#1</span>
+        </button>
+
+        <!-- Chef Hat AR Camera & Age Scanner -->
+        <button id="open-camera-scanner-btn" class="icon-btn" title="Chef Hat AR Camera & Age Scanner" style="font-size:1.05rem;">
+          📸
+        </button>
+
+        <!-- Chef Portfolio & Career Certificate -->
+        <button id="open-portfolio-btn" class="icon-btn" title="View & Export Chef Career Portfolio (PDF)" style="font-size:1.05rem;">
+          📄
+        </button>
+
+        <!-- AI Face Tour & Explainer Overlay Button -->
+        <button id="open-tour-btn" class="icon-btn" title="AI Face Guided Self-Explanatory Website Tour" style="font-size:1.05rem;">
+          🤖
+        </button>
+
         <!-- Chef Profile Pill (Click to Change Name, Role & Rank) -->
         <button id="profile-switch-btn" class="profile-pill" title="Click to Edit Profile & Rank">
           <span class="profile-avatar">🎒</span>
@@ -141,6 +166,11 @@
             <span class="scrolltide-preview-action">Explore Recipes →</span>
           </div>
         </div>
+
+        <!-- Main Page Community Rating & Feedback Summary Badge -->
+        <div id="main-feedback-summary-widget" style="text-align:center; margin-top:1.25rem;">
+          <!-- Rendered dynamically by bundle.js -->
+        </div>
       </div>
     </section>
 
@@ -205,6 +235,9 @@
 
         <!-- 3D Glowing Tandoor Coals Stage -->
         <div id="tandoor-3d-stage" class="tandoor-3d-stage-container" aria-label="3D Interactive Glowing Tandoor Hearth"></div>
+
+        <!-- Interactive Tandoori Skewer & Plating Mini-Game Arena -->
+        <div id="tandoor-skewer-game-container" style="margin-bottom:2rem;"></div>
 
         <!-- Recipe Carousel Navigation Controls -->
         <div class="view-mode-bar">
@@ -273,6 +306,29 @@
         </div>
       </div>
     </div>
+
+    <!-- ========================================================
+         TAB PANE 4: FUSION EXPLORER (World Cuisines & Flavor Lab)
+         ======================================================== -->
+    <div class="main-tab-pane" id="pane-fusion">
+      <div class="container">
+        <div class="section-head" style="margin-bottom:1.5rem;">
+          <span class="handwritten">Global Flavors & Desi Roots</span>
+          <h2>🌍 Fusion Food Explorer & Edible Universe</h2>
+          <p>
+            Discover the magic of cross-cultural cooking! See how spices, textures, and techniques from distant continents unite with vibrant Indian ingredients to create extraordinary culinary masterpieces.
+          </p>
+        </div>
+        <div id="fusion-explorer-content">
+          <!-- Rendered dynamically by bundle.js -->
+        </div>
+
+        <!-- Community Guest Reviews & Family Feedback Hub -->
+        <div id="fusion-feedback-section" style="margin-top:2.5rem;">
+          <!-- Rendered dynamically by bundle.js -->
+        </div>
+      </div>
+    </div>
   </main>
 
   <!-- Admin Settings Modal (Secure PIN authenticated, no password revealed) -->
@@ -309,6 +365,88 @@
   <div class="modal-overlay" id="recipe-popout-modal" role="dialog" aria-modal="true" aria-labelledby="popout-recipe-title">
     <div class="recipe-popout-dialog" id="recipe-popout-dialog-content">
       <!-- Rendered dynamically by bundle.js -->
+    </div>
+  </div>
+
+  <!-- Top Header Leaderboard & Hall of Fame Modal -->
+  <div class="modal-overlay" id="leaderboard-modal" role="dialog" aria-modal="true" aria-labelledby="leaderboard-modal-title">
+    <div class="modal-dialog modal-dialog-lg" style="max-width:720px;">
+      <div class="modal-header">
+        <h3 id="leaderboard-modal-title" style="display:flex; align-items:center; gap:0.5rem;">
+          <span>🏆 Global Hall of Fame & Leaderboard</span>
+        </h3>
+        <button class="modal-close-btn" id="close-leaderboard-modal-btn" aria-label="Close Leaderboard Modal">✕</button>
+      </div>
+      <div id="leaderboard-modal-body">
+        <!-- Rendered dynamically by bundle.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Hot Potato Fullscreen / Landscape Arcade Modal -->
+  <div class="modal-overlay hot-potato-fullscreen-modal" id="hot-potato-modal" role="dialog" aria-modal="true" aria-label="Hot Potato Arcade Game">
+    <div class="hp-fullscreen-dialog">
+      <div class="hp-fullscreen-header">
+        <div style="display:flex; align-items:center; gap:0.6rem;">
+          <span style="font-size:1.4rem;">🥔</span>
+          <strong style="color:#FFFFFF; font-size:1.05rem;">Hot Potato! Arcade Edition</strong>
+          <span class="pill-badge" id="hp-modal-diff-badge" style="background:#F59E0B; color:#000; font-weight:800; font-size:0.75rem;">Kid Chef</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:0.5rem;">
+          <button class="btn btn-secondary" id="hp-fullscreen-toggle-btn" style="padding:0.35rem 0.75rem; font-size:0.78rem; color:#FFF; border-color:rgba(255,255,255,0.3);">
+            ⛶ Fullscreen
+          </button>
+          <button class="modal-close-btn" id="close-hot-potato-modal-btn" aria-label="Close Hot Potato Modal" style="color:#FFF;">✕</button>
+        </div>
+      </div>
+      <div class="hp-fullscreen-body" id="hp-fullscreen-body">
+        <canvas id="hp-fullscreen-canvas" width="960" height="600"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chef Hat AR Camera & Age Scanner Modal -->
+  <div class="modal-overlay" id="camera-scanner-modal" role="dialog" aria-modal="true" aria-labelledby="camera-modal-title">
+    <div class="modal-dialog" style="max-width:540px;">
+      <div class="modal-header">
+        <h3 id="camera-modal-title" style="display:flex; align-items:center; gap:0.5rem;">
+          <span>📸 Chef Hat AR Camera & Age Scanner</span>
+        </h3>
+        <button class="modal-close-btn" id="close-camera-modal-btn" aria-label="Close Camera Modal">✕</button>
+      </div>
+      <div id="camera-scanner-modal-body">
+        <!-- Rendered dynamically by bundle.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- PDF Portfolio & Career Roadmap Modal -->
+  <div class="modal-overlay" id="portfolio-modal" role="dialog" aria-modal="true" aria-labelledby="portfolio-modal-title">
+    <div class="modal-dialog modal-dialog-lg" style="max-width:760px;">
+      <div class="modal-header">
+        <h3 id="portfolio-modal-title" style="display:flex; align-items:center; gap:0.5rem;">
+          <span>📄 Chef Career Portfolio & Certification</span>
+        </h3>
+        <button class="modal-close-btn" id="close-portfolio-modal-btn" aria-label="Close Portfolio Modal">✕</button>
+      </div>
+      <div id="portfolio-modal-body">
+        <!-- Rendered dynamically by bundle.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Guided Interactive Tour & Face Detection Overlay -->
+  <div class="modal-overlay" id="ai-face-tour-modal" role="dialog" aria-modal="true" aria-labelledby="tour-modal-title">
+    <div class="modal-dialog" style="max-width:580px;">
+      <div class="modal-header">
+        <h3 id="tour-modal-title" style="display:flex; align-items:center; gap:0.5rem;">
+          <span>🤖 AI Guided Interactive Tour & Face Detection</span>
+        </h3>
+        <button class="modal-close-btn" id="close-tour-modal-btn" aria-label="Close AI Tour Modal">✕</button>
+      </div>
+      <div id="ai-face-tour-modal-body">
+        <!-- Rendered dynamically by bundle.js -->
+      </div>
     </div>
   </div>
 
@@ -367,7 +505,10 @@
     <a role="button" tabindex="0" class="nav-link" data-tab-target="kitchen" id="mob-tab-btn-kitchen">
       <span>📖</span> <span>Kitchen</span>
     </a>
-    <a role="button" tabindex="0" class="nav-link" data-tab-target="leaderboard" id="mob-tab-btn-leaderboard">
+    <a role="button" tabindex="0" class="nav-link" data-tab-target="fusion" id="mob-tab-btn-fusion">
+      <span>🌍</span> <span>Fusion</span>
+    </a>
+    <a role="button" tabindex="0" class="nav-link" data-tab-target="leaderboard" id="mob-tab-btn-leaderboard" style="display:none;">
       <span>🏆</span> <span>Leaderboard</span>
     </a>
   </nav>
