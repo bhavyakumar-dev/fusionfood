@@ -4407,9 +4407,9 @@ input:checked + .slider:before {
   }
   #tandoor-3d-stage,
   .tandoor-3d-stage-container {
-    max-height: 180px !important;
-    min-height: 140px !important;
-    margin: 0.75rem auto 1rem !important;
+    max-height: 380px !important;
+    min-height: 280px !important;
+    margin: 0.75rem auto 1.25rem !important;
   }
 }
 
@@ -4639,4 +4639,147 @@ input:checked + .slider:before {
   color: #4ADE80;
   border-color: rgba(74, 222, 128, 0.6);
 }
+
+/* ========================================================
+   HIGH-IMPACT ARCADE HERO BUTTON (MOBILE & DESKTOP)
+   ======================================================== */
+.hp-big-arcade-btn {
+  animation: arcadePulse 2.4s infinite ease-in-out;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+  font-family: inherit;
+}
+.hp-big-arcade-btn:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 10px 32px rgba(234, 88, 12, 0.65), 0 0 20px rgba(245, 158, 11, 0.5) !important;
+}
+.hp-big-arcade-btn:active {
+  transform: translateY(1px) scale(0.98);
+}
+@keyframes arcadePulse {
+  0%, 100% {
+    box-shadow: 0 6px 20px rgba(234, 88, 12, 0.45), 0 0 12px rgba(245, 158, 11, 0.35);
+  }
+  50% {
+    box-shadow: 0 8px 30px rgba(234, 88, 12, 0.75), 0 0 24px rgba(245, 158, 11, 0.6);
+  }
+}
+
+/* ========================================================
+   SENSORY SKEWER COOKING FEEDBACK & FLOATING POPUPS
+   ======================================================== */
+.tandoor-floating-toast {
+  position: absolute;
+  font-weight: 800;
+  font-size: 0.82rem;
+  padding: 0.32rem 0.85rem;
+  border-radius: 999px;
+  pointer-events: none;
+  animation: floatUpFade 1.6s forwards cubic-bezier(0.2, 0.8, 0.2, 1);
+  z-index: 25;
+  white-space: nowrap;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+@keyframes floatUpFade {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 12px) scale(0.85);
+  }
+  20% {
+    opacity: 1;
+    transform: translate(-50%, -10px) scale(1.06);
+  }
+  80% {
+    opacity: 0.95;
+    transform: translate(-50%, -36px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -58px) scale(0.9);
+  }
+}
+
+.tandoor-skewer-rotate-btn {
+  background: rgba(30, 41, 59, 0.9);
+  color: #F8FAFC;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-full);
+  padding: 0.35rem 0.85rem;
+  font-size: 0.8rem;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.tandoor-skewer-rotate-btn:hover {
+  background: rgba(51, 65, 85, 0.95);
+  border-color: #38BDF8;
+  color: #38BDF8;
+  transform: translateY(-1px);
+}
+.tandoor-skewer-rotate-btn:active {
+  transform: translateY(1px);
+}
+
+/* Realistic Plating Studio 2D Elements */
+.realistic-skewer-canvas {
+  width: 100%;
+  height: 90px;
+  display: block;
+  touch-action: none;
+  cursor: grab;
+}
+.realistic-skewer-canvas:active {
+  cursor: grabbing;
+}
+
+/* Interactive Star Rating Selector */
+.star-rating-interactive {
+  display: inline-flex;
+  gap: 0.25rem;
+  cursor: pointer;
+}
+.star-rating-interactive span {
+  font-size: 1.45rem;
+  color: #64748B;
+  transition: color 0.15s ease, transform 0.15s ease;
+  user-select: none;
+}
+.star-rating-interactive span.filled,
+.star-rating-interactive span.hovered {
+  color: #F59E0B;
+  transform: scale(1.15);
+}
+
+/* Helpful upvote button */
+.review-helpful-btn {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  border-radius: var(--radius-full);
+  padding: 0.2rem 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.review-helpful-btn:hover {
+  background: var(--bg-card);
+  color: var(--primary);
+  border-color: var(--primary);
+}
+.review-helpful-btn.active {
+  background: rgba(234, 88, 12, 0.15);
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
 

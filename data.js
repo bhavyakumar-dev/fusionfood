@@ -2,309 +2,1133 @@
 
 export const FUSION_DISHES = [
   {
-    id: 'nikkei-ceviche',
-    name: 'Nikkei Mushroom Ceviche',
-    originalName: 'Nikkei Ceviche',
-    origin: 'Japanese-Peruvian',
-    pronunciationIPA: '/ni.kei seˈβi.ʧe/',
-    phonetic: 'nee-kay seh-VEE-cheh',
-    syllables: ['nee', 'kay', 'seh', 'VEE', 'cheh'],
-    audioText: 'Nikkei Ceviche',
-    description: 'A vibrant cross between Japanese sashimi artistry and Peruvian citrus-marinated raw flavors, adapted with tender king oyster mushrooms and hearts of palm.',
-    availability: 'Emerging / Niche',
-    availabilityClass: 'niche',
-    metros: ['Mumbai', 'Delhi-NCR', 'Goa', 'Bengaluru'],
-    cultureStory: 'Born in Peru when Japanese immigrants (*Nikkei*) combined their reverence for raw seafood and dashi with Peruvian limes, ají peppers, and sweet potatoes.',
-    originalIngredients: ['Raw ocean fish cubes', 'Dashi broth', 'Yuzu/lime juice', 'Red onions', 'Ají amarillo', 'Cancha (toasted corn nuts)'],
-    indianSubstitutes: [
-      { original: 'Ocean fish', substitute: 'King Oyster Mushrooms or Tender Hearts of Palm', why: 'Provides dense, chewy, absorbent texture that mimics cured sashimi' },
-      { original: 'Ají Amarillo chili', substitute: 'Yellow Bhavnagri chili + pinch of turmeric & drop of honey', why: 'Matches the mild heat and bright fruity notes' },
-      { original: 'Cancha (Andean corn)', substitute: 'Crispy Roasted Salted Chana or puffed Makhanas', why: 'Delivers the signature satisfying crunchy contrast' },
-      { original: 'Yuzu juice', substitute: 'Gondhoraj lime or sweet Mosambi + fresh lemon juice', why: 'Captures the floral, highly aromatic citrus perfume' }
+    "id": "nikkei-ceviche",
+    "name": "Nikkei Mushroom Ceviche",
+    "originalName": "Nikkei Ceviche",
+    "origin": "Japanese-Peruvian",
+    "prepTime": "15 mins",
+    "cookTime": "0 mins",
+    "totalTime": "15 mins",
+    "servings": "2 servings",
+    "difficulty": "Beginner",
+    "allergens": {
+      "contains": [
+        "Soy",
+        "Gluten (in standard soy sauce)"
+      ],
+      "mayContain": [
+        "Sesame"
+      ],
+      "warning": "Commercial soy sauce dashi contains wheat gluten and fermented soy. Cross-contact warning for kitchens handling peanuts or tree nuts.",
+      "swaps": "Use coconut aminos or gluten-free tamari for 100% soy-free and wheat-free preparation."
+    },
+    "pronunciationIPA": "/ni.kei seˈβi.ʧe/",
+    "phonetic": "nee-kay seh-VEE-cheh",
+    "syllables": [
+      "nee",
+      "kay",
+      "seh",
+      "VEE",
+      "cheh"
     ],
-    recipeSteps: [
-      { step: 1, title: 'Citrus Cure Bath', text: 'Whisk lime juice, grated ginger, and a dash of soy dashi to create vegetarian Leche de Tigre.', kidSafe: true },
-      { step: 2, title: 'Slice the Plant Protein', text: 'Carefully cube king oyster mushrooms and soak them in warm salted water for 3 minutes.', kidSafe: false },
-      { step: 3, title: 'Infuse & Marinate', text: 'Toss sliced red onions, yellow chili paste, and mushrooms into the cold citrus bath for 6 minutes.', kidSafe: true },
-      { step: 4, title: 'Plate with Texture', text: 'Arrange over boiled sweet potato puree and garnish with roasted chana and fresh cilantro.', kidSafe: true }
+    "audioText": "Nikkei Ceviche",
+    "description": "A vibrant cross between Japanese sashimi artistry and Peruvian citrus-marinated raw flavors, adapted with tender king oyster mushrooms and hearts of palm.",
+    "availability": "Emerging / Niche",
+    "availabilityClass": "niche",
+    "metros": [
+      "Mumbai",
+      "Delhi-NCR",
+      "Goa",
+      "Bengaluru"
     ],
-    pantryItems: [
-      { name: 'King Oyster Mushrooms', isCorrect: true, emoji: '🍄' },
-      { name: 'Fresh Lime Juice', isCorrect: true, emoji: '🍋' },
-      { name: 'Grated Ginger & Garlic', isCorrect: true, emoji: '🧄' },
-      { name: 'Yellow Bhavnagri Chili', isCorrect: true, emoji: '🌶️' },
-      { name: 'Roasted Salted Chana', isCorrect: true, emoji: '🥜' },
-      { name: 'Sweet Potato Puree', isCorrect: true, emoji: '🍠' },
-      // Distractors
-      { name: 'Fish Sauce', isCorrect: false, emoji: '🐟', distractorReason: 'Not vegetarian! We use soy-mushroom dashi instead.' },
-      { name: 'Raw Chicken Slices', isCorrect: false, emoji: '🍗', distractorReason: 'Wrong cuisine and unsafe to eat raw!' },
-      { name: 'Tomato Ketchup', isCorrect: false, emoji: '🍅', distractorReason: 'Too sweet and unnatural for Nikkei Leche de Tigre!' }
+    "cultureStory": "Born in Peru when Japanese immigrants (*Nikkei*) combined their reverence for raw seafood and dashi with Peruvian limes, ají peppers, and sweet potatoes.",
+    "originalIngredients": [
+      "Raw ocean fish cubes (200g)",
+      "Dashi broth (50ml)",
+      "Yuzu/lime juice (30ml)",
+      "Red onions (1/2 sliced)",
+      "Ají amarillo (2 pods)",
+      "Cancha toasted corn nuts (50g)"
     ],
-    scienceNote: 'Citrus acid (citric acid, pH ~2.2) breaks down the mushroom cell walls slightly and causes proteins to firm up, creating a tender yet bouncy chew without heating!'
+    "indianSubstitutes": [
+      {
+        "original": "Ocean fish",
+        "originalQty": "200g",
+        "substitute": "King Oyster Mushrooms or Tender Hearts of Palm",
+        "substituteQty": "200g",
+        "why": "Provides dense, chewy, absorbent texture that mimics cured sashimi",
+        "culinaryNote": "Absorbs citrus cure evenly without turning mushy"
+      },
+      {
+        "original": "Ají Amarillo chili",
+        "originalQty": "2 pods",
+        "substitute": "Yellow Bhavnagri chili + pinch of turmeric & drop of honey",
+        "substituteQty": "2 chilies",
+        "why": "Matches the mild heat and bright fruity notes",
+        "culinaryNote": "Mild 1,000 SHU heat with aromatic sweetness"
+      },
+      {
+        "original": "Cancha (Andean corn)",
+        "originalQty": "50g",
+        "substitute": "Crispy Roasted Salted Chana or puffed Makhanas",
+        "substituteQty": "50g",
+        "why": "Delivers the signature satisfying crunchy contrast",
+        "culinaryNote": "Stays crunchy even in citrus juice"
+      },
+      {
+        "original": "Yuzu juice",
+        "originalQty": "30ml",
+        "substitute": "Gondhoraj lime or sweet Mosambi + fresh lemon juice",
+        "substituteQty": "30ml",
+        "why": "Captures the floral, highly aromatic citrus perfume",
+        "culinaryNote": "Gondhoraj adds floral terpene notes identical to Japanese yuzu"
+      }
+    ],
+    "recipeSteps": [
+      {
+        "step": 1,
+        "title": "Citrus Cure Bath",
+        "text": "Whisk lime juice, grated ginger, and a dash of soy dashi to create vegetarian Leche de Tigre.",
+        "kidSafe": true
+      },
+      {
+        "step": 2,
+        "title": "Slice the Plant Protein",
+        "text": "Carefully cube king oyster mushrooms and soak them in warm salted water for 3 minutes.",
+        "kidSafe": false
+      },
+      {
+        "step": 3,
+        "title": "Infuse & Marinate",
+        "text": "Toss sliced red onions, yellow chili paste, and mushrooms into the cold citrus bath for 6 minutes.",
+        "kidSafe": true
+      },
+      {
+        "step": 4,
+        "title": "Plate with Texture",
+        "text": "Arrange over boiled sweet potato puree and garnish with roasted chana and fresh cilantro.",
+        "kidSafe": true
+      }
+    ],
+    "pantryItems": [
+      {
+        "name": "King Oyster Mushrooms",
+        "isCorrect": true,
+        "emoji": "🍄"
+      },
+      {
+        "name": "Fresh Lime Juice",
+        "isCorrect": true,
+        "emoji": "🍋"
+      },
+      {
+        "name": "Grated Ginger & Garlic",
+        "isCorrect": true,
+        "emoji": "🧄"
+      },
+      {
+        "name": "Yellow Bhavnagri Chili",
+        "isCorrect": true,
+        "emoji": "🌶️"
+      },
+      {
+        "name": "Roasted Salted Chana",
+        "isCorrect": true,
+        "emoji": "🥜"
+      },
+      {
+        "name": "Sweet Potato Puree",
+        "isCorrect": true,
+        "emoji": "🍠"
+      },
+      {
+        "name": "Fish Sauce",
+        "isCorrect": false,
+        "emoji": "🐟",
+        "distractorReason": "Not vegetarian! We use soy-mushroom dashi instead."
+      },
+      {
+        "name": "Raw Chicken Slices",
+        "isCorrect": false,
+        "emoji": "🍗",
+        "distractorReason": "Wrong cuisine and unsafe to eat raw!"
+      },
+      {
+        "name": "Tomato Ketchup",
+        "isCorrect": false,
+        "emoji": "🍅",
+        "distractorReason": "Too sweet and unnatural for Nikkei Leche de Tigre!"
+      }
+    ],
+    "scienceNote": "Citrus acid (citric acid, pH ~2.2) breaks down the mushroom cell walls slightly and causes proteins to firm up, creating a tender yet bouncy chew without heating!"
   },
   {
-    id: 'tofu-tiradito',
-    name: 'King Oyster & Tofu Tiradito',
-    originalName: 'Tiradito',
-    origin: 'Japanese-Peruvian',
-    pronunciationIPA: '/ti.ɾaˈði.to/',
-    phonetic: 'tee-rah-DEE-toh',
-    syllables: ['tee', 'rah', 'DEE', 'toh'],
-    audioText: 'Tiradito',
-    description: 'Delicate carpaccio-thin slices draped in a zesty, creamy ají amarillo sauce. Unlike ceviche, tiradito is sliced into strips and sauced immediately before serving.',
-    availability: 'Emerging / Niche',
-    availabilityClass: 'niche',
-    metros: ['Mumbai', 'Delhi-NCR', 'Bengaluru'],
-    cultureStory: 'Pioneered in Lima fine dining, Tiradito highlights Japanese sashimi knife skills combined with Peruvian tiger milk and spicy emulsion.',
-    originalIngredients: ['Sashimi fish carpaccio', 'Leche de tigre', 'Ají amarillo paste', 'Soy sauce', 'Sesame oil', 'Microgreens'],
-    indianSubstitutes: [
-      { original: 'Sashimi fish', substitute: 'Firm Silken Tofu or poached King Oyster coins', why: 'Gives silky, melt-in-mouth carpaccio ribbons' },
-      { original: 'Ají amarillo paste', substitute: 'Blanched yellow bell pepper + 1 fiery green chili puree', why: 'Recreates the golden-orange velvety emulsion' },
-      { original: 'Microgreens', substitute: 'Fresh tender methi leaves or baby coriander sprigs', why: 'Local aromatic peppery freshness' }
+    "id": "tofu-tiradito",
+    "name": "King Oyster & Tofu Tiradito",
+    "originalName": "Tiradito",
+    "origin": "Japanese-Peruvian",
+    "prepTime": "12 mins",
+    "cookTime": "3 mins",
+    "totalTime": "15 mins",
+    "servings": "2 servings",
+    "difficulty": "Beginner",
+    "allergens": {
+      "contains": [
+        "Soy",
+        "Sesame"
+      ],
+      "mayContain": [
+        "Gluten"
+      ],
+      "warning": "Tofu is a concentrated soy product. Toasted sesame oil is a known allergen. Cross-contact warning for kitchens handling peanuts or nuts.",
+      "swaps": "Swap tofu with poached king oyster coins for 100% soy-free. Use extra virgin olive oil or cold-pressed mustard oil in place of sesame oil."
+    },
+    "pronunciationIPA": "/ti.ɾaˈði.to/",
+    "phonetic": "tee-rah-DEE-toh",
+    "syllables": [
+      "tee",
+      "rah",
+      "DEE",
+      "toh"
     ],
-    recipeSteps: [
-      { step: 1, title: 'Precision Slicing', text: 'Slice pressed firm tofu or poached king oyster mushroom stems into paper-thin 2mm ribbons.', kidSafe: false },
-      { step: 2, title: 'Whisk the Golden Tiger Milk', text: 'Blend yellow pepper paste, lime juice, ginger juice, sesame oil, and sea salt until emulsified.', kidSafe: true },
-      { step: 3, title: 'The Draped Presentation', text: 'Layer the ribbons in an overlapping fan on a chilled ceramic platter.', kidSafe: true },
-      { step: 4, title: 'Sauce and Garnish', text: 'Spoon the sauce generously right over the slices; dot with toasted sesame seeds and baby coriander.', kidSafe: true }
+    "audioText": "Tiradito",
+    "description": "Delicate carpaccio-thin slices draped in a zesty, creamy ají amarillo sauce. Unlike ceviche, tiradito is sliced into strips and sauced immediately before serving.",
+    "availability": "Emerging / Niche",
+    "availabilityClass": "niche",
+    "metros": [
+      "Mumbai",
+      "Delhi-NCR",
+      "Bengaluru"
     ],
-    pantryItems: [
-      { name: 'Silken Firm Tofu', isCorrect: true, emoji: '🧈' },
-      { name: 'Yellow Bell Pepper Puree', isCorrect: true, emoji: '🫑' },
-      { name: 'Toasted Sesame Oil', isCorrect: true, emoji: '🥣' },
-      { name: 'Fresh Lime & Ginger', isCorrect: true, emoji: '🍋' },
-      { name: 'Baby Coriander Garnish', isCorrect: true, emoji: '🌿' },
-      // Distractors
-      { name: 'Mayonnaise', isCorrect: false, emoji: '🥚', distractorReason: 'Traditional Leche de Tigre uses lime emulsion, not heavy egg mayo!' },
-      { name: 'Tamarind Chutney', isCorrect: false, emoji: '🍯', distractorReason: 'Belongs to chaat, too heavy for delicate tiradito!' }
+    "cultureStory": "Pioneered in Lima fine dining, Tiradito highlights Japanese sashimi knife skills combined with Peruvian tiger milk and spicy emulsion.",
+    "originalIngredients": [
+      "Sashimi fish carpaccio (180g)",
+      "Leche de tigre (60ml)",
+      "Ají amarillo paste (2 tbsp)",
+      "Soy sauce (1 tsp)",
+      "Sesame oil (1 tsp)",
+      "Microgreens (10g)"
     ],
-    scienceNote: 'Tiradito sauces rely on mechanical emulsion: vigorous whisking drops of sesame oil into acidic lime juice creates microscopic droplets that stay suspended!'
+    "indianSubstitutes": [
+      {
+        "original": "Sashimi fish",
+        "originalQty": "180g",
+        "substitute": "Firm Silken Tofu or poached King Oyster coins",
+        "substituteQty": "180g",
+        "why": "Gives silky, melt-in-mouth carpaccio ribbons",
+        "culinaryNote": "Poaching for 90 seconds creates glistening tender sheets"
+      },
+      {
+        "original": "Ají amarillo paste",
+        "originalQty": "2 tbsp",
+        "substitute": "Blanched yellow bell pepper + 1 fiery green chili puree",
+        "substituteQty": "2 tbsp",
+        "why": "Recreates the golden-orange velvety emulsion",
+        "culinaryNote": "Provides velvety natural pectin emulsion"
+      },
+      {
+        "original": "Microgreens",
+        "originalQty": "10g",
+        "substitute": "Fresh tender methi leaves or baby coriander sprigs",
+        "substituteQty": "10g",
+        "why": "Local aromatic peppery freshness",
+        "culinaryNote": "Mild bitterness balances zesty sauce"
+      }
+    ],
+    "recipeSteps": [
+      {
+        "step": 1,
+        "title": "Precision Slicing",
+        "text": "Slice pressed firm tofu or poached king oyster mushroom stems into paper-thin 2mm ribbons.",
+        "kidSafe": false
+      },
+      {
+        "step": 2,
+        "title": "Whisk the Golden Tiger Milk",
+        "text": "Blend yellow pepper paste, lime juice, ginger juice, sesame oil, and sea salt until emulsified.",
+        "kidSafe": true
+      },
+      {
+        "step": 3,
+        "title": "The Draped Presentation",
+        "text": "Layer the ribbons in an overlapping fan on a chilled ceramic platter.",
+        "kidSafe": true
+      },
+      {
+        "step": 4,
+        "title": "Sauce and Garnish",
+        "text": "Spoon the sauce generously right over the slices; dot with toasted sesame seeds and baby coriander.",
+        "kidSafe": true
+      }
+    ],
+    "pantryItems": [
+      {
+        "name": "Silken Firm Tofu",
+        "isCorrect": true,
+        "emoji": "🧈"
+      },
+      {
+        "name": "Yellow Bell Pepper Puree",
+        "isCorrect": true,
+        "emoji": "🫑"
+      },
+      {
+        "name": "Toasted Sesame Oil",
+        "isCorrect": true,
+        "emoji": "🥣"
+      },
+      {
+        "name": "Fresh Lime & Ginger",
+        "isCorrect": true,
+        "emoji": "🍋"
+      },
+      {
+        "name": "Baby Coriander Garnish",
+        "isCorrect": true,
+        "emoji": "🌿"
+      },
+      {
+        "name": "Mayonnaise",
+        "isCorrect": false,
+        "emoji": "🥚",
+        "distractorReason": "Traditional Leche de Tigre uses lime emulsion, not heavy egg mayo!"
+      },
+      {
+        "name": "Tamarind Chutney",
+        "isCorrect": false,
+        "emoji": "🍯",
+        "distractorReason": "Belongs to chaat, too heavy for delicate tiradito!"
+      }
+    ],
+    "scienceNote": "Tiradito sauces rely on mechanical emulsion: vigorous whisking drops of sesame oil into acidic lime juice creates microscopic droplets that stay suspended!"
   },
   {
-    id: 'paneer-tacos',
-    name: 'Smoky Paneer Tikka Tacos',
-    originalName: 'Butter Chicken Tacos',
-    origin: 'Tex-Mex & Indian',
-    pronunciationIPA: '/ˈbʌt.ər ˈtʃɪk.ɪn ˈtɑː.koʊz/',
-    phonetic: 'but-er chik-in tah-kohz',
-    syllables: ['but', 'er', 'tik', 'ka', 'tah', 'kohz'],
-    audioText: 'Paneer Tikka Tacos',
-    description: 'Charred, tandoori-spiced paneer cubes folded into crisp or soft tortillas, drizzled with velvety makhani sauce and pickled sirka onions.',
-    availability: 'Moderate to High',
-    availabilityClass: 'high',
-    metros: ['Mumbai', 'Delhi-NCR', 'Bengaluru', 'Hyderabad', 'Pune'],
-    cultureStory: 'Born in modern Indian-American gastropubs and food trucks, merging the beloved Delhi tandoor with vibrant Mexican street tacos.',
-    originalIngredients: ['Tacos', 'Tandoori chicken', 'Makhani gravy', 'Pickled red onions', 'Cilantro', 'Sour cream'],
-    indianSubstitutes: [
-      { original: 'Chicken tikka', substitute: 'Charred Malai Paneer or Smoked Soya Chaap', why: 'Absorbs the tandoori marinade beautifully and provides juicy bites' },
-      { original: 'Mexican Sour Cream (Crema)', substitute: 'Whisked Hung Curd (Chakka) with lemon & pinch of salt', why: 'Delivers the exact creamy tanginess with lower calories' },
-      { original: 'Corn Tortilla', substitute: 'Makki di Roti (fine grind) or mini roomali roti', why: 'Heritage Indian corn bread that acts identically to artisan masa tortillas' }
+    "id": "paneer-tacos",
+    "name": "Smoky Paneer Tikka Tacos",
+    "originalName": "Tandoori Tikka Tacos",
+    "origin": "Tex-Mex & Indian",
+    "prepTime": "15 mins",
+    "cookTime": "10 mins",
+    "totalTime": "25 mins",
+    "servings": "3-4 servings",
+    "difficulty": "Beginner",
+    "allergens": {
+      "contains": [
+        "Dairy / Milk (Paneer, Curd, Butter)",
+        "Gluten (if using wheat tortillas)"
+      ],
+      "mayContain": [
+        "Mustard"
+      ],
+      "warning": "Contains cow/buffalo milk dairy. Verify packaged taco shells for 100% gluten-free corn if celiac/gluten-intolerant.",
+      "swaps": "Use smoked firm tofu or soya chaap for dairy-free. Use 100% corn tortillas or Makki di Roti for gluten-free."
+    },
+    "pronunciationIPA": "/pəˈniːr ˈtɪk.ɑː ˈtɑː.koʊz/",
+    "phonetic": "puh-neer tik-ah tah-kohz",
+    "syllables": [
+      "puh",
+      "neer",
+      "tik",
+      "kah",
+      "tah",
+      "kohz"
     ],
-    recipeSteps: [
-      { step: 1, title: 'Tandoori Marinade', text: 'Toss paneer cubes in mustard oil, Kashmiri degi mirch, hung curd, and roasted besan.', kidSafe: true },
-      { step: 2, title: 'Char & Sizzle', text: 'Sear the paneer on a cast-iron tawa until smoky grill marks form.', kidSafe: false },
-      { step: 3, title: 'Simmer Makhani Glaze', text: 'Cook tomato-butter reduction with crushed kasuri methi and green cardamom powder.', kidSafe: false },
-      { step: 4, title: 'Taco Assembly', text: 'Warm the tortillas, pile on smoked paneer, drizzle makhani gravy, sirka onion, and hung curd crema.', kidSafe: true }
+    "audioText": "Paneer Tikka Tacos",
+    "description": "Charred, tandoori-spiced paneer cubes folded into crisp or soft tortillas, drizzled with velvety makhani sauce and pickled sirka onions.",
+    "availability": "Moderate to High",
+    "availabilityClass": "high",
+    "metros": [
+      "Mumbai",
+      "Delhi-NCR",
+      "Bengaluru",
+      "Hyderabad",
+      "Pune"
     ],
-    pantryItems: [
-      { name: 'Malai Paneer Cubes', isCorrect: true, emoji: '🧀' },
-      { name: 'Corn or Flour Tortillas', isCorrect: true, emoji: '🫓' },
-      { name: 'Makhani Tomato Glaze', isCorrect: true, emoji: '🍲' },
-      { name: 'Sirka Pickled Onions', isCorrect: true, emoji: '🧅' },
-      { name: 'Hung Curd Crema', isCorrect: true, emoji: '🥛' },
-      { name: 'Kasuri Methi', isCorrect: true, emoji: '🌿' },
-      // Distractors
-      { name: 'Blue Cheese', isCorrect: false, emoji: '🧀', distractorReason: 'Too pungent, overpowers the delicate tandoori spices!' },
-      { name: 'Pineapple Jam', isCorrect: false, emoji: '🍍', distractorReason: 'Far too sugary for a savory Mexican-Indian taco!' }
+    "cultureStory": "Born in modern Indian-American gastropubs and food trucks, merging the beloved Delhi tandoor with vibrant Mexican street tacos.",
+    "originalIngredients": [
+      "Tacos (6 shells)",
+      "Charred malai paneer cubes (250g)",
+      "Makhani gravy (100ml)",
+      "Pickled red onions (50g)",
+      "Cilantro (10g)",
+      "Sour cream (100ml)"
     ],
-    scienceNote: 'The Maillard Reaction occurs between amino acids in paneer and natural milk sugars under high tawa heat (above 140°C), generating over 100 new aroma compounds!'
+    "indianSubstitutes": [
+      {
+        "original": "Chicken tikka",
+        "originalQty": "250g",
+        "substitute": "Charred Malai Paneer or Smoked Soya Chaap",
+        "substituteQty": "250g",
+        "why": "Absorbs the tandoori marinade beautifully and provides juicy bites",
+        "culinaryNote": "Tawa char creates authentic tandoor smokiness"
+      },
+      {
+        "original": "Mexican Sour Cream (Crema)",
+        "originalQty": "100ml",
+        "substitute": "Whisked Hung Curd (Chakka) with lemon & pinch of salt",
+        "substituteQty": "100ml",
+        "why": "Delivers the exact creamy tanginess with lower calories",
+        "culinaryNote": "High protein, smooth velvety pipeable consistency"
+      },
+      {
+        "original": "Corn Tortilla",
+        "originalQty": "6 shells",
+        "substitute": "Makki di Roti (fine grind) or mini roomali roti",
+        "substituteQty": "6 small rotis",
+        "why": "Heritage Indian corn bread that acts identically to artisan masa tortillas",
+        "culinaryNote": "Warm roasted corn aroma pairs naturally with spices"
+      }
+    ],
+    "recipeSteps": [
+      {
+        "step": 1,
+        "title": "Tandoori Marinade",
+        "text": "Toss paneer cubes in mustard oil, Kashmiri degi mirch, hung curd, and roasted besan.",
+        "kidSafe": true
+      },
+      {
+        "step": 2,
+        "title": "Char & Sizzle",
+        "text": "Sear the paneer on a cast-iron tawa until smoky grill marks form.",
+        "kidSafe": false
+      },
+      {
+        "step": 3,
+        "title": "Simmer Makhani Glaze",
+        "text": "Cook tomato-butter reduction with crushed kasuri methi and green cardamom powder.",
+        "kidSafe": false
+      },
+      {
+        "step": 4,
+        "title": "Taco Assembly",
+        "text": "Warm the tortillas, pile on smoked paneer, drizzle makhani gravy, sirka onion, and hung curd crema.",
+        "kidSafe": true
+      }
+    ],
+    "pantryItems": [
+      {
+        "name": "Malai Paneer Cubes",
+        "isCorrect": true,
+        "emoji": "🧀"
+      },
+      {
+        "name": "Corn or Flour Tortillas",
+        "isCorrect": true,
+        "emoji": "🫓"
+      },
+      {
+        "name": "Makhani Tomato Glaze",
+        "isCorrect": true,
+        "emoji": "🍲"
+      },
+      {
+        "name": "Sirka Pickled Onions",
+        "isCorrect": true,
+        "emoji": "🧅"
+      },
+      {
+        "name": "Hung Curd Crema",
+        "isCorrect": true,
+        "emoji": "🥛"
+      },
+      {
+        "name": "Kasuri Methi",
+        "isCorrect": true,
+        "emoji": "🌿"
+      },
+      {
+        "name": "Blue Cheese",
+        "isCorrect": false,
+        "emoji": "🧀",
+        "distractorReason": "Too pungent, overpowers the delicate tandoori spices!"
+      },
+      {
+        "name": "Pineapple Jam",
+        "isCorrect": false,
+        "emoji": "🍍",
+        "distractorReason": "Far too sugary for a savory Mexican-Indian taco!"
+      }
+    ],
+    "scienceNote": "The Maillard Reaction occurs between amino acids in paneer and natural milk sugars under high tawa heat (above 140°C), generating over 100 new aroma compounds!"
   },
   {
-    id: 'paneer-quesadilla',
-    name: 'Paneer Tikka Quesadilla',
-    originalName: 'Paneer Tikka Quesadilla',
-    origin: 'Tex-Mex & Indian',
-    pronunciationIPA: '/pəˈniːr ˈtɪk.ɑː ˌkeɪ.səˈdiː.jə/',
-    phonetic: 'puh-neer tik-ah kay-suh-dee-yuh',
-    syllables: ['puh', 'neer', 'tik', 'ah', 'kay', 'suh', 'DEE', 'yuh'],
-    audioText: 'Paneer Tikka Quesadilla',
-    description: 'A crisp, golden toasted flour tortilla loaded with molten mozzarella, spiced marinated paneer, crunchy bell peppers, and zingy mint chutney.',
-    availability: 'Moderate',
-    availabilityClass: 'moderate',
-    metros: ['Metros & Tier-2 Urban Cafes', 'Mumbai', 'Pune', 'Jaipur', 'Ahmedabad'],
-    cultureStory: 'A cafe classic across India that marries the cheesy comfort of Mexican quesadillas with the street-style punch of Punjabi paneer tikka.',
-    originalIngredients: ['Flour tortillas', 'Paneer tikka', 'Monterey Jack/Mozzarella', 'Onions & Capsicum', 'Mint-coriander chutney'],
-    indianSubstitutes: [
-      { original: 'Monterey Jack cheese', substitute: 'Amul Mozzarella blend or processed cheese + mild gouda', why: 'Yields the ultimate gooey cheese pull beloved by kids' },
-      { original: 'Flour tortilla', substitute: 'Soft whole wheat phulka or thin paratha', why: 'Crisps up delightfully with a brush of butter or ghee' }
+    "id": "paneer-quesadilla",
+    "name": "Paneer Tikka Quesadilla",
+    "originalName": "Paneer Tikka Quesadilla",
+    "origin": "Tex-Mex & Indian",
+    "prepTime": "10 mins",
+    "cookTime": "10 mins",
+    "totalTime": "20 mins",
+    "servings": "2 servings",
+    "difficulty": "Beginner",
+    "allergens": {
+      "contains": [
+        "Dairy / Milk (Mozzarella, Paneer)",
+        "Gluten (Flour tortillas)"
+      ],
+      "mayContain": [
+        "Mustard"
+      ],
+      "warning": "Contains cow milk mozzarella and refined wheat flour. Check processed cheese labels for sodium caseinate.",
+      "swaps": "Use vegan meltable shreds for dairy-free. Use 100% whole-wheat chapati or corn tortillas for gluten-free."
+    },
+    "pronunciationIPA": "/pəˈniːr ˈtɪk.ɑː ˌkeɪ.səˈdiː.jə/",
+    "phonetic": "puh-neer tik-ah kay-suh-dee-yuh",
+    "syllables": [
+      "puh",
+      "neer",
+      "tik",
+      "ah",
+      "kay",
+      "suh",
+      "DEE",
+      "yuh"
     ],
-    recipeSteps: [
-      { step: 1, title: 'Chutney Base Layer', text: 'Spread a thin layer of spicy-sweet mint-coriander chutney over one half of a soft tortilla.', kidSafe: true },
-      { step: 2, title: 'Stuff with Goodness', text: 'Heap spiced paneer crumbles, diced bell peppers, red onions, and shredded mozzarella.', kidSafe: true },
-      { step: 3, title: 'Fold and Toast', text: 'Fold over into a half-moon; grill in a buttered pan on medium heat until golden and crispy.', kidSafe: false },
-      { step: 4, title: 'Slice & Dip', text: 'Cut into triangles with a pizza wheel and serve with salsa and roasted cumin curd.', kidSafe: true }
+    "audioText": "Paneer Tikka Quesadilla",
+    "description": "A crisp, golden toasted flour tortilla loaded with molten mozzarella, spiced marinated paneer, crunchy bell peppers, and zingy mint chutney.",
+    "availability": "Moderate",
+    "availabilityClass": "moderate",
+    "metros": [
+      "Metros & Tier-2 Urban Cafes",
+      "Mumbai",
+      "Pune",
+      "Jaipur",
+      "Ahmedabad"
     ],
-    pantryItems: [
-      { name: 'Flour Tortilla or Paratha', isCorrect: true, emoji: '🫓' },
-      { name: 'Spiced Paneer Crumbles', isCorrect: true, emoji: '🧀' },
-      { name: 'Mozzarella Cheese', isCorrect: true, emoji: '🧀' },
-      { name: 'Bell Peppers & Onions', isCorrect: true, emoji: '🫑' },
-      { name: 'Mint-Coriander Chutney', isCorrect: true, emoji: '🍃' },
-      // Distractors
-      { name: 'Chocolate Spread', isCorrect: false, emoji: '🍫', distractorReason: 'Yum on toast, but disastrous in a savory spiced tikka quesadilla!' },
-      { name: 'Boiled Egg Slices', isCorrect: false, emoji: '🥚', distractorReason: 'Not in a vegetarian paneer quesadilla!' }
+    "cultureStory": "A cafe classic across India that marries the cheesy comfort of Mexican quesadillas with the street-style punch of Punjabi paneer tikka.",
+    "originalIngredients": [
+      "Flour tortillas (2 large)",
+      "Paneer tikka (150g)",
+      "Monterey Jack/Mozzarella (150g)",
+      "Onions & Capsicum (1/2 cup)",
+      "Mint-coriander chutney (3 tbsp)"
     ],
-    scienceNote: 'Cheese melting is a phase change: milk fat liquefies at ~30°C, and the casein protein network loosens at ~55°C, creating stretchable elastic strands.'
+    "indianSubstitutes": [
+      {
+        "original": "Monterey Jack cheese",
+        "originalQty": "150g",
+        "substitute": "Amul Mozzarella blend or processed cheese + mild gouda",
+        "substituteQty": "150g",
+        "why": "Yields the ultimate gooey cheese pull beloved by kids",
+        "culinaryNote": "Melts at 55°C creating stretchy elastic bonds"
+      },
+      {
+        "original": "Flour tortilla",
+        "originalQty": "2 large",
+        "substitute": "Soft whole wheat phulka or thin paratha",
+        "substituteQty": "2 pieces",
+        "why": "Crisps up delightfully with a brush of butter or ghee",
+        "culinaryNote": "Wholesome fiber with authentic flaky crispness"
+      }
+    ],
+    "recipeSteps": [
+      {
+        "step": 1,
+        "title": "Chutney Base Layer",
+        "text": "Spread a thin layer of spicy-sweet mint-coriander chutney over one half of a soft tortilla.",
+        "kidSafe": true
+      },
+      {
+        "step": 2,
+        "title": "Stuff with Goodness",
+        "text": "Heap spiced paneer crumbles, diced bell peppers, red onions, and shredded mozzarella.",
+        "kidSafe": true
+      },
+      {
+        "step": 3,
+        "title": "Fold and Toast",
+        "text": "Fold over into a half-moon; grill in a buttered pan on medium heat until golden and crispy.",
+        "kidSafe": false
+      },
+      {
+        "step": 4,
+        "title": "Slice & Dip",
+        "text": "Cut into triangles with a pizza wheel and serve with salsa and roasted cumin curd.",
+        "kidSafe": true
+      }
+    ],
+    "pantryItems": [
+      {
+        "name": "Flour Tortilla or Paratha",
+        "isCorrect": true,
+        "emoji": "🫓"
+      },
+      {
+        "name": "Spiced Paneer Crumbles",
+        "isCorrect": true,
+        "emoji": "🧀"
+      },
+      {
+        "name": "Mozzarella Cheese",
+        "isCorrect": true,
+        "emoji": "🧀"
+      },
+      {
+        "name": "Bell Peppers & Onions",
+        "isCorrect": true,
+        "emoji": "🫑"
+      },
+      {
+        "name": "Mint-Coriander Chutney",
+        "isCorrect": true,
+        "emoji": "🍃"
+      },
+      {
+        "name": "Chocolate Spread",
+        "isCorrect": false,
+        "emoji": "🍫",
+        "distractorReason": "Yum on toast, but disastrous in a savory spiced tikka quesadilla!"
+      },
+      {
+        "name": "Boiled Egg Slices",
+        "isCorrect": false,
+        "emoji": "🥚",
+        "distractorReason": "Not in a vegetarian paneer quesadilla!"
+      }
+    ],
+    "scienceNote": "Cheese melting is a phase change: milk fat liquefies at ~30°C, and the casein protein network loosens at ~55°C, creating stretchable elastic strands."
   },
   {
-    id: 'makhani-pasta',
-    name: 'Creamy Makhani Penne Pasta',
-    originalName: 'Makhani Pasta',
-    origin: 'Ital-Indian',
-    pronunciationIPA: '/mʌk.n.iː ˈpɑː.stə/',
-    phonetic: 'muk-nee pah-stuh',
-    syllables: ['muk', 'nee', 'PAH', 'stuh'],
-    audioText: 'Makhani Pasta',
-    description: 'Italian tubular penne cooked al dente, smothered in a rich, buttery San Marzano or Desi tomato sauce infused with cream, kasuri methi, and paneer cubes.',
-    availability: 'High',
-    availabilityClass: 'high',
-    metros: ['Pan-India', 'Every modern cafe and family diner'],
-    cultureStory: 'First created by creative home cooks in Delhi and Mumbai who loved pasta but craved the soul-satisfying depth of North Indian makhani gravy.',
-    originalIngredients: ['Penne or fusilli', 'Tomato-butter gravy', 'Heavy cream', 'Kasuri methi', 'Paneer cubes', 'Parmesan'],
-    indianSubstitutes: [
-      { original: 'San Marzano tomatoes', substitute: 'Ripe Desi Plum Tomatoes boiled with cashews and Kashmiri chilies', why: 'Creates a deep natural ruby-red sauce without synthetic colors' },
-      { original: 'Parmesan cheese', substitute: 'Amul aged cheese or finely grated paneer with nutritional yeast', why: 'Provides savory umami depth' }
+    "id": "makhani-pasta",
+    "name": "Creamy Makhani Penne Pasta",
+    "originalName": "Makhani Pasta",
+    "origin": "Ital-Indian",
+    "prepTime": "10 mins",
+    "cookTime": "15 mins",
+    "totalTime": "25 mins",
+    "servings": "3 servings",
+    "difficulty": "Intermediate",
+    "allergens": {
+      "contains": [
+        "Dairy / Milk (Butter, Cream, Paneer)",
+        "Gluten (Durum Wheat Pasta)",
+        "Tree Nuts (Cashews)"
+      ],
+      "mayContain": [
+        "Soy"
+      ],
+      "warning": "Contains tree nuts (cashew nut paste), dairy cream, and durum wheat semolina. Strict caution for individuals with nut allergies.",
+      "swaps": "Substitute cashews with peeled melon seeds (magaz) or sunflower seeds for 100% nut-free. Use gluten-free chickpea or corn pasta."
+    },
+    "pronunciationIPA": "/mʌk.n.iː ˈpɑː.stə/",
+    "phonetic": "muk-nee pah-stuh",
+    "syllables": [
+      "muk",
+      "nee",
+      "PAH",
+      "stuh"
     ],
-    recipeSteps: [
-      { step: 1, title: 'Boil Pasta Al Dente', text: 'Boil penne in well-salted water for 9 minutes until firm to the bite; reserve 1/2 cup pasta water.', kidSafe: false },
-      { step: 2, title: 'Simmer Tomato-Cashew Gravy', text: 'Puree cooked tomatoes with soaked cashews; simmer with butter, garlic, and cardamom.', kidSafe: false },
-      { step: 3, title: 'Emulsify with Cream & Fenugreek', text: 'Swirl in heavy cream and rub dried kasuri methi between palms to release aromatic oils.', kidSafe: true },
-      { step: 4, title: 'Toss & Marry', text: 'Toss the drained penne and golden paneer cubes into the sauce until every ridge is coated.', kidSafe: true }
+    "audioText": "Makhani Pasta",
+    "description": "Italian tubular penne cooked al dente, smothered in a rich, buttery San Marzano or Desi tomato sauce infused with cream, kasuri methi, and paneer cubes.",
+    "availability": "High",
+    "availabilityClass": "high",
+    "metros": [
+      "Pan-India",
+      "Every modern cafe and family diner"
     ],
-    pantryItems: [
-      { name: 'Penne Pasta', isCorrect: true, emoji: '🍝' },
-      { name: 'Tomato-Cashew Gravy', isCorrect: true, emoji: '🥫' },
-      { name: 'White Butter & Cream', isCorrect: true, emoji: '🧈' },
-      { name: 'Kasuri Methi', isCorrect: true, emoji: '🌿' },
-      { name: 'Paneer Cubes', isCorrect: true, emoji: '🧀' },
-      // Distractors
-      { name: 'Wasabi Paste', isCorrect: false, emoji: '🥬', distractorReason: 'Fiery Japanese horseradish clashes with warm creamy makhani!' },
-      { name: 'Anchovy Paste', isCorrect: false, emoji: '🐟', distractorReason: 'Definitely not vegetarian!' }
+    "cultureStory": "First created by creative home cooks in Delhi and Mumbai who loved pasta but craved the soul-satisfying depth of North Indian makhani gravy.",
+    "originalIngredients": [
+      "Penne or fusilli (250g)",
+      "Tomato-butter gravy (200ml)",
+      "Heavy cream (50ml)",
+      "Kasuri methi (1 tbsp)",
+      "Paneer cubes (100g)",
+      "Parmesan (40g)"
     ],
-    scienceNote: 'Cashews contain natural starch and fatty acids that act as a plant-based emulsifier, preventing the tomato acids from curdling the dairy cream!'
+    "indianSubstitutes": [
+      {
+        "original": "San Marzano tomatoes",
+        "originalQty": "400g",
+        "substitute": "Ripe Desi Plum Tomatoes boiled with cashews and Kashmiri chilies",
+        "substituteQty": "400g",
+        "why": "Creates a deep natural ruby-red sauce without synthetic colors",
+        "culinaryNote": "Natural sweetness balances high tomato acidity"
+      },
+      {
+        "original": "Parmesan cheese",
+        "originalQty": "40g",
+        "substitute": "Amul aged cheese or finely grated paneer with nutritional yeast",
+        "substituteQty": "40g",
+        "why": "Provides savory umami depth",
+        "culinaryNote": "Nutritional yeast delivers vegetarian glutamates"
+      }
+    ],
+    "recipeSteps": [
+      {
+        "step": 1,
+        "title": "Boil Pasta Al Dente",
+        "text": "Boil penne in well-salted water for 9 minutes until firm to the bite; reserve 1/2 cup pasta water.",
+        "kidSafe": false
+      },
+      {
+        "step": 2,
+        "title": "Simmer Tomato-Cashew Gravy",
+        "text": "Puree cooked tomatoes with soaked cashews; simmer with butter, garlic, and cardamom.",
+        "kidSafe": false
+      },
+      {
+        "step": 3,
+        "title": "Emulsify with Cream & Fenugreek",
+        "text": "Swirl in heavy cream and rub dried kasuri methi between palms to release aromatic oils.",
+        "kidSafe": true
+      },
+      {
+        "step": 4,
+        "title": "Toss & Marry",
+        "text": "Toss the drained penne and golden paneer cubes into the sauce until every ridge is coated.",
+        "kidSafe": true
+      }
+    ],
+    "pantryItems": [
+      {
+        "name": "Penne Pasta",
+        "isCorrect": true,
+        "emoji": "🍝"
+      },
+      {
+        "name": "Tomato-Cashew Gravy",
+        "isCorrect": true,
+        "emoji": "🥫"
+      },
+      {
+        "name": "White Butter & Cream",
+        "isCorrect": true,
+        "emoji": "🧈"
+      },
+      {
+        "name": "Kasuri Methi",
+        "isCorrect": true,
+        "emoji": "🌿"
+      },
+      {
+        "name": "Paneer Cubes",
+        "isCorrect": true,
+        "emoji": "🧀"
+      },
+      {
+        "name": "Wasabi Paste",
+        "isCorrect": false,
+        "emoji": "🥬",
+        "distractorReason": "Fiery Japanese horseradish clashes with warm creamy makhani!"
+      },
+      {
+        "name": "Anchovy Paste",
+        "isCorrect": false,
+        "emoji": "🐟",
+        "distractorReason": "Definitely not vegetarian!"
+      }
+    ],
+    "scienceNote": "Cashews contain natural starch and fatty acids that act as a plant-based emulsifier, preventing the tomato acids from curdling the dairy cream!"
   },
   {
-    id: 'naan-pizza',
-    name: 'Charred Naan Pizza (Naanza)',
-    originalName: 'Naan Pizza / Naanza',
-    origin: 'Ital-Indian',
-    pronunciationIPA: '/nɑːn ˈpiːt.sə/ - /nɑːn.zɑː/',
-    phonetic: 'nahn peet-suh / nahn-zah',
-    syllables: ['nahn', 'ZAH'],
-    audioText: 'Naanza',
-    description: 'A blistered tandoori garlic naan turns into an artisan pizza base, crowned with spicy tikka sauce, diced veggies, paneer, and bubbly mozzarella.',
-    availability: 'High',
-    availabilityClass: 'high',
-    metros: ['Nationwide', 'Pizzerias, gastro-cafes, food stalls'],
-    cultureStory: 'A culinary match made in heaven: both tandoors and wood-fired pizza ovens cook at 450°C, producing pillowy bread with blistered air pockets.',
-    originalIngredients: ['Tandoori naan base', 'Mozzarella cheese', 'Spiced tomato sauce', 'Onion & capsicum', 'Paneer or corn', 'Oregano'],
-    indianSubstitutes: [
-      { original: 'Pizza dough', substitute: 'Freshly baked Garlic-Butter Tandoori Naan or Stuffed Kulcha', why: 'Saves hours of dough proofing while providing unbeatable smoky blistered flavor' },
-      { original: 'Pizza herb seasoning', substitute: 'Dry roasted oregano + crushed kasuri methi & chili flakes', why: 'Gives the distinctive Indo-Italian aroma' }
+    "id": "naan-pizza",
+    "name": "Charred Naan Pizza (Naanza)",
+    "originalName": "Naan Pizza / Naanza",
+    "origin": "Ital-Indian",
+    "prepTime": "10 mins",
+    "cookTime": "12 mins",
+    "totalTime": "22 mins",
+    "servings": "2-3 servings",
+    "difficulty": "Beginner",
+    "allergens": {
+      "contains": [
+        "Dairy / Milk (Mozzarella, Butter, Naan yogurt)",
+        "Gluten (Maida Naan)"
+      ],
+      "mayContain": [
+        "Sesame (Naan seed topping)"
+      ],
+      "warning": "Traditional naan is leavened refined wheat flour with yogurt and milk. High gluten and dairy profile.",
+      "swaps": "Use gluten-free oat-flour flatbread. Use plant-based meltable shreds for dairy-free cheese pull."
+    },
+    "pronunciationIPA": "/nɑːn ˈpiːt.sə/ - /nɑːn.zɑː/",
+    "phonetic": "nahn peet-suh / nahn-zah",
+    "syllables": [
+      "nahn",
+      "ZAH"
     ],
-    recipeSteps: [
-      { step: 1, title: 'Crisp the Naan Base', text: 'Pre-bake the naan in a tawa or hot oven for 2 minutes so the crust stays crunchy under toppings.', kidSafe: false },
-      { step: 2, title: 'Spread Spiced Marinara', text: 'Slather a blend of Italian marinara and Punjabi tikka masala sauce edge to edge.', kidSafe: true },
-      { step: 3, title: 'Decorate with Veggie Confetti', text: 'Scatter capsicum strips, red onions, sweet corn kernels, and paneer cubes.', kidSafe: true },
-      { step: 4, title: 'Bake to Molten Perfection', text: 'Bake at 220°C for 7 minutes until the mozzarella bubbles with golden spots.', kidSafe: false }
+    "audioText": "Naanza",
+    "description": "A blistered tandoori garlic naan turns into an artisan pizza base, crowned with spicy tikka sauce, diced veggies, paneer, and bubbly mozzarella.",
+    "availability": "High",
+    "availabilityClass": "high",
+    "metros": [
+      "Nationwide",
+      "Pizzerias, gastro-cafes, food stalls"
     ],
-    pantryItems: [
-      { name: 'Garlic Butter Naan', isCorrect: true, emoji: '🫓' },
-      { name: 'Spicy Tikka Marinara', isCorrect: true, emoji: '🍅' },
-      { name: 'Mozzarella Cheese', isCorrect: true, emoji: '🧀' },
-      { name: 'Crisp Bell Peppers & Corn', isCorrect: true, emoji: '🌽' },
-      { name: 'Kasuri Methi & Oregano', isCorrect: true, emoji: '🌿' },
-      // Distractors
-      { name: 'Marshmallows', isCorrect: false, emoji: '🍬', distractorReason: 'Sweet s’mores do not belong on a spicy savory Naanza!' },
-      { name: 'Gelatin Powder', isCorrect: false, emoji: '🍮', distractorReason: 'Not food for pizza and definitely not vegetarian!' }
+    "cultureStory": "A culinary match made in heaven: both tandoors and wood-fired pizza ovens cook at 450°C, producing pillowy bread with blistered air pockets.",
+    "originalIngredients": [
+      "Tandoori naan base (1 large)",
+      "Mozzarella cheese (120g)",
+      "Spiced tomato sauce (60ml)",
+      "Onion & capsicum (1/2 cup)",
+      "Paneer or corn (60g)",
+      "Oregano (1 tsp)"
     ],
-    scienceNote: 'High heat triggers rapid carbon dioxide expansion inside the naan pockets, lifting the crust while the mozzarella forms a protective vapor barrier that keeps the dough crispy!'
+    "indianSubstitutes": [
+      {
+        "original": "Pizza dough",
+        "originalQty": "1 ball (200g)",
+        "substitute": "Freshly baked Garlic-Butter Tandoori Naan or Stuffed Kulcha",
+        "substituteQty": "1 large naan",
+        "why": "Saves hours of dough proofing while providing unbeatable smoky blistered flavor",
+        "culinaryNote": "Tandoori blistered crust withstands sauce without sogging"
+      },
+      {
+        "original": "Pizza herb seasoning",
+        "originalQty": "1 tsp",
+        "substitute": "Dry roasted oregano + crushed kasuri methi & chili flakes",
+        "substituteQty": "1 tsp",
+        "why": "Gives the distinctive Indo-Italian aroma",
+        "culinaryNote": "Kasuri methi essential oils volatilize under pizza heat"
+      }
+    ],
+    "recipeSteps": [
+      {
+        "step": 1,
+        "title": "Crisp the Naan Base",
+        "text": "Pre-bake the naan in a tawa or hot oven for 2 minutes so the crust stays crunchy under toppings.",
+        "kidSafe": false
+      },
+      {
+        "step": 2,
+        "title": "Spread Spiced Marinara",
+        "text": "Slather a blend of Italian marinara and Punjabi tikka masala sauce edge to edge.",
+        "kidSafe": true
+      },
+      {
+        "step": 3,
+        "title": "Decorate with Veggie Confetti",
+        "text": "Scatter capsicum strips, red onions, sweet corn kernels, and paneer cubes.",
+        "kidSafe": true
+      },
+      {
+        "step": 4,
+        "title": "Bake to Molten Perfection",
+        "text": "Bake at 220°C for 7 minutes until the mozzarella bubbles with golden spots.",
+        "kidSafe": false
+      }
+    ],
+    "pantryItems": [
+      {
+        "name": "Garlic Butter Naan",
+        "isCorrect": true,
+        "emoji": "🫓"
+      },
+      {
+        "name": "Spicy Tikka Marinara",
+        "isCorrect": true,
+        "emoji": "🍅"
+      },
+      {
+        "name": "Mozzarella Cheese",
+        "isCorrect": true,
+        "emoji": "🧀"
+      },
+      {
+        "name": "Crisp Bell Peppers & Corn",
+        "isCorrect": true,
+        "emoji": "🌽"
+      },
+      {
+        "name": "Kasuri Methi & Oregano",
+        "isCorrect": true,
+        "emoji": "🌿"
+      },
+      {
+        "name": "Marshmallows",
+        "isCorrect": false,
+        "emoji": "🍬",
+        "distractorReason": "Sweet s’mores do not belong on a spicy savory Naanza!"
+      },
+      {
+        "name": "Gelatin Powder",
+        "isCorrect": false,
+        "emoji": "🍮",
+        "distractorReason": "Not food for pizza and definitely not vegetarian!"
+      }
+    ],
+    "scienceNote": "High heat triggers rapid carbon dioxide expansion inside the naan pockets, lifting the crust while the mozzarella forms a protective vapor barrier that keeps the dough crispy!"
   },
   {
-    id: 'gulab-jamun-cheesecake',
-    name: 'Eggless Gulab Jamun Cheesecake',
-    originalName: 'Gulab Jamun Cheesecake',
-    origin: 'Indo-French / Euro-Asian',
-    pronunciationIPA: '/ɡuːˈlɑːb ˈdʒɑː.mʊn ˈtʃiːz.keɪk/',
-    phonetic: 'goo-lahb jah-moon cheez-kayk',
-    syllables: ['goo', 'lahb', 'jah', 'moon', 'cheez', 'kayk'],
-    audioText: 'Gulab Jamun Cheesecake',
-    description: 'Silky cardamom and saffron-infused cream cheese custard layered over a crumbly biscuit crust, concealing soft baby gulab jamuns inside each slice.',
-    availability: 'Moderate to High',
-    availabilityClass: 'high',
-    metros: ['Nationwide', 'Patisseries, wedding banquets, boutique cafes'],
-    cultureStory: 'Invented by progressive Indian pastry chefs wanting to reinvent festive mithai for modern global dessert lovers.',
-    originalIngredients: ['Cream cheese', 'Graham cracker crust', 'Gulab jamun balls', 'Cardamom', 'Saffron', 'Pistachios'],
-    indianSubstitutes: [
-      { original: 'Graham crackers', substitute: 'Nutri-Choice Digestive Biscuits or Marie Gold + melted Amul butter', why: 'Provides the iconic nutty, toasted crunch base' },
-      { original: 'Sour cream / eggs in custard', substitute: 'Hung Greek yogurt + condensed milk + cornstarch', why: 'Creates a rich, set, eggless cheesecake custard with clean dairy tang' },
-      { original: 'Vanilla extract', substitute: 'Crushed green cardamom seeds, saffron strands, and rose water', why: 'Authentic royal Shahi Indian aromatics' }
+    "id": "gulab-jamun-cheesecake",
+    "name": "Eggless Gulab Jamun Cheesecake",
+    "originalName": "Gulab Jamun Cheesecake",
+    "origin": "Indo-French / Euro-Asian",
+    "prepTime": "20 mins",
+    "cookTime": "35 mins",
+    "totalTime": "55 mins",
+    "servings": "6-8 servings",
+    "difficulty": "Intermediate",
+    "allergens": {
+      "contains": [
+        "Dairy / Milk (Cream cheese, Mawa, Condensed milk)",
+        "Gluten (Biscuits, Mawa binder)"
+      ],
+      "mayContain": [
+        "Tree Nuts (Pistachio, Almond garnish)"
+      ],
+      "warning": "Mawa khoya and cream cheese provide heavy dairy density. Slivered nuts on garnish pose an allergen risk.",
+      "swaps": "Omit pistachio nut garnish. Use gluten-free digestive biscuits and plant-based condensed milk."
+    },
+    "pronunciationIPA": "/ɡuːˈlɑːb ˈdʒɑː.mʊn ˈtʃiːz.keɪk/",
+    "phonetic": "goo-lahb jah-moon cheez-kayk",
+    "syllables": [
+      "goo",
+      "lahb",
+      "jah",
+      "moon",
+      "cheez",
+      "kayk"
     ],
-    recipeSteps: [
-      { step: 1, title: 'Crush the Crust', text: 'Crush digestive biscuits with a rolling pin and stir in melted butter; press firmly into a springform pan.', kidSafe: true },
-      { step: 2, title: 'Whip Eggless Custard', text: 'Whisk cream cheese, hung curd, condensed milk, saffron-infused milk, and cardamom powder.', kidSafe: true },
-      { step: 3, title: 'The Jamun Treasure', text: 'Drain syrup from baby gulab jamuns and nestle them evenly across the biscuit base.', kidSafe: true },
-      { step: 4, title: 'Pour & Chill', text: 'Pour the golden custard over the jamuns; chill overnight or bake gently in a water bath.', kidSafe: false }
+    "audioText": "Gulab Jamun Cheesecake",
+    "description": "Silky cardamom and saffron-infused cream cheese custard layered over a crumbly biscuit crust, concealing soft baby gulab jamuns inside each slice.",
+    "availability": "Moderate to High",
+    "availabilityClass": "high",
+    "metros": [
+      "Nationwide",
+      "Patisseries, wedding banquets, boutique cafes"
     ],
-    pantryItems: [
-      { name: 'Digestive Biscuits & Butter', isCorrect: true, emoji: '🍪' },
-      { name: 'Cream Cheese & Hung Curd', isCorrect: true, emoji: '🥣' },
-      { name: 'Baby Gulab Jamuns', isCorrect: true, emoji: '🟤' },
-      { name: 'Saffron & Green Cardamom', isCorrect: true, emoji: '🌺' },
-      { name: 'Slivered Pistachios', isCorrect: true, emoji: '🥜' },
-      // Distractors
-      { name: 'Wasabi Peas', isCorrect: false, emoji: '🟢', distractorReason: 'Spicy wasabi ruins a delicate saffron dessert!' },
-      { name: 'Beef Gelatin', isCorrect: false, emoji: '🥩', distractorReason: 'Non-vegetarian! We use natural cornstarch or agar-agar.' }
+    "cultureStory": "Invented by progressive Indian pastry chefs wanting to reinvent festive mithai for modern global dessert lovers.",
+    "originalIngredients": [
+      "Cream cheese (250g)",
+      "Graham cracker crust (150g)",
+      "Gulab jamun balls (12 baby jamuns)",
+      "Cardamom (1/2 tsp)",
+      "Saffron (pinch)",
+      "Pistachios (20g)"
     ],
-    scienceNote: 'The sugar syrup in gulab jamun has high osmotic pressure; soaking or draining properly prevents the jamun from leaking excess water into the cheesecake cream, keeping the custard silky!'
+    "indianSubstitutes": [
+      {
+        "original": "Graham crackers",
+        "originalQty": "150g",
+        "substitute": "Nutri-Choice Digestive Biscuits or Marie Gold + melted Amul butter",
+        "substituteQty": "150g",
+        "why": "Provides the iconic nutty, toasted crunch base",
+        "culinaryNote": "Whole wheat crumb absorbs butter without getting soggy"
+      },
+      {
+        "original": "Sour cream / eggs in custard",
+        "originalQty": "2 eggs + 100g sour cream",
+        "substitute": "Hung Greek yogurt + condensed milk + cornstarch",
+        "substituteQty": "150g hung curd + 100g condensed milk",
+        "why": "Creates a rich, set, eggless cheesecake custard with clean dairy tang",
+        "culinaryNote": "Cornstarch gelatinizes at 75°C to set custard without egg albumin"
+      },
+      {
+        "original": "Vanilla extract",
+        "originalQty": "1 tsp",
+        "substitute": "Crushed green cardamom seeds, saffron strands, and rose water",
+        "substituteQty": "1/2 tsp cardamom + pinch saffron",
+        "why": "Authentic royal Shahi Indian aromatics",
+        "culinaryNote": "Cardamonin and safranal provide deep warm festive perfumes"
+      }
+    ],
+    "recipeSteps": [
+      {
+        "step": 1,
+        "title": "Crush the Crust",
+        "text": "Crush digestive biscuits with a rolling pin and stir in melted butter; press firmly into a springform pan.",
+        "kidSafe": true
+      },
+      {
+        "step": 2,
+        "title": "Whip Eggless Custard",
+        "text": "Whisk cream cheese, hung curd, condensed milk, saffron-infused milk, and cardamom powder.",
+        "kidSafe": true
+      },
+      {
+        "step": 3,
+        "title": "The Jamun Treasure",
+        "text": "Drain syrup from baby gulab jamuns and nestle them evenly across the biscuit base.",
+        "kidSafe": true
+      },
+      {
+        "step": 4,
+        "title": "Pour & Chill",
+        "text": "Pour the golden custard over the jamuns; chill overnight or bake gently in a water bath.",
+        "kidSafe": false
+      }
+    ],
+    "pantryItems": [
+      {
+        "name": "Digestive Biscuits & Butter",
+        "isCorrect": true,
+        "emoji": "🍪"
+      },
+      {
+        "name": "Cream Cheese & Hung Curd",
+        "isCorrect": true,
+        "emoji": "🥣"
+      },
+      {
+        "name": "Baby Gulab Jamuns",
+        "isCorrect": true,
+        "emoji": "🟤"
+      },
+      {
+        "name": "Saffron & Green Cardamom",
+        "isCorrect": true,
+        "emoji": "🌺"
+      },
+      {
+        "name": "Slivered Pistachios",
+        "isCorrect": true,
+        "emoji": "🥜"
+      },
+      {
+        "name": "Wasabi Peas",
+        "isCorrect": false,
+        "emoji": "🟢",
+        "distractorReason": "Spicy wasabi ruins a delicate saffron dessert!"
+      },
+      {
+        "name": "Beef Gelatin",
+        "isCorrect": false,
+        "emoji": "🥩",
+        "distractorReason": "Non-vegetarian! We use natural cornstarch or agar-agar."
+      }
+    ],
+    "scienceNote": "The sugar syrup in gulab jamun has high osmotic pressure; soaking or draining properly prevents the jamun from leaking excess water into the cheesecake cream, keeping the custard silky!"
   },
   {
-    id: 'curry-ramen',
-    name: 'Spiced Veggie Curry Ramen',
-    originalName: 'Curry Ramen',
-    origin: 'Indo-Japanese',
-    pronunciationIPA: '/ˈkʌr.i ˈrɑː.mən/',
-    phonetic: 'kuh-ree RAH-men',
-    syllables: ['kuh', 'ree', 'RAH', 'men'],
-    audioText: 'Curry Ramen',
-    description: 'Springy alkaline wheat noodles immersed in a golden coconut-curry dashi broth, topped with charred bok choy, crispy spiced tofu, and sweet corn.',
-    availability: 'Emerging / Niche',
-    availabilityClass: 'niche',
-    metros: ['Delhi-NCR', 'Mumbai', 'Bengaluru'],
-    cultureStory: 'A collision of Hokkaido Japanese winter ramen with coastal South Indian curry spices and coconut milk.',
-    originalIngredients: ['Ramen noodles', 'Curry paste', 'Kombu dashi', 'Pork/Chicken broth', 'Chashu'],
-    indianSubstitutes: [
-      { original: 'Meat broth', substitute: 'Kombu + roasted onion, garlic & shiitake vegetable broth', why: 'Produces rich savory umami without animal products' },
-      { original: 'Chashu meat', substitute: 'Soy-glazed crispy paneer or charred smoked tofu slices', why: 'Tender interior with deeply caramelized exterior' },
-      { original: 'Japanese curry roux', substitute: 'Turmeric, coriander, cumin, ginger paste, and coconut milk reduction', why: 'Warmer, fragrant, and familiar to Indian palates' }
+    "id": "curry-ramen",
+    "name": "Spiced Veggie Curry Ramen",
+    "originalName": "Curry Ramen",
+    "origin": "Indo-Japanese",
+    "prepTime": "15 mins",
+    "cookTime": "15 mins",
+    "totalTime": "30 mins",
+    "servings": "2 servings",
+    "difficulty": "Intermediate",
+    "allergens": {
+      "contains": [
+        "Gluten (Wheat noodles)",
+        "Soy (Dashi glaze, Tofu)"
+      ],
+      "mayContain": [
+        "Sesame",
+        "Mustard (Curry paste blend)"
+      ],
+      "warning": "Wheat alkaline ramen noodles contain gluten. Soy sauce and tofu contain soy. Check packaged curry pastes for shrimp paste (our recipe is 100% veg).",
+      "swaps": "Use 100% buckwheat soba or brown rice noodles for gluten-free. Use coconut aminos for soy-free."
+    },
+    "pronunciationIPA": "/ˈkʌr.i ˈrɑː.mən/",
+    "phonetic": "kuh-ree RAH-men",
+    "syllables": [
+      "kuh",
+      "ree",
+      "RAH",
+      "men"
     ],
-    recipeSteps: [
-      { step: 1, title: 'Simmer Umami Broth', text: 'Boil vegetable stock with charred onions, ginger, turmeric, cumin, and coconut milk for 20 minutes.', kidSafe: false },
-      { step: 2, title: 'Cook Alkaline Noodles', text: 'Boil ramen noodles for 2.5 minutes until springy; drain and rinse with cold water.', kidSafe: false },
-      { step: 3, title: 'Sear Tofu Topping', text: 'Pan-sear pressed tofu with a dash of soy sauce and tandoori chili crisp until crisp.', kidSafe: false },
-      { step: 4, title: 'Assemble the Ramen Bowl', text: 'Fold noodles in deep bowl, pour steaming curry broth, and arrange tofu, corn, and nori.', kidSafe: true }
+    "audioText": "Curry Ramen",
+    "description": "Springy alkaline wheat noodles immersed in a golden coconut-curry dashi broth, topped with charred bok choy, crispy spiced tofu, and sweet corn.",
+    "availability": "Emerging / Niche",
+    "availabilityClass": "niche",
+    "metros": [
+      "Delhi-NCR",
+      "Mumbai",
+      "Bengaluru"
     ],
-    pantryItems: [
-      { name: 'Ramen Wheat Noodles', isCorrect: true, emoji: '🍜' },
-      { name: 'Coconut-Curry Umami Broth', isCorrect: true, emoji: '🥥' },
-      { name: 'Crispy Seared Tofu / Paneer', isCorrect: true, emoji: '🧈' },
-      { name: 'Sweet Corn & Bok Choy', isCorrect: true, emoji: '🥬' },
-      { name: 'Tandoori Chili Crisp', isCorrect: true, emoji: '🌶️' },
-      // Distractors
-      { name: 'Fish Stock Powder', isCorrect: false, emoji: '🐟', distractorReason: 'Contains non-veg fish extracts! We use shiitake kombu stock.' },
-      { name: 'Maple Syrup', isCorrect: false, emoji: '🍁', distractorReason: 'Too sugary for a savory savory Japanese-Indian curry ramen!' }
+    "cultureStory": "A collision of Hokkaido Japanese winter ramen with coastal South Indian curry spices and coconut milk.",
+    "originalIngredients": [
+      "Ramen noodles (180g)",
+      "Curry paste (2 tbsp)",
+      "Kombu dashi (500ml)",
+      "Pork/Chicken broth (500ml)",
+      "Chashu (100g)"
     ],
-    scienceNote: 'Ramen noodles contain kansui (alkaline salts: sodium carbonate) which raises pH, giving noodles their yellow hue, firm chew, and resistance to getting soggy in hot broth!'
+    "indianSubstitutes": [
+      {
+        "original": "Meat broth",
+        "originalQty": "500ml",
+        "substitute": "Kombu + roasted onion, garlic & shiitake vegetable broth",
+        "substituteQty": "500ml",
+        "why": "Produces rich savory umami without animal products",
+        "culinaryNote": "Shiitake mushrooms provide natural guanylate umami synergy"
+      },
+      {
+        "original": "Chashu meat",
+        "originalQty": "100g",
+        "substitute": "Soy-glazed crispy paneer or charred smoked tofu slices",
+        "substituteQty": "100g",
+        "why": "Tender interior with deeply caramelized exterior",
+        "culinaryNote": "Smoked tofu absorbs curry broth like a sponge"
+      },
+      {
+        "original": "Japanese curry roux",
+        "originalQty": "2 cubes (40g)",
+        "substitute": "Turmeric, coriander, cumin, ginger paste, and coconut milk reduction",
+        "substituteQty": "3 tbsp blend",
+        "why": "Warmer, fragrant, and familiar to Indian palates",
+        "culinaryNote": "Curcumin from turmeric provides vibrant golden glow"
+      }
+    ],
+    "recipeSteps": [
+      {
+        "step": 1,
+        "title": "Simmer Umami Broth",
+        "text": "Boil vegetable stock with charred onions, ginger, turmeric, cumin, and coconut milk for 20 minutes.",
+        "kidSafe": false
+      },
+      {
+        "step": 2,
+        "title": "Cook Alkaline Noodles",
+        "text": "Boil ramen noodles for 2.5 minutes until springy; drain and rinse with cold water.",
+        "kidSafe": false
+      },
+      {
+        "step": 3,
+        "title": "Sear Tofu Topping",
+        "text": "Pan-sear pressed tofu with a dash of soy sauce and tandoori chili crisp until crisp.",
+        "kidSafe": false
+      },
+      {
+        "step": 4,
+        "title": "Assemble the Ramen Bowl",
+        "text": "Fold noodles in deep bowl, pour steaming curry broth, and arrange tofu, corn, and nori.",
+        "kidSafe": true
+      }
+    ],
+    "pantryItems": [
+      {
+        "name": "Ramen Wheat Noodles",
+        "isCorrect": true,
+        "emoji": "🍜"
+      },
+      {
+        "name": "Coconut-Curry Umami Broth",
+        "isCorrect": true,
+        "emoji": "🥥"
+      },
+      {
+        "name": "Crispy Seared Tofu / Paneer",
+        "isCorrect": true,
+        "emoji": "🧈"
+      },
+      {
+        "name": "Sweet Corn & Bok Choy",
+        "isCorrect": true,
+        "emoji": "🥬"
+      },
+      {
+        "name": "Tandoori Chili Crisp",
+        "isCorrect": true,
+        "emoji": "🌶️"
+      },
+      {
+        "name": "Fish Stock Powder",
+        "isCorrect": false,
+        "emoji": "🐟",
+        "distractorReason": "Contains non-veg fish extracts! We use shiitake kombu stock."
+      },
+      {
+        "name": "Maple Syrup",
+        "isCorrect": false,
+        "emoji": "🍁",
+        "distractorReason": "Too sugary for a savory Japanese-Indian curry ramen!"
+      }
+    ],
+    "scienceNote": "Ramen noodles contain kansui (alkaline salts: sodium carbonate) which raises pH, giving noodles their yellow hue, firm chew, and resistance to getting soggy in hot broth!"
   }
 ];
 

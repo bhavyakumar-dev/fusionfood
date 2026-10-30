@@ -43,47 +43,47 @@
       </nav>
 
       <div class="header-actions">
-        <!-- Live Leaderboard Top Header Pill (Non-Intrusive, Click to View Hall of Fame) -->
-        <button id="header-leaderboard-pill" class="header-leaderboard-pill" title="View Global Hall of Fame & Leaderboard">
-          <span class="lb-trophy">🏆</span>
-          <span class="lb-title">Top Chefs</span>
+        <!-- Live Leaderboard Top Header Pill (Unambiguous Leaderboard Access) -->
+        <button id="header-leaderboard-pill" class="header-leaderboard-pill" title="View Global Hall of Fame & Leaderboard" aria-label="View Leaderboard & Hall of Fame, Current Rank #1">
+          <span class="lb-trophy" aria-hidden="true">🏆</span>
+          <span class="lb-title">Leaderboard</span>
           <span class="lb-rank" id="header-lb-rank">#1</span>
         </button>
 
         <!-- Chef Hat AR Camera & Age Scanner -->
-        <button id="open-camera-scanner-btn" class="icon-btn" title="Chef Hat AR Camera & Age Scanner" style="font-size:1.05rem;">
-          📸
+        <button id="open-camera-scanner-btn" class="icon-btn" title="Chef Hat AR Camera & Age Scanner" aria-label="Chef Hat AR Camera & Age Scanner" style="font-size:1.05rem;">
+          <span aria-hidden="true">📸</span>
         </button>
 
         <!-- Chef Portfolio & Career Certificate -->
-        <button id="open-portfolio-btn" class="icon-btn" title="View & Export Chef Career Portfolio (PDF)" style="font-size:1.05rem;">
-          📄
+        <button id="open-portfolio-btn" class="icon-btn" title="View & Export Chef Career Portfolio (PDF)" aria-label="View & Export Chef Career Portfolio (PDF)" style="font-size:1.05rem;">
+          <span aria-hidden="true">📄</span>
         </button>
 
         <!-- AI Face Tour & Explainer Overlay Button -->
-        <button id="open-tour-btn" class="icon-btn" title="AI Face Guided Self-Explanatory Website Tour" style="font-size:1.05rem;">
-          🤖
+        <button id="open-tour-btn" class="icon-btn" title="AI Face Guided Self-Explanatory Website Tour" aria-label="AI Guided Interactive Website Tour" style="font-size:1.05rem;">
+          <span aria-hidden="true">🤖</span>
         </button>
 
-        <!-- Chef Profile Pill (Click to Change Name, Role & Rank) -->
-        <button id="profile-switch-btn" class="profile-pill" title="Click to Edit Profile & Rank">
-          <span class="profile-avatar">🎒</span>
-          <span>Maya</span>
+        <!-- Chef Profile Pill (Unambiguous Profile Control: Name, Role & Rank) -->
+        <button id="profile-switch-btn" class="profile-pill" title="Click to Edit Chef Profile & Rank" aria-label="Maya's Chef Profile & Rank Setup">
+          <span class="profile-avatar" aria-hidden="true">🎒</span>
+          <span id="header-profile-name">Maya's Profile</span>
         </button>
 
         <!-- Sound Toggle -->
-        <button id="sound-toggle-btn" class="icon-btn" title="Toggle Sound Effects">
-          🔊
+        <button id="sound-toggle-btn" class="icon-btn" title="Toggle Sound Effects" aria-label="Toggle Sound Effects (Mute/Unmute)">
+          <span aria-hidden="true">🔊</span>
         </button>
 
         <!-- Theme Toggle (Light-Blue / Obsidian Black) -->
-        <button id="theme-toggle-btn" class="icon-btn" title="Toggle Theme (Light-Blue / Obsidian Black)">
-          🌙
+        <button id="theme-toggle-btn" class="icon-btn" title="Toggle Theme (Light-Blue / Obsidian Black)" aria-label="Toggle Theme (Light-Blue / Obsidian Black)">
+          <span aria-hidden="true">🌙</span>
         </button>
 
-        <!-- Admin Mode Lock (Secret PIN protected) -->
-        <button id="admin-modal-open-btn" class="icon-btn" title="Admin Game Controls" style="border-color:var(--secondary); color:var(--secondary);">
-          🔒
+        <!-- Admin Settings Lock (PIN protected) -->
+        <button id="admin-modal-open-btn" class="icon-btn" title="Admin Settings & Game Controls" aria-label="Admin Settings & Game Controls" style="border-color:var(--secondary); color:var(--secondary);">
+          <span aria-hidden="true">🔒</span>
         </button>
       </div>
     </div>
@@ -112,34 +112,44 @@
           An interactive edible universe engineered for families and food enthusiasts. Discover molecular gastronomy secrets, master authentic Indian bazaar ingredient swaps, and conquer high-velocity 3D culinary challenges.
         </p>
 
+        <!-- Primary & Secondary Action CTAs (FF-10) -->
+        <div class="hero-cta-group" style="display:flex; gap:0.85rem; justify-content:center; align-items:center; flex-wrap:wrap; margin:1.25rem 0 1.5rem;">
+          <button class="btn btn-primary hero-main-cta" id="hero-primary-cta" data-target-tab="games" aria-label="Play Arcade Games">
+            🎮 Play Arcade Games
+          </button>
+          <button class="btn btn-secondary hero-secondary-cta" id="hero-secondary-cta" data-target-tab="kitchen" aria-label="Explore Kitchen Lab">
+            📖 Explore Kitchen Lab
+          </button>
+        </div>
+
         <!-- 2.5D Animated Stat Counters Grid -->
         <div class="scrolltide-stats-grid">
-          <div class="scrolltide-stat-card" data-stat-target="5">
-            <span class="scrolltide-stat-icon">🎮</span>
+          <div class="scrolltide-stat-card" data-stat-target="5" aria-label="5 Arcade Labs">
+            <span class="scrolltide-stat-icon" aria-hidden="true">🎮</span>
             <span class="scrolltide-stat-num" id="stat-counter-labs">5</span>
-            <span class="scrolltide-stat-label">5 Arcade Labs</span>
+            <span class="scrolltide-stat-label">Arcade Labs</span>
             <span class="scrolltide-stat-sub">3D & Interactive</span>
           </div>
 
-          <div class="scrolltide-stat-card" data-stat-target="8">
-            <span class="scrolltide-stat-icon">🍲</span>
+          <div class="scrolltide-stat-card" data-stat-target="8" aria-label="8 Indian Fusion Replications">
+            <span class="scrolltide-stat-icon" aria-hidden="true">🍲</span>
             <span class="scrolltide-stat-num" id="stat-counter-recipes">8</span>
-            <span class="scrolltide-stat-label">8 Indian Fusion Replications</span>
+            <span class="scrolltide-stat-label">Fusion Replications</span>
             <span class="scrolltide-stat-sub">Desi Bazaar Replications</span>
           </div>
 
-          <div class="scrolltide-stat-card" data-stat-target="100">
-            <span class="scrolltide-stat-icon">🌱</span>
+          <div class="scrolltide-stat-card" data-stat-target="100" aria-label="100% Pure Vegetarian">
+            <span class="scrolltide-stat-icon" aria-hidden="true">🌱</span>
             <span class="scrolltide-stat-num" id="stat-counter-veg">100%</span>
             <span class="scrolltide-stat-label">100% Pure Veg</span>
             <span class="scrolltide-stat-sub">Zero Meat • Plant Powered</span>
           </div>
 
-          <div class="scrolltide-stat-card" data-stat-target="0">
-            <span class="scrolltide-stat-icon">🛡️</span>
-            <span class="scrolltide-stat-num" id="stat-counter-allergens">0</span>
-            <span class="scrolltide-stat-label">Zero Allergens</span>
-            <span class="scrolltide-stat-sub">Clear Warning Flags</span>
+          <div class="scrolltide-stat-card" data-stat-target="100" aria-label="100% Allergen Transparency">
+            <span class="scrolltide-stat-icon" aria-hidden="true">🛡️</span>
+            <span class="scrolltide-stat-num" id="stat-counter-allergens">100%</span>
+            <span class="scrolltide-stat-label">Allergen Flags</span>
+            <span class="scrolltide-stat-sub">Itemized Warning Flags</span>
           </div>
         </div>
 
@@ -148,7 +158,7 @@
           <div class="scrolltide-preview-card" id="showcase-card-potato">
             <span class="scrolltide-preview-tag">🔥 3D Physics Arena</span>
             <h3 class="scrolltide-preview-title">Hot Potato Rush</h3>
-            <p class="scrolltide-preview-desc">Tumble a 3D golden deformed potato over scorching tandoor coals with dynamic roast shading and kinetic momentum.</p>
+            <p class="scrolltide-preview-desc">Roll the hot potato through the sizzling tandoor, avoid obstacles and earn points before time runs out!</p>
             <span class="scrolltide-preview-action">Launch Arcade →</span>
           </div>
 
@@ -202,15 +212,15 @@
           </div>
         </div>
 
-        <!-- Horizontal Scrollable Game Selector Track with Left/Right Arrows -->
+        <!-- Horizontal Scrollable Game Selector Track with Left/Right Arrows (FF-07) -->
         <div class="games-scroll-container">
-          <button class="scroll-arrow-btn scroll-left" id="games-scroll-left" title="Scroll Left">‹</button>
+          <button class="scroll-arrow-btn scroll-left" id="games-scroll-left" title="Previous featured game" aria-label="Previous featured game"><span aria-hidden="true">‹</span></button>
           
           <div class="games-scroll-track" id="games-grid-tabs">
             <!-- Rendered dynamically as a single horizontal scroll row (No awkward wrapping!) -->
           </div>
 
-          <button class="scroll-arrow-btn scroll-right" id="games-scroll-right" title="Scroll Right">›</button>
+          <button class="scroll-arrow-btn scroll-right" id="games-scroll-right" title="Next featured game" aria-label="Next featured game"><span aria-hidden="true">›</span></button>
         </div>
 
         <!-- Main Interactive Game Arena (Right in view without scrolling down) -->
@@ -239,6 +249,15 @@
         <!-- Interactive Tandoori Skewer & Plating Mini-Game Arena -->
         <div id="tandoor-skewer-game-container" style="margin-bottom:2rem;"></div>
 
+        <!-- Instant Recipe Search Bar (K-03) -->
+        <div class="recipe-search-container" style="margin-bottom:1rem; display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap;">
+          <div style="position:relative; flex:1; max-width:480px;">
+            <input type="search" id="kitchen-recipe-search" placeholder="🔍 Search dishes, ingredients, or cuisines..." aria-label="Search recipes, ingredients, or cuisines" style="width:100%; padding:0.5rem 1rem 0.5rem 2.2rem; border-radius:var(--radius-full); border:1.5px solid var(--border-color); background:var(--bg-card-subtle); color:var(--text-main); font-size:0.88rem;">
+            <span style="position:absolute; left:0.75rem; top:50%; transform:translateY(-50%); pointer-events:none; font-size:0.9rem;" aria-hidden="true">🔎</span>
+          </div>
+          <span id="recipe-search-count" style="font-size:0.82rem; color:var(--text-muted); font-weight:600;">Showing 8 dishes</span>
+        </div>
+
         <!-- Recipe Carousel Navigation Controls -->
         <div class="view-mode-bar">
           <div class="cuisine-filter-chips" id="cuisine-filter-chips">
@@ -250,8 +269,8 @@
             <button class="recipe-chip" data-filter="Indo-Japanese">Indo-Japanese</button>
           </div>
           <div class="scroll-controls">
-            <button class="scroll-arrow-btn" id="recipes-scroll-left" title="Scroll Recipes Left">‹</button>
-            <button class="scroll-arrow-btn" id="recipes-scroll-right" title="Scroll Recipes Right">›</button>
+            <button class="scroll-arrow-btn" id="recipes-scroll-left" title="Previous recipe" aria-label="Previous recipe"><span aria-hidden="true">‹</span></button>
+            <button class="scroll-arrow-btn" id="recipes-scroll-right" title="Next recipe" aria-label="Next recipe"><span aria-hidden="true">›</span></button>
           </div>
         </div>
 
@@ -393,6 +412,9 @@
           <span class="pill-badge" id="hp-modal-diff-badge" style="background:#F59E0B; color:#000; font-weight:800; font-size:0.75rem;">Kid Chef</span>
         </div>
         <div style="display:flex; align-items:center; gap:0.5rem;">
+          <button class="btn btn-secondary" id="hp-modal-stop-btn" style="padding:0.35rem 0.85rem; font-size:0.78rem; color:#FFF; background:rgba(239,68,68,0.25); border-color:#EF4444; font-weight:800; cursor:pointer;" title="Stop or Pause the Game">
+            🛑 Stop Game
+          </button>
           <button class="btn btn-secondary" id="hp-fullscreen-toggle-btn" style="padding:0.35rem 0.75rem; font-size:0.78rem; color:#FFF; border-color:rgba(255,255,255,0.3);">
             ⛶ Fullscreen
           </button>

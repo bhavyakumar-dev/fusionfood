@@ -1008,7 +1008,7 @@ class SoundEngine {
     if (!this.audioCtx) return;
 
     const now = this.audioCtx.currentTime;
-    const bufferSize = Math.floor(this.audioCtx.sampleRate * 0.18);
+    const bufferSize = Math.floor(this.audioCtx.sampleRate * 0.22);
     const buffer = this.audioCtx.createBuffer(1, bufferSize, this.audioCtx.sampleRate);
     const data = buffer.getChannelData(0);
     for (let i = 0; i < bufferSize; i++) {
@@ -1020,19 +1020,154 @@ class SoundEngine {
 
     const filter = this.audioCtx.createBiquadFilter();
     filter.type = 'bandpass';
-    filter.frequency.setValueAtTime(1400, now);
-    filter.Q.setValueAtTime(3.0, now);
+    filter.frequency.setValueAtTime(2200, now);
+    filter.Q.setValueAtTime(2.5, now);
 
     const gain = this.audioCtx.createGain();
-    gain.gain.setValueAtTime(0.25, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+    gain.gain.setValueAtTime(0.28, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
 
     noise.connect(filter);
     filter.connect(gain);
     gain.connect(this.audioCtx.destination);
 
     noise.start(now);
-    noise.stop(now + 0.18);
+    noise.stop(now + 0.22);
+  }
+
+  startContinuousSizzle(intensity = 0.5, heatMultiplier = 1.0) {
+    if (this.muted) return;
+    this.init();
+    if (!this.audioCtx) return;
+    if (this._sizzleNode) return;
+
+    try {
+      const ctx = this.audioCtx;
+      const now = ctx.currentTime;
+      const bufferSize = ctx.sampleRate * 2;
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+      for (let i = 0; i < bufferSize; i++) {
+        const white = Math.random() * 2 - 1;
+        b0 = 0.99886 * b0 + white * 0.0555179;
+        b1 = 0.99332 * b1 + white * 0.0750759;
+        b2 = 0.96900 * b2 + white * 0.1538520;
+        b3 = 0.86650 * b3 + white * 0.3104856;
+        b4 = 0.55000 * b4 + white * 0.5329522;
+        b5 = -0.7616 * b5 - white * 0.0168980;
+        data[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.11;
+        b6 = white * 0.115926;
+      }
+
+      const noiseSource = ctx.createBufferSource();
+      noiseSource.buffer = buffer;
+      noiseSource.loop = true;
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.setValueAtTime(2600, now);
+      filter.Q.setValueAtTime(1.8, now);
+
+      const highpass = ctx.createBiquadFilter();
+      highpass.type = 'highpass';
+      highpass.frequency.setValueAtTime(1200, now);
+
+      const gainNode = ctx.createGain();
+      const targetGain = Math.min(0.35, (0.08 + intensity * 0.18) * heatMultiplier);
+      gainNode.gain.setValueAtTime(0.001, now);
+      gainNode.gain.exponentialRampToValueAtTime(targetGain, now + 0.15);
+
+      noiseSource.connect(filter);
+      filter.connect(highpass);
+      highpass.connect(gainNode);
+      gainNode.connect(ctx.destination);
+
+      noiseSource.start(now);
+      this._sizzleNode = {
+        source: noiseSource,
+        filter: filter,
+        gain: gainNode
+      };
+    } catch (e) {
+      console.warn('Continuous sizzle audio error:', e);
+    }
+  }
+
+  updateContinuousSizzle(proximity = 1.0, heatMultiplier = 1.0) {
+    if (!this._sizzleNode || !this.audioCtx) return;
+    try {
+      const now = this.audioCtx.currentTime;
+      const target = Math.max(0.001, Math.min(0.35, (0.08 + proximity * 0.22) * heatMultiplier));
+      this._sizzleNode.gain.gain.cancelScheduledValues(now);
+      this._sizzleNode.gain.gain.linearRampToValueAtTime(target, now + 0.1);
+      this._sizzleNode.filter.frequency.setValueAtTime(2200 + proximity * 1400 * heatMultiplier, now);
+    } catch (e) {}
+  }
+
+  stopContinuousSizzle() {
+    if (!this._sizzleNode || !this.audioCtx) return;
+    try {
+      const now = this.audioCtx.currentTime;
+      this._sizzleNode.gain.gain.cancelScheduledValues(now);
+      this._sizzleNode.gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.2);
+      const node = this._sizzleNode;
+      this._sizzleNode = null;
+      setTimeout(() => {
+        try {
+          node.source.stop();
+          node.source.disconnect();
+        } catch (e) {}
+      }, 250);
+    } catch (e) {
+      this._sizzleNode = null;
+    }
+  }
+
+  playSkewerClink() {
+    if (this.muted) return;
+    this.init();
+    if (!this.audioCtx) return;
+    const now = this.audioCtx.currentTime;
+    [2200, 3400, 4800].forEach((freq, idx) => {
+      const osc = this.audioCtx.createOscillator();
+      const gain = this.audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now);
+      osc.frequency.exponentialRampToValueAtTime(freq * 0.85, now + 0.12);
+      gain.gain.setValueAtTime(0.12 / (idx + 1), now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
+      osc.connect(gain);
+      gain.connect(this.audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.12);
+    });
+  }
+
+  playOilFlarePop() {
+    if (this.muted) return;
+    this.init();
+    if (!this.audioCtx) return;
+    const now = this.audioCtx.currentTime;
+    const osc = this.audioCtx.createOscillator();
+    const gain = this.audioCtx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(160, now);
+    osc.frequency.exponentialRampToValueAtTime(45, now + 0.08);
+    gain.gain.setValueAtTime(0.2, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+    osc.connect(gain);
+    gain.connect(this.audioCtx.destination);
+    osc.start(now);
+    osc.stop(now + 0.08);
+  }
+
+  triggerHaptic(pattern = [25, 30, 25]) {
+    if (typeof navigator !== 'undefined' && navigator.vibrate) {
+      try {
+        navigator.vibrate(pattern);
+      } catch (e) {}
+    }
   }
 
   playWhack() {
@@ -3161,6 +3296,7 @@ class FusionApp {
     this.assembledSyllables = [];
     this.buildDishSelectedIngredients = [];
     this.hotPotatoGame = null;
+    this.initThreeJSLifecycle();
     this.threeManager = new Fusion3DManager(this);
     this.adminView = 'games';
     this.lastGeneratedKey = null;
@@ -3301,6 +3437,7 @@ class FusionApp {
   }
 
   init() {
+    this.initThreeJSLifecycle();
     this.applyTheme(this.state.theme);
     this.renderHeader();
     this.renderProgressStrip();
@@ -4466,23 +4603,18 @@ class FusionApp {
           </div>
         </div>
         <div class="arena-badges" style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
-          <span class="pill-badge ${diff.badgeClass}" style="font-weight:800; border-color:var(--primary); color:var(--primary);">${diff.badgeText}</span>
           <span class="pill-badge" style="color:var(--primary); font-weight:800;" id="hp-score-badge">Score: 0</span>
           <span class="pill-badge" id="hp-high-badge">Best: ${highScore}</span>
           <span class="pill-badge" style="color:#F59E0B;" id="hp-heat-badge">Heat: Raw (0%)</span>
         </div>
       </div>
 
-      <!-- Dual Mode Selector Switch -->
-      <div class="hp-mode-switch-row" style="display:flex; justify-content:center; gap:0.75rem; margin-bottom:1rem; flex-wrap:wrap;">
-        <button class="btn btn-secondary hp-mode-switch-btn ${!isItchMode ? 'active' : ''}" id="hp-mode-native-btn" style="padding:0.45rem 1.15rem; font-size:0.9rem;">
-          🎮 Native Jump Arena
-        </button>
-        <button class="btn btn-secondary hp-mode-switch-btn ${isItchMode ? 'active' : ''}" id="hp-mode-itch-btn" style="padding:0.45rem 1.15rem; font-size:0.9rem;">
-          🌐 Play Itch.io Original
-        </button>
-        <button class="btn btn-primary" id="hp-launch-fullscreen-btn" style="padding:0.45rem 1.25rem; font-size:0.9rem; background:linear-gradient(135deg, #F59E0B, #EA580C);">
-          🔄 Play Landscape Fullscreen (Arcade Mode)
+      <!-- Prominent Big Arcade Action Launch Button -->
+      <div class="hp-mode-switch-row" style="display:flex; justify-content:center; margin:1rem 0 1.25rem;">
+        <button class="btn btn-primary hp-big-arcade-btn" id="hp-launch-fullscreen-btn" style="width:100%; max-width:560px; padding:0.95rem 1.6rem; font-size:1.1rem; font-weight:900; background:linear-gradient(135deg, #F59E0B, #EA580C, #DC2626); border:2px solid rgba(255,255,255,0.3); border-radius:var(--radius-full); box-shadow:0 6px 26px rgba(234,88,12,0.5); display:inline-flex; align-items:center; justify-content:center; gap:0.75rem; text-transform:uppercase; letter-spacing:0.5px; cursor:pointer;">
+          <span style="font-size:1.4rem;">📱</span>
+          <span>Play Landscape Fullscreen (Arcade Mode)</span>
+          <span style="font-size:1.1rem;">⚡</span>
         </button>
       </div>
 
@@ -4518,11 +4650,14 @@ class FusionApp {
           </div>
 
           <!-- Touch Mobile Whack Controls -->
-          <div class="hp-controls-bar">
-            <button class="btn btn-primary hp-action-btn" id="hp-tap-whack-btn">
+          <div class="hp-controls-bar" style="display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap;">
+            <button class="btn btn-primary hp-action-btn" id="hp-tap-whack-btn" style="flex:1; min-width:200px;">
               💥 TAP TO LAUNCH (Or Click Anywhere On Canvas)
             </button>
-            <div class="hp-status-strip">
+            <button class="btn btn-secondary" id="hp-native-stop-btn" style="padding:0.6rem 1.1rem; font-weight:800; background:rgba(239,68,68,0.2); border:1px solid #EF4444; color:#FFF; border-radius:var(--radius-md); display:none; cursor:pointer;" title="Pause or Stop Current Game">
+              🛑 Stop Game
+            </button>
+            <div class="hp-status-strip" style="min-width:180px;">
               <div class="hp-meter-outer">
                 <div class="hp-meter-fill" id="hp-meter-fill"></div>
               </div>
@@ -4685,8 +4820,92 @@ class FusionApp {
       }
     };
 
+    const stopBtn = arena.querySelector('#hp-native-stop-btn');
+
+    const pauseGame = () => {
+      if (!isPlaying) return;
+      isPlaying = false;
+      sound.playClick();
+      if (stopBtn) stopBtn.style.display = 'none';
+
+      startOverlay.style.display = 'flex';
+      startOverlay.innerHTML = `
+        <div class="hp-overlay-card">
+          <div class="hp-overlay-icon">⏸️</div>
+          <h3 class="hp-overlay-title" style="color:#F59E0B;">Cooking Paused</h3>
+          <p style="color:var(--text-main); font-size:1.05rem; font-weight:800; margin-bottom:0.35rem;">
+            Score: ${score} Potatoes Served • Doneness: ${Math.floor(potato.cookLevel)}%
+          </p>
+          <p class="hp-overlay-desc">
+            Take a breather! You can resume cooking or stop now to register your final score.
+          </p>
+          <div style="display:flex; gap:0.65rem; justify-content:center; flex-wrap:wrap; margin-top:1rem;">
+            <button class="btn btn-primary" id="hp-resume-btn" style="padding:0.65rem 1.6rem; font-size:1rem;">
+              ▶️ Resume Cooking
+            </button>
+            <button class="btn btn-secondary" id="hp-finish-btn" style="padding:0.65rem 1.4rem; font-size:0.95rem; border-color:#EF4444; color:#EF4444; font-weight:800;">
+              🛑 Stop & Save Score
+            </button>
+            <button class="btn btn-secondary" id="hp-pause-restart-btn" style="padding:0.65rem 1.2rem; font-size:0.95rem;">
+              🔄 Restart
+            </button>
+          </div>
+        </div>
+      `;
+
+      arena.querySelector('#hp-resume-btn')?.addEventListener('click', () => {
+        sound.playClick();
+        startOverlay.style.display = 'none';
+        if (stopBtn) stopBtn.style.display = 'inline-flex';
+        isPlaying = true;
+      });
+
+      arena.querySelector('#hp-finish-btn')?.addEventListener('click', () => {
+        sound.playClick();
+        updateLeaderboardScore(score);
+        showToast(`Game stopped! Registered score of ${score} potatoes served.`, 'info');
+        startOverlay.innerHTML = `
+          <div class="hp-overlay-card">
+            <div class="hp-overlay-icon">🏆</div>
+            <h3 class="hp-overlay-title" style="color:#10B981;">Cooking Session Saved!</h3>
+            <p style="color:var(--text-main); font-size:1.15rem; font-weight:800; margin-bottom:0.35rem;">
+              Final Score: ${score} Potatoes Served
+            </p>
+            <p class="hp-overlay-desc">
+              Your score has been registered on the leaderboard!
+            </p>
+            <button class="btn btn-primary" id="hp-new-game-btn" style="padding:0.75rem 2.2rem; font-size:1.05rem; margin-top:0.75rem;">
+              🎮 Start New Game
+            </button>
+          </div>
+        `;
+        arena.querySelector('#hp-new-game-btn')?.addEventListener('click', () => {
+          sound.playClick();
+          startOverlay.style.display = 'none';
+          score = 0;
+          scoreBadge.innerText = 'Score: 0';
+          resetPotato();
+          isPlaying = true;
+          if (stopBtn) stopBtn.style.display = 'inline-flex';
+        });
+      });
+
+      arena.querySelector('#hp-pause-restart-btn')?.addEventListener('click', () => {
+        sound.playClick();
+        startOverlay.style.display = 'none';
+        score = 0;
+        scoreBadge.innerText = 'Score: 0';
+        resetPotato();
+        isPlaying = true;
+        if (stopBtn) stopBtn.style.display = 'inline-flex';
+      });
+    };
+
+    stopBtn?.addEventListener('click', () => pauseGame());
+
     const gameOver = (reason) => {
       isPlaying = false;
+      if (stopBtn) stopBtn.style.display = 'none';
       sound.playWrong();
       if (reason === 'burnt') {
         this.deductScoreAndXP(15, 'Burnt Hot Potato (-15 XP)');
@@ -4721,6 +4940,7 @@ class FusionApp {
         scoreBadge.innerText = `Score: 0`;
         resetPotato();
         isPlaying = true;
+        if (stopBtn) stopBtn.style.display = 'inline-flex';
       });
     };
 
@@ -4758,6 +4978,7 @@ class FusionApp {
       scoreBadge.innerText = `Score: 0`;
       resetPotato();
       isPlaying = true;
+      if (stopBtn) stopBtn.style.display = 'inline-flex';
     });
 
     whackBtn?.addEventListener('pointerdown', (e) => {
@@ -4784,6 +5005,11 @@ class FusionApp {
         if (this.state.activeGameTab === 'hotPotato') {
           e.preventDefault();
           whackPotato();
+        }
+      } else if (e.code === 'Escape' || e.code === 'KeyP') {
+        if (this.state.activeGameTab === 'hotPotato' && isPlaying) {
+          e.preventDefault();
+          pauseGame();
         }
       }
     };
