@@ -1,0 +1,44 @@
+name: Deploy to Cloudflare Pages & Workers
+
+on:
+  push:
+    branches:
+      - main
+      - deploy-fix
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Build & Deploy to Cloudflare
+    permissions:
+      contents: read
+      deployments: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Verify Binary Parity (app.js vs bundle.js)
+        run: |
+          APP_HASH=$(sha256sum app.js | awk '{print $1}')
+          BUNDLE_HASH=$(sha256sum bundle.js | awk '{print $1}')
+          echo "app.js SHA256:    $APP_HASH"
+          echo "bundle.js SHA256: $BUNDLE_HASH"
+          if [ "$APP_HASH" != "$BUNDLE_HASH" ]; then
+            echo "::error::Binary parity failure! app.js and bundle.js are not byte-identical."
+            exit 1
+          fi
+          echo "100% Binary Parity Verified."
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy . --project-name=fusionfood --commit-dirty=true
