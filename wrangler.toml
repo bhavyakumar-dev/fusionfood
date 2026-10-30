@@ -1,10 +1,8 @@
 # ====================================================================
-# Cloudflare Workers & Pages Configuration for Fusion Food Family Lab
+# Cloudflare Pages Configuration for Fusion Food Family Lab
 # ====================================================================
 
-name = "fusion-food-family-lab"
-account_id = "fd5212b57a3b48ade17607107a583e11"
-main = "worker/index.js"
+name = "foodfusionweb"
 compatibility_date = "2024-04-01"
 compatibility_flags = ["nodejs_compat"]
 
@@ -16,8 +14,8 @@ pages_build_output_dir = "."
 # --------------------------------------------------------------------
 [[d1_databases]]
 binding = "DB"
-database_name = "fusionfoodweb"
-database_id = "fusionfoodweb"
+database_name = "foodfusionweb"
+database_id = "653756d0-4a06-4e6a-b022-13d4635125c3"
 
 # --------------------------------------------------------------------
 # Cloudflare Workers KV Namespace Binding (Cache & Offline Fallback)
@@ -25,7 +23,6 @@ database_id = "fusionfoodweb"
 [[kv_namespaces]]
 binding = "KV"
 id = "kv-fusion-food-family-lab-001"
-preview_id = "kv-preview-fusion-food-family-lab-001"
 
 # --------------------------------------------------------------------
 # Environment Variables & Custom Settings
