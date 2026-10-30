@@ -4417,11 +4417,11 @@ class FusionApp {
       this.renderFeedbackSection();
     }
 
-    // Scroll to tab navigation bar smoothly rather than forcing page back to hero
+    // Scroll to tab navigation bar rather than forcing page back to hero
     if (playSound) {
       const navBar = document.getElementById('main-nav-bar');
       if (navBar && tabId !== 'games') {
-        navBar.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        navBar.scrollIntoView({ behavior: 'auto', block: 'start' });
       }
     }
   }
