@@ -2399,7 +2399,7 @@ const DEFAULT_STATE = {
       role: 'Culinary Nutritionist'
     }
   ],
-  apiKeys: [],,
+  apiKeys: [],
   activeGameTab: 'buildDish',
   recipeFilter: 'all',
   recipeCompletedSteps: {},
@@ -4154,6 +4154,8 @@ class FusionApp {
         parsed.apiKeys = parsed.apiKeys
           .filter(key => !['key_master_admin', 'key_public_ro'].includes(key?.keyId))
           .map(({ token, ...metadata }) => metadata);
+        // Remove the old client-side PIN field from legacy localStorage records.
+        delete parsed.adminPin;
         if (!parsed.v2Features) {
           parsed.v2Features = { ...DEFAULT_STATE.v2Features };
         }
