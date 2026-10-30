@@ -1,0 +1,27 @@
+# ====================================================================
+# Cloudflare Worker Configuration for Fusion Food Family Lab
+# ====================================================================
+
+name = "foodfusionweb"
+main = "worker/index.js"
+compatibility_date = "2024-04-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Static Assets (Workers Sites / Static Assets Directory)
+assets = { directory = "." }
+
+# --------------------------------------------------------------------
+# Cloudflare D1 Relational Database Binding
+# --------------------------------------------------------------------
+[[d1_databases]]
+binding = "DB"
+database_name = "foodfusionweb"
+database_id = "653756d0-4a06-4e6a-b022-13d4635125c3"
+
+# --------------------------------------------------------------------
+# Environment Variables & Custom Settings
+# --------------------------------------------------------------------
+[vars]
+ENVIRONMENT = "production"
+APP_NAME = "Fusion Food Family Lab"
+CORS_ORIGIN = "https://fusionfood.pages.dev"

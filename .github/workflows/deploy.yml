@@ -36,9 +36,19 @@ jobs:
           fi
           echo "100% Binary Parity Verified."
 
+      # Deploy 1: Cloudflare Pages (foodfusionweb / fusionfood)
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
+        continue-on-error: true
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy . --project-name=fusionfood --commit-dirty=true
+
+      # Deploy 2: Cloudflare Worker (foodfusionweb)
+      - name: Deploy Cloudflare Worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy --config=wrangler.worker.toml
