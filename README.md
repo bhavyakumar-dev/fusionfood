@@ -11,6 +11,26 @@ Welcome to the **Fusion Food Family Lab**! This interactive web platform brings 
 - **Pause / resume:** the standard arena freezes the remaining time on pause and continues it on resume.
 - **Round end:** when the timer reaches zero, the game stops and presents the final score.
 
+## 🌐 Host on GitHub Pages
+
+This repository includes a GitHub Actions workflow that publishes a static edition of Fusion Food Lab.
+
+**One-time setup**
+1. Open the repository's **Settings → Pages**.
+2. Under **Build and deployment → Source**, select **GitHub Actions**.
+3. Save the setting. The workflow `.github/workflows/github-pages.yml` will publish automatically on pushes to `main`.
+
+**Site address:** `https://shivanktoper.github.io/fusionfood/`
+
+The classic, modern and AI/Vision presets are also available at:
+- `https://shivanktoper.github.io/fusionfood/v1/`
+- `https://shivanktoper.github.io/fusionfood/v2/`
+- `https://shivanktoper.github.io/fusionfood/v3/`
+
+**Static-host limitations:** GitHub Pages serves static HTML, CSS and JavaScript; it does not run the Cloudflare Functions or D1 database used by the original hosted backend. On the GitHub Pages hostname, profiles, progress, reviews and scores stay in the visitor's own browser (local storage/IndexedDB). They do not sync between visitors or devices, and server API-key management is disabled. For a shared global leaderboard, shared feedback or server-backed API features, keep using a backend host such as the existing Cloudflare deployment.
+
+The Pages workflow deliberately publishes only `index.html`, `bundle.js`, `styles.css`, `.nojekyll` and the three version-route wrappers. It does not publish the Cloudflare Worker, Functions, database schema, scripts or repository maintenance files.
+
 ## 🚀 Quick Start
 1. Double-click **`Start-FusionFood.bat`** or open **`index.html`** in any web browser (Chrome, Edge, Opera, Firefox, Safari).
 2. The core app runs without a build step. Google Fonts and optional Three.js visuals load from external CDNs and therefore require an internet connection; core recipes and game fallbacks should remain usable if those assets fail.
