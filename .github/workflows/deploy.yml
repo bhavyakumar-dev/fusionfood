@@ -58,8 +58,11 @@ jobs:
             node --input-type=module --check < "$file"
           done
 
-      - name: Run application API and feature regression suite
-        run: node run_e2e_tests.js --no-chrome
+      # The legacy all-tier suite requires checked-in screenshot/GIF artifacts
+      # and invokes the local-only "agy-node" binary. Run the deterministic API
+      # scenario tier in Linux CI; syntax, parity, build and Worker checks run above.
+      - name: Run deterministic API regression scenarios
+        run: node run_e2e_tests.js --tier=4 --no-chrome
 
       - name: Validate Worker bundle and Wrangler configuration
         run: npx --yes wrangler@4 deploy --dry-run --config=wrangler.worker.toml
