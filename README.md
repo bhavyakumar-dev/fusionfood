@@ -36,9 +36,9 @@ Welcome to the **Fusion Food Family Lab**! This interactive web platform brings 
 * **"Parent Hint" Button**: Brainstorm together with helpful real-world cooking hints.
 
 ### 4. 🗺️ India Availability Map & City Quest
-* **Interactive SVG Map**: Explore regional fusion adoption across 7 key metro hubs (Mumbai, Delhi-NCR, Bengaluru, Goa, Pune, Hyderabad).
+* **Interactive SVG Map**: Explore regional fusion adoption across the cities represented in the map.
 * **Availability Matrix**: Filter dishes by *Emerging/Niche*, *Moderate*, and *High* availability.
-* **Bazaar Quests**: Discover authentic local markets (Crawford Market, INA Market, Russell Market) that stock replacement ingredients!
+* **Bazaar Quests**: Discover authentic local markets that stock replacement ingredients.
 
 ### 5. 🎡 Spin the Wheel & Culinary Food Science
 * **Dynamic Physics Wheel**: Spin across 6 core food chemistry concepts:
@@ -49,6 +49,11 @@ Welcome to the **Fusion Food Family Lab**! This interactive web platform brings 
   * *Alkaline Starch Chemistry* (Why kansui makes ramen noodles bouncy)
   * *Fat-Soluble Spice Volatiles* (Why tadka in hot oil/ghee awakens spices)
 * **Rapid Science Challenge**: Answer an instant food chemistry mini-question to win +50 Bonus XP!
+
+### 6. 🥔 Hot Potato Rush
+* **60-second round**: A fixed countdown is visible during both the standard arena and fullscreen arcade.
+* **Round controls**: Start and replay begin a fresh 60-second session; pausing freezes the standard arena clock and resume continues from the remaining time.
+* **Timed finish**: When the countdown reaches zero, gameplay stops and the final score is presented.
 
 ---
 
@@ -79,11 +84,11 @@ Every fusion dish includes a full Indian kitchen adaptation:
 
 ---
 
-## 🔒 Secret Admin Controls
-* Click the **Lock Icon (🔒)** in the site header or footer.
-* Enter Secret Admin PIN (configured by admin).
-* Toggle any of the 6 games on or off.
-* Reset family high scores or streak records.
+## Admin Controls
+* Open **Tools → Admin Settings** from the site header.
+* On first use, create a browser-local PIN of at least 8 characters. The PIN is stored as a salted PBKDF2-derived hash.
+* This is a **local interface lock only**. It does not secure Cloudflare D1 data, API routes, or other server-side operations.
+* Toggle which of the 6 games appear and manage local family settings.
 
 ---
 
