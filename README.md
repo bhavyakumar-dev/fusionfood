@@ -87,3 +87,77 @@ Every fusion dish includes a full Indian kitchen adaptation:
 * **Theme Modes**: Seamless toggle between **Light Mode** (Parchment & Terracotta) and **Dark Mode** (Cast Iron Espresso & Saffron Glow).
 * **Web Audio API Synthesizer**: Chimes, clicks, wheel ticks, error buzzes, and victory fanfares generated via native code (with master mute toggle 🔇).
 * **Celebration Confetti**: Full-screen particle physics celebrations on game completions and tier rank-ups!
+
+
+---
+
+## ☁️ Cloudflare Production Deployment
+
+Fusion Food uses **Cloudflare Pages for the website and Pages Functions**, with an optional standalone **API-only Worker**. Both API deployments use the D1 binding named `DB`.
+
+### Production build
+
+This project has no frontend package manager or bundler. Prepare a clean allowlisted output directory:
+
+```bash
+node scripts/build-pages.mjs
+node scripts/validate-cloudflare.mjs
+```
+
+Deploy Pages from `dist/`, never from the repository root:
+
+```bash
+npx wrangler@4 pages deploy dist --project-name=fusionfood --branch=main
+```
+
+The Pages Functions source stays in the top-level `functions/` directory for Wrangler to bundle. The `dist/` directory contains only `index.html`, `styles.css`, `bundle.js`, `_headers`, and `_redirects`. Database schemas, Worker source, tests, scripts and Wrangler configuration are not public assets.
+
+When configuring Cloudflare Pages Git integration, set the build command to `node scripts/build-pages.mjs` and build output directory to `dist`. Do not use the repository root as the output directory.
+
+### Required secrets
+
+The Admin PIN is not shipped in browser JavaScript. Before using the online Admin panel, set both secrets on the Pages project:
+
+```bash
+npx wrangler@4 pages secret put ADMIN_PIN --project-name=fusionfood
+npx wrangler@4 pages secret put ADMIN_SESSION_SECRET --project-name=fusionfood
+```
+
+Use a new private PIN (do not reuse the old hardcoded demo PIN) and a random `ADMIN_SESSION_SECRET` of at least 32 characters. Generate a session secret with:
+
+```bash
+node -e "console.log(require('node:crypto').randomBytes(48).toString('base64url'))"
+```
+
+For the standalone API Worker, set the same secrets for that Worker too:
+
+```bash
+npx wrangler@4 secret put ADMIN_PIN --config=wrangler.worker.toml
+npx wrangler@4 secret put ADMIN_SESSION_SECRET --config=wrangler.worker.toml
+npx wrangler@4 deploy --config=wrangler.worker.toml
+```
+
+Admin sessions use a signed two-hour `HttpOnly`, `Secure`, `SameSite=Strict` cookie. The PIN is not saved in local browser storage. Offline `file://` mode keeps local-only admin controls, which do not authenticate to the deployed API.
+
+### D1 setup
+
+The existing D1 database is configured by ID in both Wrangler files. For a **new, empty** database only, initialize it once:
+
+```bash
+npx wrangler@4 d1 execute foodfusionweb --remote --file=./schema.sql
+```
+
+Do not run this against a database containing production data without a verified backup. The GitHub workflow does not automatically reinitialize or seed D1.
+
+### GitHub Actions
+
+Configure repository secrets:
+
+- `CLOUDFLARE_API_TOKEN` — scoped to the account with Pages and Workers deployment permissions.
+- `CLOUDFLARE_ACCOUNT_ID` — the target Cloudflare account ID.
+
+Pushes and pull requests run the build, parity check, regression suite and Wrangler Worker dry run. Only pushes to `main` deploy Pages and the API Worker. Deployment errors are not ignored.
+
+### CORS and custom domains
+
+`CORS_ORIGIN` is the primary Pages origin. For a custom domain, add its exact HTTPS origin to the `CORS_ALLOWED_ORIGINS` Pages/Worker variable (comma-separated when there are multiple origins). Do not use wildcard origins. CORS is not a substitute for authentication.
