@@ -194,7 +194,7 @@
     <!-- ========================================================
          TAB PANE 1: GAMES HUB (Horizontal Scroll Selector + Arena)
          ======================================================== -->
-    <div class="main-tab-pane active" id="pane-games">
+    <div class="main-tab-pane active" id="pane-games" role="tabpanel" aria-labelledby="tab-btn-games" tabindex="0">
       <div class="container">
         <!-- Compact Games Header -->
         <div class="games-welcome-banner">
@@ -233,7 +233,7 @@
     <!-- ========================================================
          TAB PANE 2: KITCHEN LAB (Replicate in India Recipes)
          ======================================================== -->
-    <div class="main-tab-pane" id="pane-kitchen">
+    <div class="main-tab-pane" id="pane-kitchen" role="tabpanel" aria-labelledby="tab-btn-kitchen" tabindex="0">
       <div class="container">
         <div class="section-head" style="margin-bottom:1.5rem;">
           <span class="handwritten">From Global Menu to Desi Rasoi</span>
@@ -284,7 +284,7 @@
     <!-- ========================================================
          TAB PANE 3: LEADERBOARD & CHEF RANKS
          ======================================================== -->
-    <div class="main-tab-pane" id="pane-leaderboard">
+    <div class="main-tab-pane" id="pane-leaderboard" role="tabpanel" aria-labelledby="header-leaderboard-pill" tabindex="0">
       <div class="container">
         <div class="section-head" style="margin-bottom:1.75rem;">
           <span class="handwritten">The Hall of Culinary Fame</span>
@@ -341,7 +341,7 @@
     <!-- ========================================================
          TAB PANE 4: FUSION EXPLORER (World Cuisines & Flavor Lab)
          ======================================================== -->
-    <div class="main-tab-pane" id="pane-fusion">
+    <div class="main-tab-pane" id="pane-fusion" role="tabpanel" aria-labelledby="tab-btn-fusion" tabindex="0">
       <div class="container">
         <div class="section-head" style="margin-bottom:1.5rem;">
           <span class="handwritten">Global Flavors & Desi Roots</span>
@@ -424,13 +424,13 @@
           <span class="pill-badge" id="hp-modal-diff-badge" style="background:#F59E0B; color:#000; font-weight:800; font-size:0.75rem;">Kid Chef</span>
         </div>
         <div style="display:flex; align-items:center; gap:0.5rem;">
-          <button class="btn btn-secondary" id="hp-modal-stop-btn" style="padding:0.35rem 0.85rem; font-size:0.78rem; color:#FFF; background:rgba(239,68,68,0.25); border-color:#EF4444; font-weight:800; cursor:pointer;" title="Stop or Pause the Game">
+          <button class="btn btn-secondary" id="hp-modal-stop-btn" style="padding:0.35rem 0.85rem; font-size:0.78rem; color:#FFF; background:rgba(239,68,68,0.35); border-color:#EF4444; font-weight:800; cursor:pointer;" title="Stop or Pause the Game">
             🛑 Stop Game
           </button>
-          <button class="btn btn-secondary" id="hp-fullscreen-toggle-btn" style="padding:0.35rem 0.75rem; font-size:0.78rem; color:#FFF; border-color:rgba(255,255,255,0.3);">
+          <button class="btn btn-secondary" id="hp-fullscreen-toggle-btn" style="padding:0.35rem 0.75rem; font-size:0.78rem; color:#FFFFFF; background:rgba(255,255,255,0.18); border:1px solid rgba(255,255,255,0.35);">
             ⛶ Fullscreen
           </button>
-          <button class="modal-close-btn" id="close-hot-potato-modal-btn" aria-label="Close Hot Potato Modal" style="color:#FFF;">✕</button>
+          <button class="modal-close-btn" id="close-hot-potato-modal-btn" aria-label="Close Hot Potato Modal" style="color:#FFFFFF; background:rgba(255,255,255,0.18); border:1px solid rgba(255,255,255,0.35);">✕</button>
         </div>
       </div>
       <div class="hp-fullscreen-body" id="hp-fullscreen-body">
@@ -485,7 +485,7 @@
   </div>
 
   <!-- Toast Notification Container with Accessible ARIA Live Region (A-05, A-15) -->
-  <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+  <div id="toast-container" class="toast-container" role="status" aria-live="polite" aria-atomic="true"></div>
 
   <!-- Warm Illustrated Cookbook Footer -->
   <footer class="site-footer">
@@ -543,19 +543,19 @@
   </footer>
 
   <!-- Floating Bottom Navigation Bar for Mobile & Compact Screens -->
-  <nav class="mobile-bottom-nav" id="mobile-nav-bar" aria-label="Mobile Navigation">
-    <a role="button" tabindex="0" class="nav-link active" data-tab-target="games" id="mob-tab-btn-games">
+  <nav class="mobile-bottom-nav" id="mobile-nav-bar" aria-label="Mobile View Switcher" role="tablist">
+    <button type="button" class="nav-link active" data-tab-target="games" id="mob-tab-btn-games" role="tab" aria-selected="true">
       <span>🎮</span> <span>Games</span>
-    </a>
-    <a role="button" tabindex="0" class="nav-link" data-tab-target="kitchen" id="mob-tab-btn-kitchen">
+    </button>
+    <button type="button" class="nav-link" data-tab-target="kitchen" id="mob-tab-btn-kitchen" role="tab" aria-selected="false">
       <span>📖</span> <span>Kitchen</span>
-    </a>
-    <a role="button" tabindex="0" class="nav-link" data-tab-target="fusion" id="mob-tab-btn-fusion">
+    </button>
+    <button type="button" class="nav-link" data-tab-target="fusion" id="mob-tab-btn-fusion" role="tab" aria-selected="false">
       <span>🌍</span> <span>Fusion</span>
-    </a>
-    <a role="button" tabindex="0" class="nav-link" data-tab-target="leaderboard" id="mob-tab-btn-leaderboard" style="display:none;">
+    </button>
+    <button type="button" class="nav-link" data-tab-target="leaderboard" id="mob-tab-btn-leaderboard" role="tab" aria-selected="false" style="display:none;">
       <span>🏆</span> <span>Leaderboard</span>
-    </a>
+    </button>
   </nav>
 
   <!-- Application Script (Zero-CORS, works locally & over web) -->

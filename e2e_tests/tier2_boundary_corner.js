@@ -214,7 +214,7 @@ async function runTier2Tests(engine, reporter, options = {}) {
     if (cdp) {
       const minTarget = await cdp.evaluate(`
         (() => {
-          const btns = Array.from(document.querySelectorAll('.site-nav button, .mobile-bottom-nav button'));
+          const btns = Array.from(document.querySelectorAll('.site-nav button, .mobile-bottom-nav button')).filter(b => b.offsetParent !== null && window.getComputedStyle(b).display !== 'none');
           return btns.length > 0 && btns.every(b => {
             const rect = b.getBoundingClientRect();
             return rect.width >= 32 && rect.height >= 32;

@@ -17,312 +17,1135 @@ if (typeof window !== 'undefined' && window.fetch) {
 // ==========================================
 const FUSION_DISHES = [
   {
-    id: 'nikkei-ceviche',
-    name: 'Nikkei Mushroom Ceviche',
-    originalName: 'Nikkei Ceviche',
-    origin: 'Japanese-Peruvian',
-    pronunciationIPA: '/ni.kei seˈβi.ʧe/',
-    phonetic: 'nee-kay seh-VEE-cheh',
-    syllables: ['nee', 'kay', 'seh', 'VEE', 'cheh'],
-    audioText: 'Nikkei Ceviche',
-    description: 'A vibrant cross between Japanese sashimi artistry and Peruvian citrus-marinated raw flavors, adapted with tender king oyster mushrooms and hearts of palm.',
-    availability: 'Emerging / Niche',
-    availabilityClass: 'niche',
-    metros: ['Mumbai', 'Delhi-NCR', 'Goa', 'Bengaluru'],
-    cultureStory: 'Born in Peru when Japanese immigrants (*Nikkei*) combined their reverence for raw seafood and dashi with Peruvian limes, ají peppers, and sweet potatoes.',
-    originalIngredients: ['Raw ocean fish cubes', 'Dashi broth', 'Yuzu/lime juice', 'Red onions', 'Ají amarillo', 'Cancha (toasted corn nuts)'],
-    indianSubstitutes: [
-      { original: 'Ocean fish', substitute: 'King Oyster Mushrooms or Tender Hearts of Palm', why: 'Provides dense, chewy, absorbent texture that mimics cured sashimi' },
-      { original: 'Ají Amarillo chili', substitute: 'Yellow Bhavnagri chili + pinch of turmeric & drop of honey', why: 'Matches the mild heat and bright fruity notes' },
-      { original: 'Cancha (Andean corn)', substitute: 'Crispy Roasted Salted Chana or puffed Makhanas', why: 'Delivers the signature satisfying crunchy contrast' },
-      { original: 'Yuzu juice', substitute: 'Gondhoraj lime or sweet Mosambi + fresh lemon juice', why: 'Captures the floral, highly aromatic citrus perfume' }
+    "id": "nikkei-ceviche",
+    "name": "Nikkei Mushroom Ceviche",
+    "originalName": "Nikkei Ceviche",
+    "origin": "Japanese-Peruvian",
+    "prepTime": "15 mins",
+    "cookTime": "0 mins",
+    "totalTime": "15 mins",
+    "servings": "2 servings",
+    "difficulty": "Beginner",
+    "allergens": {
+      "contains": [
+        "Soy",
+        "Gluten (in standard soy sauce)"
+      ],
+      "mayContain": [
+        "Sesame"
+      ],
+      "warning": "Commercial soy sauce dashi contains wheat gluten and fermented soy. Cross-contact warning for kitchens handling peanuts or tree nuts.",
+      "swaps": "Use coconut aminos or gluten-free tamari for 100% soy-free and wheat-free preparation."
+    },
+    "pronunciationIPA": "/ni.kei seˈβi.ʧe/",
+    "phonetic": "nee-kay seh-VEE-cheh",
+    "syllables": [
+      "nee",
+      "kay",
+      "seh",
+      "VEE",
+      "cheh"
     ],
-    recipeSteps: [
-      { step: 1, title: 'Citrus Cure Bath', text: 'Whisk lime juice, grated ginger, and a dash of soy dashi to create vegetarian Leche de Tigre.', kidSafe: true },
-      { step: 2, title: 'Slice the Plant Protein', text: 'Carefully cube king oyster mushrooms and soak them in warm salted water for 3 minutes.', kidSafe: false },
-      { step: 3, title: 'Infuse & Marinate', text: 'Toss sliced red onions, yellow chili paste, and mushrooms into the cold citrus bath for 6 minutes.', kidSafe: true },
-      { step: 4, title: 'Plate with Texture', text: 'Arrange over boiled sweet potato puree and garnish with roasted chana and fresh cilantro.', kidSafe: true }
+    "audioText": "Nikkei Ceviche",
+    "description": "A vibrant cross between Japanese sashimi artistry and Peruvian citrus-marinated raw flavors, adapted with tender king oyster mushrooms and hearts of palm.",
+    "availability": "Emerging / Niche",
+    "availabilityClass": "niche",
+    "metros": [
+      "Mumbai",
+      "Delhi-NCR",
+      "Goa",
+      "Bengaluru"
     ],
-    pantryItems: [
-      { name: 'King Oyster Mushrooms', isCorrect: true, emoji: '🍄' },
-      { name: 'Fresh Lime Juice', isCorrect: true, emoji: '🍋' },
-      { name: 'Grated Ginger & Garlic', isCorrect: true, emoji: '🧄' },
-      { name: 'Yellow Bhavnagri Chili', isCorrect: true, emoji: '🌶️' },
-      { name: 'Roasted Salted Chana', isCorrect: true, emoji: '🥜' },
-      { name: 'Sweet Potato Puree', isCorrect: true, emoji: '🍠' },
-      // Distractors
-      { name: 'Fish Sauce', isCorrect: false, emoji: '🐟', distractorReason: 'Not vegetarian! We use soy-mushroom dashi instead.' },
-      { name: 'Raw Chicken Slices', isCorrect: false, emoji: '🍗', distractorReason: 'Wrong cuisine and unsafe to eat raw!' },
-      { name: 'Tomato Ketchup', isCorrect: false, emoji: '🍅', distractorReason: 'Too sweet and unnatural for Nikkei Leche de Tigre!' }
+    "cultureStory": "Born in Peru when Japanese immigrants (*Nikkei*) combined their reverence for raw seafood and dashi with Peruvian limes, ají peppers, and sweet potatoes.",
+    "originalIngredients": [
+      "Raw ocean fish cubes (200g)",
+      "Dashi broth (50ml)",
+      "Yuzu/lime juice (30ml)",
+      "Red onions (1/2 sliced)",
+      "Ají amarillo (2 pods)",
+      "Cancha toasted corn nuts (50g)"
     ],
-    scienceNote: 'Citrus acid (citric acid, pH ~2.2) breaks down the mushroom cell walls slightly and causes proteins to firm up, creating a tender yet bouncy chew without heating!'
+    "indianSubstitutes": [
+      {
+        "original": "Ocean fish",
+        "originalQty": "200g",
+        "substitute": "King Oyster Mushrooms or Tender Hearts of Palm",
+        "substituteQty": "200g",
+        "why": "Provides dense, chewy, absorbent texture that mimics cured sashimi",
+        "culinaryNote": "Absorbs citrus cure evenly without turning mushy"
+      },
+      {
+        "original": "Ají Amarillo chili",
+        "originalQty": "2 pods",
+        "substitute": "Yellow Bhavnagri chili + pinch of turmeric & drop of honey",
+        "substituteQty": "2 chilies",
+        "why": "Matches the mild heat and bright fruity notes",
+        "culinaryNote": "Mild 1,000 SHU heat with aromatic sweetness"
+      },
+      {
+        "original": "Cancha (Andean corn)",
+        "originalQty": "50g",
+        "substitute": "Crispy Roasted Salted Chana or puffed Makhanas",
+        "substituteQty": "50g",
+        "why": "Delivers the signature satisfying crunchy contrast",
+        "culinaryNote": "Stays crunchy even in citrus juice"
+      },
+      {
+        "original": "Yuzu juice",
+        "originalQty": "30ml",
+        "substitute": "Gondhoraj lime or sweet Mosambi + fresh lemon juice",
+        "substituteQty": "30ml",
+        "why": "Captures the floral, highly aromatic citrus perfume",
+        "culinaryNote": "Gondhoraj adds floral terpene notes identical to Japanese yuzu"
+      }
+    ],
+    "recipeSteps": [
+      {
+        "step": 1,
+        "title": "Citrus Cure Bath",
+        "text": "Whisk lime juice, grated ginger, and a dash of soy dashi to create vegetarian Leche de Tigre.",
+        "kidSafe": true
+      },
+      {
+        "step": 2,
+        "title": "Slice the Plant Protein",
+        "text": "Carefully cube king oyster mushrooms and soak them in warm salted water for 3 minutes.",
+        "kidSafe": false
+      },
+      {
+        "step": 3,
+        "title": "Infuse & Marinate",
+        "text": "Toss sliced red onions, yellow chili paste, and mushrooms into the cold citrus bath for 6 minutes.",
+        "kidSafe": true
+      },
+      {
+        "step": 4,
+        "title": "Plate with Texture",
+        "text": "Arrange over boiled sweet potato puree and garnish with roasted chana and fresh cilantro.",
+        "kidSafe": true
+      }
+    ],
+    "pantryItems": [
+      {
+        "name": "King Oyster Mushrooms",
+        "isCorrect": true,
+        "emoji": "🍄"
+      },
+      {
+        "name": "Fresh Lime Juice",
+        "isCorrect": true,
+        "emoji": "🍋"
+      },
+      {
+        "name": "Grated Ginger & Garlic",
+        "isCorrect": true,
+        "emoji": "🧄"
+      },
+      {
+        "name": "Yellow Bhavnagri Chili",
+        "isCorrect": true,
+        "emoji": "🌶️"
+      },
+      {
+        "name": "Roasted Salted Chana",
+        "isCorrect": true,
+        "emoji": "🥜"
+      },
+      {
+        "name": "Sweet Potato Puree",
+        "isCorrect": true,
+        "emoji": "🍠"
+      },
+      {
+        "name": "Fish Sauce",
+        "isCorrect": false,
+        "emoji": "🐟",
+        "distractorReason": "Not vegetarian! We use soy-mushroom dashi instead."
+      },
+      {
+        "name": "Raw Chicken Slices",
+        "isCorrect": false,
+        "emoji": "🍗",
+        "distractorReason": "Wrong cuisine and unsafe to eat raw!"
+      },
+      {
+        "name": "Tomato Ketchup",
+        "isCorrect": false,
+        "emoji": "🍅",
+        "distractorReason": "Too sweet and unnatural for Nikkei Leche de Tigre!"
+      }
+    ],
+    "scienceNote": "Citrus acid (citric acid, pH ~2.2) breaks down the mushroom cell walls slightly and causes proteins to firm up, creating a tender yet bouncy chew without heating!"
   },
   {
-    id: 'tofu-tiradito',
-    name: 'King Oyster & Tofu Tiradito',
-    originalName: 'Tiradito',
-    origin: 'Japanese-Peruvian',
-    pronunciationIPA: '/ti.ɾaˈði.to/',
-    phonetic: 'tee-rah-DEE-toh',
-    syllables: ['tee', 'rah', 'DEE', 'toh'],
-    audioText: 'Tiradito',
-    description: 'Delicate carpaccio-thin slices draped in a zesty, creamy ají amarillo sauce. Unlike ceviche, tiradito is sliced into strips and sauced immediately before serving.',
-    availability: 'Emerging / Niche',
-    availabilityClass: 'niche',
-    metros: ['Mumbai', 'Delhi-NCR', 'Bengaluru'],
-    cultureStory: 'Pioneered in Lima fine dining, Tiradito highlights Japanese sashimi knife skills combined with Peruvian tiger milk and spicy emulsion.',
-    originalIngredients: ['Sashimi fish carpaccio', 'Leche de tigre', 'Ají amarillo paste', 'Soy sauce', 'Sesame oil', 'Microgreens'],
-    indianSubstitutes: [
-      { original: 'Sashimi fish', substitute: 'Firm Silken Tofu or poached King Oyster coins', why: 'Gives silky, melt-in-mouth carpaccio ribbons' },
-      { original: 'Ají amarillo paste', substitute: 'Blanched yellow bell pepper + 1 fiery green chili puree', why: 'Recreates the golden-orange velvety emulsion' },
-      { original: 'Microgreens', substitute: 'Fresh tender methi leaves or baby coriander sprigs', why: 'Local aromatic peppery freshness' }
+    "id": "tofu-tiradito",
+    "name": "King Oyster & Tofu Tiradito",
+    "originalName": "Tiradito",
+    "origin": "Japanese-Peruvian",
+    "prepTime": "12 mins",
+    "cookTime": "3 mins",
+    "totalTime": "15 mins",
+    "servings": "2 servings",
+    "difficulty": "Beginner",
+    "allergens": {
+      "contains": [
+        "Soy",
+        "Sesame"
+      ],
+      "mayContain": [
+        "Gluten"
+      ],
+      "warning": "Tofu is a concentrated soy product. Toasted sesame oil is a known allergen. Cross-contact warning for kitchens handling peanuts or nuts.",
+      "swaps": "Swap tofu with poached king oyster coins for 100% soy-free. Use extra virgin olive oil or cold-pressed mustard oil in place of sesame oil."
+    },
+    "pronunciationIPA": "/ti.ɾaˈði.to/",
+    "phonetic": "tee-rah-DEE-toh",
+    "syllables": [
+      "tee",
+      "rah",
+      "DEE",
+      "toh"
     ],
-    recipeSteps: [
-      { step: 1, title: 'Precision Slicing', text: 'Slice pressed firm tofu or poached king oyster mushroom stems into paper-thin 2mm ribbons.', kidSafe: false },
-      { step: 2, title: 'Whisk the Golden Tiger Milk', text: 'Blend yellow pepper paste, lime juice, ginger juice, sesame oil, and sea salt until emulsified.', kidSafe: true },
-      { step: 3, title: 'The Draped Presentation', text: 'Layer the ribbons in an overlapping fan on a chilled ceramic platter.', kidSafe: true },
-      { step: 4, title: 'Sauce and Garnish', text: 'Spoon the sauce generously right over the slices; dot with toasted sesame seeds and baby coriander.', kidSafe: true }
+    "audioText": "Tiradito",
+    "description": "Delicate carpaccio-thin slices draped in a zesty, creamy ají amarillo sauce. Unlike ceviche, tiradito is sliced into strips and sauced immediately before serving.",
+    "availability": "Emerging / Niche",
+    "availabilityClass": "niche",
+    "metros": [
+      "Mumbai",
+      "Delhi-NCR",
+      "Bengaluru"
     ],
-    pantryItems: [
-      { name: 'Silken Firm Tofu', isCorrect: true, emoji: '🧈' },
-      { name: 'Yellow Bell Pepper Puree', isCorrect: true, emoji: '🫑' },
-      { name: 'Toasted Sesame Oil', isCorrect: true, emoji: '🥣' },
-      { name: 'Fresh Lime & Ginger', isCorrect: true, emoji: '🍋' },
-      { name: 'Baby Coriander Garnish', isCorrect: true, emoji: '🌿' },
-      // Distractors
-      { name: 'Mayonnaise', isCorrect: false, emoji: '🥚', distractorReason: 'Traditional Leche de Tigre uses lime emulsion, not heavy egg mayo!' },
-      { name: 'Tamarind Chutney', isCorrect: false, emoji: '🍯', distractorReason: 'Belongs to chaat, too heavy for delicate tiradito!' }
+    "cultureStory": "Pioneered in Lima fine dining, Tiradito highlights Japanese sashimi knife skills combined with Peruvian tiger milk and spicy emulsion.",
+    "originalIngredients": [
+      "Sashimi fish carpaccio (180g)",
+      "Leche de tigre (60ml)",
+      "Ají amarillo paste (2 tbsp)",
+      "Soy sauce (1 tsp)",
+      "Sesame oil (1 tsp)",
+      "Microgreens (10g)"
     ],
-    scienceNote: 'Tiradito sauces rely on mechanical emulsion: vigorous whisking drops of sesame oil into acidic lime juice creates microscopic droplets that stay suspended!'
+    "indianSubstitutes": [
+      {
+        "original": "Sashimi fish",
+        "originalQty": "180g",
+        "substitute": "Firm Silken Tofu or poached King Oyster coins",
+        "substituteQty": "180g",
+        "why": "Gives silky, melt-in-mouth carpaccio ribbons",
+        "culinaryNote": "Poaching for 90 seconds creates glistening tender sheets"
+      },
+      {
+        "original": "Ají amarillo paste",
+        "originalQty": "2 tbsp",
+        "substitute": "Blanched yellow bell pepper + 1 fiery green chili puree",
+        "substituteQty": "2 tbsp",
+        "why": "Recreates the golden-orange velvety emulsion",
+        "culinaryNote": "Provides velvety natural pectin emulsion"
+      },
+      {
+        "original": "Microgreens",
+        "originalQty": "10g",
+        "substitute": "Fresh tender methi leaves or baby coriander sprigs",
+        "substituteQty": "10g",
+        "why": "Local aromatic peppery freshness",
+        "culinaryNote": "Mild bitterness balances zesty sauce"
+      }
+    ],
+    "recipeSteps": [
+      {
+        "step": 1,
+        "title": "Precision Slicing",
+        "text": "Slice pressed firm tofu or poached king oyster mushroom stems into paper-thin 2mm ribbons.",
+        "kidSafe": false
+      },
+      {
+        "step": 2,
+        "title": "Whisk the Golden Tiger Milk",
+        "text": "Blend yellow pepper paste, lime juice, ginger juice, sesame oil, and sea salt until emulsified.",
+        "kidSafe": true
+      },
+      {
+        "step": 3,
+        "title": "The Draped Presentation",
+        "text": "Layer the ribbons in an overlapping fan on a chilled ceramic platter.",
+        "kidSafe": true
+      },
+      {
+        "step": 4,
+        "title": "Sauce and Garnish",
+        "text": "Spoon the sauce generously right over the slices; dot with toasted sesame seeds and baby coriander.",
+        "kidSafe": true
+      }
+    ],
+    "pantryItems": [
+      {
+        "name": "Silken Firm Tofu",
+        "isCorrect": true,
+        "emoji": "🧈"
+      },
+      {
+        "name": "Yellow Bell Pepper Puree",
+        "isCorrect": true,
+        "emoji": "🫑"
+      },
+      {
+        "name": "Toasted Sesame Oil",
+        "isCorrect": true,
+        "emoji": "🥣"
+      },
+      {
+        "name": "Fresh Lime & Ginger",
+        "isCorrect": true,
+        "emoji": "🍋"
+      },
+      {
+        "name": "Baby Coriander Garnish",
+        "isCorrect": true,
+        "emoji": "🌿"
+      },
+      {
+        "name": "Mayonnaise",
+        "isCorrect": false,
+        "emoji": "🥚",
+        "distractorReason": "Traditional Leche de Tigre uses lime emulsion, not heavy egg mayo!"
+      },
+      {
+        "name": "Tamarind Chutney",
+        "isCorrect": false,
+        "emoji": "🍯",
+        "distractorReason": "Belongs to chaat, too heavy for delicate tiradito!"
+      }
+    ],
+    "scienceNote": "Tiradito sauces rely on mechanical emulsion: vigorous whisking drops of sesame oil into acidic lime juice creates microscopic droplets that stay suspended!"
   },
   {
-    id: 'paneer-tacos',
-    name: 'Smoky Paneer Tikka Tacos',
-    originalName: 'Butter Chicken Tacos',
-    origin: 'Tex-Mex & Indian',
-    pronunciationIPA: '/ˈbʌt.ər ˈtʃɪk.ɪn ˈtɑː.koʊz/',
-    phonetic: 'but-er chik-in tah-kohz',
-    syllables: ['but', 'er', 'tik', 'ka', 'tah', 'kohz'],
-    audioText: 'Paneer Tikka Tacos',
-    description: 'Charred, tandoori-spiced paneer cubes folded into crisp or soft tortillas, drizzled with velvety makhani sauce and pickled sirka onions.',
-    availability: 'Moderate to High',
-    availabilityClass: 'high',
-    metros: ['Mumbai', 'Delhi-NCR', 'Bengaluru', 'Hyderabad', 'Pune'],
-    cultureStory: 'Born in modern Indian-American gastropubs and food trucks, merging the beloved Delhi tandoor with vibrant Mexican street tacos.',
-    originalIngredients: ['Tacos', 'Tandoori chicken', 'Makhani gravy', 'Pickled red onions', 'Cilantro', 'Sour cream'],
-    indianSubstitutes: [
-      { original: 'Chicken tikka', substitute: 'Charred Malai Paneer or Smoked Soya Chaap', why: 'Absorbs the tandoori marinade beautifully and provides juicy bites' },
-      { original: 'Mexican Sour Cream (Crema)', substitute: 'Whisked Hung Curd (Chakka) with lemon & pinch of salt', why: 'Delivers the exact creamy tanginess with lower calories' },
-      { original: 'Corn Tortilla', substitute: 'Makki di Roti (fine grind) or mini roomali roti', why: 'Heritage Indian corn bread that acts identically to artisan masa tortillas' }
+    "id": "paneer-tacos",
+    "name": "Smoky Paneer Tikka Tacos",
+    "originalName": "Tandoori Tikka Tacos",
+    "origin": "Tex-Mex & Indian",
+    "prepTime": "15 mins",
+    "cookTime": "10 mins",
+    "totalTime": "25 mins",
+    "servings": "3-4 servings",
+    "difficulty": "Beginner",
+    "allergens": {
+      "contains": [
+        "Dairy / Milk (Paneer, Curd, Butter)",
+        "Gluten (if using wheat tortillas)"
+      ],
+      "mayContain": [
+        "Mustard"
+      ],
+      "warning": "Contains cow/buffalo milk dairy. Verify packaged taco shells for 100% gluten-free corn if celiac/gluten-intolerant.",
+      "swaps": "Use smoked firm tofu or soya chaap for dairy-free. Use 100% corn tortillas or Makki di Roti for gluten-free."
+    },
+    "pronunciationIPA": "/pəˈniːr ˈtɪk.ɑː ˈtɑː.koʊz/",
+    "phonetic": "puh-neer tik-ah tah-kohz",
+    "syllables": [
+      "puh",
+      "neer",
+      "tik",
+      "kah",
+      "tah",
+      "kohz"
     ],
-    recipeSteps: [
-      { step: 1, title: 'Tandoori Marinade', text: 'Toss paneer cubes in mustard oil, Kashmiri degi mirch, hung curd, and roasted besan.', kidSafe: true },
-      { step: 2, title: 'Char & Sizzle', text: 'Sear the paneer on a cast-iron tawa until smoky grill marks form.', kidSafe: false },
-      { step: 3, title: 'Simmer Makhani Glaze', text: 'Cook tomato-butter reduction with crushed kasuri methi and green cardamom powder.', kidSafe: false },
-      { step: 4, title: 'Taco Assembly', text: 'Warm the tortillas, pile on smoked paneer, drizzle makhani gravy, sirka onion, and hung curd crema.', kidSafe: true }
+    "audioText": "Paneer Tikka Tacos",
+    "description": "Charred, tandoori-spiced paneer cubes folded into crisp or soft tortillas, drizzled with velvety makhani sauce and pickled sirka onions.",
+    "availability": "Moderate to High",
+    "availabilityClass": "high",
+    "metros": [
+      "Mumbai",
+      "Delhi-NCR",
+      "Bengaluru",
+      "Hyderabad",
+      "Pune"
     ],
-    pantryItems: [
-      { name: 'Malai Paneer Cubes', isCorrect: true, emoji: '🧀' },
-      { name: 'Corn or Flour Tortillas', isCorrect: true, emoji: '🫓' },
-      { name: 'Makhani Tomato Glaze', isCorrect: true, emoji: '🍲' },
-      { name: 'Sirka Pickled Onions', isCorrect: true, emoji: '🧅' },
-      { name: 'Hung Curd Crema', isCorrect: true, emoji: '🥛' },
-      { name: 'Kasuri Methi', isCorrect: true, emoji: '🌿' },
-      // Distractors
-      { name: 'Blue Cheese', isCorrect: false, emoji: '🧀', distractorReason: 'Too pungent, overpowers the delicate tandoori spices!' },
-      { name: 'Pineapple Jam', isCorrect: false, emoji: '🍍', distractorReason: 'Far too sugary for a savory Mexican-Indian taco!' }
+    "cultureStory": "Born in modern Indian-American gastropubs and food trucks, merging the beloved Delhi tandoor with vibrant Mexican street tacos.",
+    "originalIngredients": [
+      "Tacos (6 shells)",
+      "Charred malai paneer cubes (250g)",
+      "Makhani gravy (100ml)",
+      "Pickled red onions (50g)",
+      "Cilantro (10g)",
+      "Sour cream (100ml)"
     ],
-    scienceNote: 'The Maillard Reaction occurs between amino acids in paneer and natural milk sugars under high tawa heat (above 140°C), generating over 100 new aroma compounds!'
+    "indianSubstitutes": [
+      {
+        "original": "Chicken tikka",
+        "originalQty": "250g",
+        "substitute": "Charred Malai Paneer or Smoked Soya Chaap",
+        "substituteQty": "250g",
+        "why": "Absorbs the tandoori marinade beautifully and provides juicy bites",
+        "culinaryNote": "Tawa char creates authentic tandoor smokiness"
+      },
+      {
+        "original": "Mexican Sour Cream (Crema)",
+        "originalQty": "100ml",
+        "substitute": "Whisked Hung Curd (Chakka) with lemon & pinch of salt",
+        "substituteQty": "100ml",
+        "why": "Delivers the exact creamy tanginess with lower calories",
+        "culinaryNote": "High protein, smooth velvety pipeable consistency"
+      },
+      {
+        "original": "Corn Tortilla",
+        "originalQty": "6 shells",
+        "substitute": "Makki di Roti (fine grind) or mini roomali roti",
+        "substituteQty": "6 small rotis",
+        "why": "Heritage Indian corn bread that acts identically to artisan masa tortillas",
+        "culinaryNote": "Warm roasted corn aroma pairs naturally with spices"
+      }
+    ],
+    "recipeSteps": [
+      {
+        "step": 1,
+        "title": "Tandoori Marinade",
+        "text": "Toss paneer cubes in mustard oil, Kashmiri degi mirch, hung curd, and roasted besan.",
+        "kidSafe": true
+      },
+      {
+        "step": 2,
+        "title": "Char & Sizzle",
+        "text": "Sear the paneer on a cast-iron tawa until smoky grill marks form.",
+        "kidSafe": false
+      },
+      {
+        "step": 3,
+        "title": "Simmer Makhani Glaze",
+        "text": "Cook tomato-butter reduction with crushed kasuri methi and green cardamom powder.",
+        "kidSafe": false
+      },
+      {
+        "step": 4,
+        "title": "Taco Assembly",
+        "text": "Warm the tortillas, pile on smoked paneer, drizzle makhani gravy, sirka onion, and hung curd crema.",
+        "kidSafe": true
+      }
+    ],
+    "pantryItems": [
+      {
+        "name": "Malai Paneer Cubes",
+        "isCorrect": true,
+        "emoji": "🧀"
+      },
+      {
+        "name": "Corn or Flour Tortillas",
+        "isCorrect": true,
+        "emoji": "🫓"
+      },
+      {
+        "name": "Makhani Tomato Glaze",
+        "isCorrect": true,
+        "emoji": "🍲"
+      },
+      {
+        "name": "Sirka Pickled Onions",
+        "isCorrect": true,
+        "emoji": "🧅"
+      },
+      {
+        "name": "Hung Curd Crema",
+        "isCorrect": true,
+        "emoji": "🥛"
+      },
+      {
+        "name": "Kasuri Methi",
+        "isCorrect": true,
+        "emoji": "🌿"
+      },
+      {
+        "name": "Blue Cheese",
+        "isCorrect": false,
+        "emoji": "🧀",
+        "distractorReason": "Too pungent, overpowers the delicate tandoori spices!"
+      },
+      {
+        "name": "Pineapple Jam",
+        "isCorrect": false,
+        "emoji": "🍍",
+        "distractorReason": "Far too sugary for a savory Mexican-Indian taco!"
+      }
+    ],
+    "scienceNote": "The Maillard Reaction occurs between amino acids in paneer and natural milk sugars under high tawa heat (above 140°C), generating over 100 new aroma compounds!"
   },
   {
-    id: 'paneer-quesadilla',
-    name: 'Paneer Tikka Quesadilla',
-    originalName: 'Paneer Tikka Quesadilla',
-    origin: 'Tex-Mex & Indian',
-    pronunciationIPA: '/pəˈniːr ˈtɪk.ɑː ˌkeɪ.səˈdiː.jə/',
-    phonetic: 'puh-neer tik-ah kay-suh-dee-yuh',
-    syllables: ['puh', 'neer', 'tik', 'ah', 'kay', 'suh', 'DEE', 'yuh'],
-    audioText: 'Paneer Tikka Quesadilla',
-    description: 'A crisp, golden toasted flour tortilla loaded with molten mozzarella, spiced marinated paneer, crunchy bell peppers, and zingy mint chutney.',
-    availability: 'Moderate',
-    availabilityClass: 'moderate',
-    metros: ['Metros & Tier-2 Urban Cafes', 'Mumbai', 'Pune', 'Jaipur', 'Ahmedabad'],
-    cultureStory: 'A cafe classic across India that marries the cheesy comfort of Mexican quesadillas with the street-style punch of Punjabi paneer tikka.',
-    originalIngredients: ['Flour tortillas', 'Paneer tikka', 'Monterey Jack/Mozzarella', 'Onions & Capsicum', 'Mint-coriander chutney'],
-    indianSubstitutes: [
-      { original: 'Monterey Jack cheese', substitute: 'Amul Mozzarella blend or processed cheese + mild gouda', why: 'Yields the ultimate gooey cheese pull beloved by kids' },
-      { original: 'Flour tortilla', substitute: 'Soft whole wheat phulka or thin paratha', why: 'Crisps up delightfully with a brush of butter or ghee' }
+    "id": "paneer-quesadilla",
+    "name": "Paneer Tikka Quesadilla",
+    "originalName": "Paneer Tikka Quesadilla",
+    "origin": "Tex-Mex & Indian",
+    "prepTime": "10 mins",
+    "cookTime": "10 mins",
+    "totalTime": "20 mins",
+    "servings": "2 servings",
+    "difficulty": "Beginner",
+    "allergens": {
+      "contains": [
+        "Dairy / Milk (Mozzarella, Paneer)",
+        "Gluten (Flour tortillas)"
+      ],
+      "mayContain": [
+        "Mustard"
+      ],
+      "warning": "Contains cow milk mozzarella and refined wheat flour. Check processed cheese labels for sodium caseinate.",
+      "swaps": "Use vegan meltable shreds for dairy-free. Use 100% whole-wheat chapati or corn tortillas for gluten-free."
+    },
+    "pronunciationIPA": "/pəˈniːr ˈtɪk.ɑː ˌkeɪ.səˈdiː.jə/",
+    "phonetic": "puh-neer tik-ah kay-suh-dee-yuh",
+    "syllables": [
+      "puh",
+      "neer",
+      "tik",
+      "ah",
+      "kay",
+      "suh",
+      "DEE",
+      "yuh"
     ],
-    recipeSteps: [
-      { step: 1, title: 'Chutney Base Layer', text: 'Spread a thin layer of spicy-sweet mint-coriander chutney over one half of a soft tortilla.', kidSafe: true },
-      { step: 2, title: 'Stuff with Goodness', text: 'Heap spiced paneer crumbles, diced bell peppers, red onions, and shredded mozzarella.', kidSafe: true },
-      { step: 3, title: 'Fold and Toast', text: 'Fold over into a half-moon; grill in a buttered pan on medium heat until golden and crispy.', kidSafe: false },
-      { step: 4, title: 'Slice & Dip', text: 'Cut into triangles with a pizza wheel and serve with salsa and roasted cumin curd.', kidSafe: true }
+    "audioText": "Paneer Tikka Quesadilla",
+    "description": "A crisp, golden toasted flour tortilla loaded with molten mozzarella, spiced marinated paneer, crunchy bell peppers, and zingy mint chutney.",
+    "availability": "Moderate",
+    "availabilityClass": "moderate",
+    "metros": [
+      "Metros & Tier-2 Urban Cafes",
+      "Mumbai",
+      "Pune",
+      "Jaipur",
+      "Ahmedabad"
     ],
-    pantryItems: [
-      { name: 'Flour Tortilla or Paratha', isCorrect: true, emoji: '🫓' },
-      { name: 'Spiced Paneer Crumbles', isCorrect: true, emoji: '🧀' },
-      { name: 'Mozzarella Cheese', isCorrect: true, emoji: '🧀' },
-      { name: 'Bell Peppers & Onions', isCorrect: true, emoji: '🫑' },
-      { name: 'Mint-Coriander Chutney', isCorrect: true, emoji: '🍃' },
-      // Distractors
-      { name: 'Chocolate Spread', isCorrect: false, emoji: '🍫', distractorReason: 'Yum on toast, but disastrous in a savory spiced tikka quesadilla!' },
-      { name: 'Boiled Egg Slices', isCorrect: false, emoji: '🥚', distractorReason: 'Not in a vegetarian paneer quesadilla!' }
+    "cultureStory": "A cafe classic across India that marries the cheesy comfort of Mexican quesadillas with the street-style punch of Punjabi paneer tikka.",
+    "originalIngredients": [
+      "Flour tortillas (2 large)",
+      "Paneer tikka (150g)",
+      "Monterey Jack/Mozzarella (150g)",
+      "Onions & Capsicum (1/2 cup)",
+      "Mint-coriander chutney (3 tbsp)"
     ],
-    scienceNote: 'Cheese melting is a phase change: milk fat liquefies at ~30°C, and the casein protein network loosens at ~55°C, creating stretchable elastic strands.'
+    "indianSubstitutes": [
+      {
+        "original": "Monterey Jack cheese",
+        "originalQty": "150g",
+        "substitute": "Amul Mozzarella blend or processed cheese + mild gouda",
+        "substituteQty": "150g",
+        "why": "Yields the ultimate gooey cheese pull beloved by kids",
+        "culinaryNote": "Melts at 55°C creating stretchy elastic bonds"
+      },
+      {
+        "original": "Flour tortilla",
+        "originalQty": "2 large",
+        "substitute": "Soft whole wheat phulka or thin paratha",
+        "substituteQty": "2 pieces",
+        "why": "Crisps up delightfully with a brush of butter or ghee",
+        "culinaryNote": "Wholesome fiber with authentic flaky crispness"
+      }
+    ],
+    "recipeSteps": [
+      {
+        "step": 1,
+        "title": "Chutney Base Layer",
+        "text": "Spread a thin layer of spicy-sweet mint-coriander chutney over one half of a soft tortilla.",
+        "kidSafe": true
+      },
+      {
+        "step": 2,
+        "title": "Stuff with Goodness",
+        "text": "Heap spiced paneer crumbles, diced bell peppers, red onions, and shredded mozzarella.",
+        "kidSafe": true
+      },
+      {
+        "step": 3,
+        "title": "Fold and Toast",
+        "text": "Fold over into a half-moon; grill in a buttered pan on medium heat until golden and crispy.",
+        "kidSafe": false
+      },
+      {
+        "step": 4,
+        "title": "Slice & Dip",
+        "text": "Cut into triangles with a pizza wheel and serve with salsa and roasted cumin curd.",
+        "kidSafe": true
+      }
+    ],
+    "pantryItems": [
+      {
+        "name": "Flour Tortilla or Paratha",
+        "isCorrect": true,
+        "emoji": "🫓"
+      },
+      {
+        "name": "Spiced Paneer Crumbles",
+        "isCorrect": true,
+        "emoji": "🧀"
+      },
+      {
+        "name": "Mozzarella Cheese",
+        "isCorrect": true,
+        "emoji": "🧀"
+      },
+      {
+        "name": "Bell Peppers & Onions",
+        "isCorrect": true,
+        "emoji": "🫑"
+      },
+      {
+        "name": "Mint-Coriander Chutney",
+        "isCorrect": true,
+        "emoji": "🍃"
+      },
+      {
+        "name": "Chocolate Spread",
+        "isCorrect": false,
+        "emoji": "🍫",
+        "distractorReason": "Yum on toast, but disastrous in a savory spiced tikka quesadilla!"
+      },
+      {
+        "name": "Boiled Egg Slices",
+        "isCorrect": false,
+        "emoji": "🥚",
+        "distractorReason": "Not in a vegetarian paneer quesadilla!"
+      }
+    ],
+    "scienceNote": "Cheese melting is a phase change: milk fat liquefies at ~30°C, and the casein protein network loosens at ~55°C, creating stretchable elastic strands."
   },
   {
-    id: 'makhani-pasta',
-    name: 'Creamy Makhani Penne Pasta',
-    originalName: 'Makhani Pasta',
-    origin: 'Ital-Indian',
-    pronunciationIPA: '/mʌk.n.iː ˈpɑː.stə/',
-    phonetic: 'muk-nee pah-stuh',
-    syllables: ['muk', 'nee', 'PAH', 'stuh'],
-    audioText: 'Makhani Pasta',
-    description: 'Italian tubular penne cooked al dente, smothered in a rich, buttery San Marzano or Desi tomato sauce infused with cream, kasuri methi, and paneer cubes.',
-    availability: 'High',
-    availabilityClass: 'high',
-    metros: ['Pan-India', 'Every modern cafe and family diner'],
-    cultureStory: 'First created by creative home cooks in Delhi and Mumbai who loved pasta but craved the soul-satisfying depth of North Indian makhani gravy.',
-    originalIngredients: ['Penne or fusilli', 'Tomato-butter gravy', 'Heavy cream', 'Kasuri methi', 'Paneer cubes', 'Parmesan'],
-    indianSubstitutes: [
-      { original: 'San Marzano tomatoes', substitute: 'Ripe Desi Plum Tomatoes boiled with cashews and Kashmiri chilies', why: 'Creates a deep natural ruby-red sauce without synthetic colors' },
-      { original: 'Parmesan cheese', substitute: 'Amul aged cheese or finely grated paneer with nutritional yeast', why: 'Provides savory umami depth' }
+    "id": "makhani-pasta",
+    "name": "Creamy Makhani Penne Pasta",
+    "originalName": "Makhani Pasta",
+    "origin": "Ital-Indian",
+    "prepTime": "10 mins",
+    "cookTime": "15 mins",
+    "totalTime": "25 mins",
+    "servings": "3 servings",
+    "difficulty": "Intermediate",
+    "allergens": {
+      "contains": [
+        "Dairy / Milk (Butter, Cream, Paneer)",
+        "Gluten (Durum Wheat Pasta)",
+        "Tree Nuts (Cashews)"
+      ],
+      "mayContain": [
+        "Soy"
+      ],
+      "warning": "Contains tree nuts (cashew nut paste), dairy cream, and durum wheat semolina. Strict caution for individuals with nut allergies.",
+      "swaps": "Substitute cashews with peeled melon seeds (magaz) or sunflower seeds for 100% nut-free. Use gluten-free chickpea or corn pasta."
+    },
+    "pronunciationIPA": "/mʌk.n.iː ˈpɑː.stə/",
+    "phonetic": "muk-nee pah-stuh",
+    "syllables": [
+      "muk",
+      "nee",
+      "PAH",
+      "stuh"
     ],
-    recipeSteps: [
-      { step: 1, title: 'Boil Pasta Al Dente', text: 'Boil penne in well-salted water for 9 minutes until firm to the bite; reserve 1/2 cup pasta water.', kidSafe: false },
-      { step: 2, title: 'Simmer Tomato-Cashew Gravy', text: 'Puree cooked tomatoes with soaked cashews; simmer with butter, garlic, and cardamom.', kidSafe: false },
-      { step: 3, title: 'Emulsify with Cream & Fenugreek', text: 'Swirl in heavy cream and rub dried kasuri methi between palms to release aromatic oils.', kidSafe: true },
-      { step: 4, title: 'Toss & Marry', text: 'Toss the drained penne and golden paneer cubes into the sauce until every ridge is coated.', kidSafe: true }
+    "audioText": "Makhani Pasta",
+    "description": "Italian tubular penne cooked al dente, smothered in a rich, buttery San Marzano or Desi tomato sauce infused with cream, kasuri methi, and paneer cubes.",
+    "availability": "High",
+    "availabilityClass": "high",
+    "metros": [
+      "Pan-India",
+      "Every modern cafe and family diner"
     ],
-    pantryItems: [
-      { name: 'Penne Pasta', isCorrect: true, emoji: '🍝' },
-      { name: 'Tomato-Cashew Gravy', isCorrect: true, emoji: '🥫' },
-      { name: 'White Butter & Cream', isCorrect: true, emoji: '🧈' },
-      { name: 'Kasuri Methi', isCorrect: true, emoji: '🌿' },
-      { name: 'Paneer Cubes', isCorrect: true, emoji: '🧀' },
-      // Distractors
-      { name: 'Wasabi Paste', isCorrect: false, emoji: '🥬', distractorReason: 'Fiery Japanese horseradish clashes with warm creamy makhani!' },
-      { name: 'Anchovy Paste', isCorrect: false, emoji: '🐟', distractorReason: 'Definitely not vegetarian!' }
+    "cultureStory": "First created by creative home cooks in Delhi and Mumbai who loved pasta but craved the soul-satisfying depth of North Indian makhani gravy.",
+    "originalIngredients": [
+      "Penne or fusilli (250g)",
+      "Tomato-butter gravy (200ml)",
+      "Heavy cream (50ml)",
+      "Kasuri methi (1 tbsp)",
+      "Paneer cubes (100g)",
+      "Parmesan (40g)"
     ],
-    scienceNote: 'Cashews contain natural starch and fatty acids that act as a plant-based emulsifier, preventing the tomato acids from curdling the dairy cream!'
+    "indianSubstitutes": [
+      {
+        "original": "San Marzano tomatoes",
+        "originalQty": "400g",
+        "substitute": "Ripe Desi Plum Tomatoes boiled with cashews and Kashmiri chilies",
+        "substituteQty": "400g",
+        "why": "Creates a deep natural ruby-red sauce without synthetic colors",
+        "culinaryNote": "Natural sweetness balances high tomato acidity"
+      },
+      {
+        "original": "Parmesan cheese",
+        "originalQty": "40g",
+        "substitute": "Amul aged cheese or finely grated paneer with nutritional yeast",
+        "substituteQty": "40g",
+        "why": "Provides savory umami depth",
+        "culinaryNote": "Nutritional yeast delivers vegetarian glutamates"
+      }
+    ],
+    "recipeSteps": [
+      {
+        "step": 1,
+        "title": "Boil Pasta Al Dente",
+        "text": "Boil penne in well-salted water for 9 minutes until firm to the bite; reserve 1/2 cup pasta water.",
+        "kidSafe": false
+      },
+      {
+        "step": 2,
+        "title": "Simmer Tomato-Cashew Gravy",
+        "text": "Puree cooked tomatoes with soaked cashews; simmer with butter, garlic, and cardamom.",
+        "kidSafe": false
+      },
+      {
+        "step": 3,
+        "title": "Emulsify with Cream & Fenugreek",
+        "text": "Swirl in heavy cream and rub dried kasuri methi between palms to release aromatic oils.",
+        "kidSafe": true
+      },
+      {
+        "step": 4,
+        "title": "Toss & Marry",
+        "text": "Toss the drained penne and golden paneer cubes into the sauce until every ridge is coated.",
+        "kidSafe": true
+      }
+    ],
+    "pantryItems": [
+      {
+        "name": "Penne Pasta",
+        "isCorrect": true,
+        "emoji": "🍝"
+      },
+      {
+        "name": "Tomato-Cashew Gravy",
+        "isCorrect": true,
+        "emoji": "🥫"
+      },
+      {
+        "name": "White Butter & Cream",
+        "isCorrect": true,
+        "emoji": "🧈"
+      },
+      {
+        "name": "Kasuri Methi",
+        "isCorrect": true,
+        "emoji": "🌿"
+      },
+      {
+        "name": "Paneer Cubes",
+        "isCorrect": true,
+        "emoji": "🧀"
+      },
+      {
+        "name": "Wasabi Paste",
+        "isCorrect": false,
+        "emoji": "🥬",
+        "distractorReason": "Fiery Japanese horseradish clashes with warm creamy makhani!"
+      },
+      {
+        "name": "Anchovy Paste",
+        "isCorrect": false,
+        "emoji": "🐟",
+        "distractorReason": "Definitely not vegetarian!"
+      }
+    ],
+    "scienceNote": "Cashews contain natural starch and fatty acids that act as a plant-based emulsifier, preventing the tomato acids from curdling the dairy cream!"
   },
   {
-    id: 'naan-pizza',
-    name: 'Charred Naan Pizza (Naanza)',
-    originalName: 'Naan Pizza / Naanza',
-    origin: 'Ital-Indian',
-    pronunciationIPA: '/nɑːn ˈpiːt.sə/ - /nɑːn.zɑː/',
-    phonetic: 'nahn peet-suh / nahn-zah',
-    syllables: ['nahn', 'ZAH'],
-    audioText: 'Naanza',
-    description: 'A blistered tandoori garlic naan turns into an artisan pizza base, crowned with spicy tikka sauce, diced veggies, paneer, and bubbly mozzarella.',
-    availability: 'High',
-    availabilityClass: 'high',
-    metros: ['Nationwide', 'Pizzerias, gastro-cafes, food stalls'],
-    cultureStory: 'A culinary match made in heaven: both tandoors and wood-fired pizza ovens cook at 450°C, producing pillowy bread with blistered air pockets.',
-    originalIngredients: ['Tandoori naan base', 'Mozzarella cheese', 'Spiced tomato sauce', 'Onion & capsicum', 'Paneer or corn', 'Oregano'],
-    indianSubstitutes: [
-      { original: 'Pizza dough', substitute: 'Freshly baked Garlic-Butter Tandoori Naan or Stuffed Kulcha', why: 'Saves hours of dough proofing while providing unbeatable smoky blistered flavor' },
-      { original: 'Pizza herb seasoning', substitute: 'Dry roasted oregano + crushed kasuri methi & chili flakes', why: 'Gives the distinctive Indo-Italian aroma' }
+    "id": "naan-pizza",
+    "name": "Charred Naan Pizza (Naanza)",
+    "originalName": "Naan Pizza / Naanza",
+    "origin": "Ital-Indian",
+    "prepTime": "10 mins",
+    "cookTime": "12 mins",
+    "totalTime": "22 mins",
+    "servings": "2-3 servings",
+    "difficulty": "Beginner",
+    "allergens": {
+      "contains": [
+        "Dairy / Milk (Mozzarella, Butter, Naan yogurt)",
+        "Gluten (Maida Naan)"
+      ],
+      "mayContain": [
+        "Sesame (Naan seed topping)"
+      ],
+      "warning": "Traditional naan is leavened refined wheat flour with yogurt and milk. High gluten and dairy profile.",
+      "swaps": "Use gluten-free oat-flour flatbread. Use plant-based meltable shreds for dairy-free cheese pull."
+    },
+    "pronunciationIPA": "/nɑːn ˈpiːt.sə/ - /nɑːn.zɑː/",
+    "phonetic": "nahn peet-suh / nahn-zah",
+    "syllables": [
+      "nahn",
+      "ZAH"
     ],
-    recipeSteps: [
-      { step: 1, title: 'Crisp the Naan Base', text: 'Pre-bake the naan in a tawa or hot oven for 2 minutes so the crust stays crunchy under toppings.', kidSafe: false },
-      { step: 2, title: 'Spread Spiced Marinara', text: 'Slather a blend of Italian marinara and Punjabi tikka masala sauce edge to edge.', kidSafe: true },
-      { step: 3, title: 'Decorate with Veggie Confetti', text: 'Scatter capsicum strips, red onions, sweet corn kernels, and paneer cubes.', kidSafe: true },
-      { step: 4, title: 'Bake to Molten Perfection', text: 'Bake at 220°C for 7 minutes until the mozzarella bubbles with golden spots.', kidSafe: false }
+    "audioText": "Naanza",
+    "description": "A blistered tandoori garlic naan turns into an artisan pizza base, crowned with spicy tikka sauce, diced veggies, paneer, and bubbly mozzarella.",
+    "availability": "High",
+    "availabilityClass": "high",
+    "metros": [
+      "Nationwide",
+      "Pizzerias, gastro-cafes, food stalls"
     ],
-    pantryItems: [
-      { name: 'Garlic Butter Naan', isCorrect: true, emoji: '🫓' },
-      { name: 'Spicy Tikka Marinara', isCorrect: true, emoji: '🍅' },
-      { name: 'Mozzarella Cheese', isCorrect: true, emoji: '🧀' },
-      { name: 'Crisp Bell Peppers & Corn', isCorrect: true, emoji: '🌽' },
-      { name: 'Kasuri Methi & Oregano', isCorrect: true, emoji: '🌿' },
-      // Distractors
-      { name: 'Marshmallows', isCorrect: false, emoji: '🍬', distractorReason: 'Sweet s’mores do not belong on a spicy savory Naanza!' },
-      { name: 'Gelatin Powder', isCorrect: false, emoji: '🍮', distractorReason: 'Not food for pizza and definitely not vegetarian!' }
+    "cultureStory": "A culinary match made in heaven: both tandoors and wood-fired pizza ovens cook at 450°C, producing pillowy bread with blistered air pockets.",
+    "originalIngredients": [
+      "Tandoori naan base (1 large)",
+      "Mozzarella cheese (120g)",
+      "Spiced tomato sauce (60ml)",
+      "Onion & capsicum (1/2 cup)",
+      "Paneer or corn (60g)",
+      "Oregano (1 tsp)"
     ],
-    scienceNote: 'High heat triggers rapid carbon dioxide expansion inside the naan pockets, lifting the crust while the mozzarella forms a protective vapor barrier that keeps the dough crispy!'
+    "indianSubstitutes": [
+      {
+        "original": "Pizza dough",
+        "originalQty": "1 ball (200g)",
+        "substitute": "Freshly baked Garlic-Butter Tandoori Naan or Stuffed Kulcha",
+        "substituteQty": "1 large naan",
+        "why": "Saves hours of dough proofing while providing unbeatable smoky blistered flavor",
+        "culinaryNote": "Tandoori blistered crust withstands sauce without sogging"
+      },
+      {
+        "original": "Pizza herb seasoning",
+        "originalQty": "1 tsp",
+        "substitute": "Dry roasted oregano + crushed kasuri methi & chili flakes",
+        "substituteQty": "1 tsp",
+        "why": "Gives the distinctive Indo-Italian aroma",
+        "culinaryNote": "Kasuri methi essential oils volatilize under pizza heat"
+      }
+    ],
+    "recipeSteps": [
+      {
+        "step": 1,
+        "title": "Crisp the Naan Base",
+        "text": "Pre-bake the naan in a tawa or hot oven for 2 minutes so the crust stays crunchy under toppings.",
+        "kidSafe": false
+      },
+      {
+        "step": 2,
+        "title": "Spread Spiced Marinara",
+        "text": "Slather a blend of Italian marinara and Punjabi tikka masala sauce edge to edge.",
+        "kidSafe": true
+      },
+      {
+        "step": 3,
+        "title": "Decorate with Veggie Confetti",
+        "text": "Scatter capsicum strips, red onions, sweet corn kernels, and paneer cubes.",
+        "kidSafe": true
+      },
+      {
+        "step": 4,
+        "title": "Bake to Molten Perfection",
+        "text": "Bake at 220°C for 7 minutes until the mozzarella bubbles with golden spots.",
+        "kidSafe": false
+      }
+    ],
+    "pantryItems": [
+      {
+        "name": "Garlic Butter Naan",
+        "isCorrect": true,
+        "emoji": "🫓"
+      },
+      {
+        "name": "Spicy Tikka Marinara",
+        "isCorrect": true,
+        "emoji": "🍅"
+      },
+      {
+        "name": "Mozzarella Cheese",
+        "isCorrect": true,
+        "emoji": "🧀"
+      },
+      {
+        "name": "Crisp Bell Peppers & Corn",
+        "isCorrect": true,
+        "emoji": "🌽"
+      },
+      {
+        "name": "Kasuri Methi & Oregano",
+        "isCorrect": true,
+        "emoji": "🌿"
+      },
+      {
+        "name": "Marshmallows",
+        "isCorrect": false,
+        "emoji": "🍬",
+        "distractorReason": "Sweet s’mores do not belong on a spicy savory Naanza!"
+      },
+      {
+        "name": "Gelatin Powder",
+        "isCorrect": false,
+        "emoji": "🍮",
+        "distractorReason": "Not food for pizza and definitely not vegetarian!"
+      }
+    ],
+    "scienceNote": "High heat triggers rapid carbon dioxide expansion inside the naan pockets, lifting the crust while the mozzarella forms a protective vapor barrier that keeps the dough crispy!"
   },
   {
-    id: 'gulab-jamun-cheesecake',
-    name: 'Eggless Gulab Jamun Cheesecake',
-    originalName: 'Gulab Jamun Cheesecake',
-    origin: 'Indo-French',
-    pronunciationIPA: '/ɡuːˈlɑːb ˈdʒɑː.mʊn ˈtʃiːz.keɪk/',
-    phonetic: 'goo-lahb jah-moon cheez-kayk',
-    syllables: ['goo', 'lahb', 'jah', 'moon', 'cheez', 'kayk'],
-    audioText: 'Gulab Jamun Cheesecake',
-    description: 'Silky cardamom and saffron-infused cream cheese custard layered over a crumbly biscuit crust, concealing soft baby gulab jamuns inside each slice.',
-    availability: 'Moderate to High',
-    availabilityClass: 'high',
-    metros: ['Nationwide', 'Patisseries, wedding banquets, boutique cafes'],
-    cultureStory: 'Invented by progressive Indian pastry chefs wanting to reinvent festive mithai for modern global dessert lovers.',
-    originalIngredients: ['Cream cheese', 'Graham cracker crust', 'Gulab jamun balls', 'Cardamom', 'Saffron', 'Pistachios'],
-    indianSubstitutes: [
-      { original: 'Graham crackers', substitute: 'Nutri-Choice Digestive Biscuits or Marie Gold + melted Amul butter', why: 'Provides the iconic nutty, toasted crunch base' },
-      { original: 'Sour cream / eggs in custard', substitute: 'Hung Greek yogurt + condensed milk + cornstarch', why: 'Creates a rich, set, eggless cheesecake custard with clean dairy tang' },
-      { original: 'Vanilla extract', substitute: 'Crushed green cardamom seeds, saffron strands, and rose water', why: 'Authentic royal Shahi Indian aromatics' }
+    "id": "gulab-jamun-cheesecake",
+    "name": "Eggless Gulab Jamun Cheesecake",
+    "originalName": "Gulab Jamun Cheesecake",
+    "origin": "Indo-French / Euro-Asian",
+    "prepTime": "20 mins",
+    "cookTime": "35 mins",
+    "totalTime": "55 mins",
+    "servings": "6-8 servings",
+    "difficulty": "Intermediate",
+    "allergens": {
+      "contains": [
+        "Dairy / Milk (Cream cheese, Mawa, Condensed milk)",
+        "Gluten (Biscuits, Mawa binder)"
+      ],
+      "mayContain": [
+        "Tree Nuts (Pistachio, Almond garnish)"
+      ],
+      "warning": "Mawa khoya and cream cheese provide heavy dairy density. Slivered nuts on garnish pose an allergen risk.",
+      "swaps": "Omit pistachio nut garnish. Use gluten-free digestive biscuits and plant-based condensed milk."
+    },
+    "pronunciationIPA": "/ɡuːˈlɑːb ˈdʒɑː.mʊn ˈtʃiːz.keɪk/",
+    "phonetic": "goo-lahb jah-moon cheez-kayk",
+    "syllables": [
+      "goo",
+      "lahb",
+      "jah",
+      "moon",
+      "cheez",
+      "kayk"
     ],
-    recipeSteps: [
-      { step: 1, title: 'Crush the Crust', text: 'Crush digestive biscuits with a rolling pin and stir in melted butter; press firmly into a springform pan.', kidSafe: true },
-      { step: 2, title: 'Whip Eggless Custard', text: 'Whisk cream cheese, hung curd, condensed milk, saffron-infused milk, and cardamom powder.', kidSafe: true },
-      { step: 3, title: 'The Jamun Treasure', text: 'Drain syrup from baby gulab jamuns and nestle them evenly across the biscuit base.', kidSafe: true },
-      { step: 4, title: 'Pour & Chill', text: 'Pour the golden custard over the jamuns; chill overnight or bake gently in a water bath.', kidSafe: false }
+    "audioText": "Gulab Jamun Cheesecake",
+    "description": "Silky cardamom and saffron-infused cream cheese custard layered over a crumbly biscuit crust, concealing soft baby gulab jamuns inside each slice.",
+    "availability": "Moderate to High",
+    "availabilityClass": "high",
+    "metros": [
+      "Nationwide",
+      "Patisseries, wedding banquets, boutique cafes"
     ],
-    pantryItems: [
-      { name: 'Digestive Biscuits & Butter', isCorrect: true, emoji: '🍪' },
-      { name: 'Cream Cheese & Hung Curd', isCorrect: true, emoji: '🥣' },
-      { name: 'Baby Gulab Jamuns', isCorrect: true, emoji: '🟤' },
-      { name: 'Saffron & Green Cardamom', isCorrect: true, emoji: '🌺' },
-      { name: 'Slivered Pistachios', isCorrect: true, emoji: '🥜' },
-      // Distractors
-      { name: 'Wasabi Peas', isCorrect: false, emoji: '🟢', distractorReason: 'Spicy wasabi ruins a delicate saffron dessert!' },
-      { name: 'Beef Gelatin', isCorrect: false, emoji: '🥩', distractorReason: 'Non-vegetarian! We use natural cornstarch or agar-agar.' }
+    "cultureStory": "Invented by progressive Indian pastry chefs wanting to reinvent festive mithai for modern global dessert lovers.",
+    "originalIngredients": [
+      "Cream cheese (250g)",
+      "Graham cracker crust (150g)",
+      "Gulab jamun balls (12 baby jamuns)",
+      "Cardamom (1/2 tsp)",
+      "Saffron (pinch)",
+      "Pistachios (20g)"
     ],
-    scienceNote: 'The sugar syrup in gulab jamun has high osmotic pressure; soaking or draining properly prevents the jamun from leaking excess water into the cheesecake cream, keeping the custard silky!'
+    "indianSubstitutes": [
+      {
+        "original": "Graham crackers",
+        "originalQty": "150g",
+        "substitute": "Nutri-Choice Digestive Biscuits or Marie Gold + melted Amul butter",
+        "substituteQty": "150g",
+        "why": "Provides the iconic nutty, toasted crunch base",
+        "culinaryNote": "Whole wheat crumb absorbs butter without getting soggy"
+      },
+      {
+        "original": "Sour cream / eggs in custard",
+        "originalQty": "2 eggs + 100g sour cream",
+        "substitute": "Hung Greek yogurt + condensed milk + cornstarch",
+        "substituteQty": "150g hung curd + 100g condensed milk",
+        "why": "Creates a rich, set, eggless cheesecake custard with clean dairy tang",
+        "culinaryNote": "Cornstarch gelatinizes at 75°C to set custard without egg albumin"
+      },
+      {
+        "original": "Vanilla extract",
+        "originalQty": "1 tsp",
+        "substitute": "Crushed green cardamom seeds, saffron strands, and rose water",
+        "substituteQty": "1/2 tsp cardamom + pinch saffron",
+        "why": "Authentic royal Shahi Indian aromatics",
+        "culinaryNote": "Cardamonin and safranal provide deep warm festive perfumes"
+      }
+    ],
+    "recipeSteps": [
+      {
+        "step": 1,
+        "title": "Crush the Crust",
+        "text": "Crush digestive biscuits with a rolling pin and stir in melted butter; press firmly into a springform pan.",
+        "kidSafe": true
+      },
+      {
+        "step": 2,
+        "title": "Whip Eggless Custard",
+        "text": "Whisk cream cheese, hung curd, condensed milk, saffron-infused milk, and cardamom powder.",
+        "kidSafe": true
+      },
+      {
+        "step": 3,
+        "title": "The Jamun Treasure",
+        "text": "Drain syrup from baby gulab jamuns and nestle them evenly across the biscuit base.",
+        "kidSafe": true
+      },
+      {
+        "step": 4,
+        "title": "Pour & Chill",
+        "text": "Pour the golden custard over the jamuns; chill overnight or bake gently in a water bath.",
+        "kidSafe": false
+      }
+    ],
+    "pantryItems": [
+      {
+        "name": "Digestive Biscuits & Butter",
+        "isCorrect": true,
+        "emoji": "🍪"
+      },
+      {
+        "name": "Cream Cheese & Hung Curd",
+        "isCorrect": true,
+        "emoji": "🥣"
+      },
+      {
+        "name": "Baby Gulab Jamuns",
+        "isCorrect": true,
+        "emoji": "🟤"
+      },
+      {
+        "name": "Saffron & Green Cardamom",
+        "isCorrect": true,
+        "emoji": "🌺"
+      },
+      {
+        "name": "Slivered Pistachios",
+        "isCorrect": true,
+        "emoji": "🥜"
+      },
+      {
+        "name": "Wasabi Peas",
+        "isCorrect": false,
+        "emoji": "🟢",
+        "distractorReason": "Spicy wasabi ruins a delicate saffron dessert!"
+      },
+      {
+        "name": "Beef Gelatin",
+        "isCorrect": false,
+        "emoji": "🥩",
+        "distractorReason": "Non-vegetarian! We use natural cornstarch or agar-agar."
+      }
+    ],
+    "scienceNote": "The sugar syrup in gulab jamun has high osmotic pressure; soaking or draining properly prevents the jamun from leaking excess water into the cheesecake cream, keeping the custard silky!"
   },
   {
-    id: 'curry-ramen',
-    name: 'Spiced Veggie Curry Ramen',
-    originalName: 'Curry Ramen',
-    origin: 'Indo-Japanese',
-    pronunciationIPA: '/ˈkʌr.i ˈrɑː.mən/',
-    phonetic: 'kuh-ree RAH-men',
-    syllables: ['kuh', 'ree', 'RAH', 'men'],
-    audioText: 'Curry Ramen',
-    description: 'Springy alkaline wheat noodles immersed in a golden coconut-curry dashi broth, topped with charred bok choy, crispy spiced tofu, and sweet corn.',
-    availability: 'Emerging / Niche',
-    availabilityClass: 'niche',
-    metros: ['Delhi-NCR', 'Mumbai', 'Bengaluru'],
-    cultureStory: 'A collision of Hokkaido Japanese winter ramen with coastal South Indian curry spices and coconut milk.',
-    originalIngredients: ['Ramen noodles', 'Curry paste', 'Kombu dashi', 'Pork/Chicken broth', 'Chashu'],
-    indianSubstitutes: [
-      { original: 'Meat broth', substitute: 'Kombu + roasted onion, garlic & shiitake vegetable broth', why: 'Produces rich savory umami without animal products' },
-      { original: 'Chashu meat', substitute: 'Soy-glazed crispy paneer or charred smoked tofu slices', why: 'Tender interior with deeply caramelized exterior' },
-      { original: 'Japanese curry roux', substitute: 'Turmeric, coriander, cumin, ginger paste, and coconut milk reduction', why: 'Warmer, fragrant, and familiar to Indian palates' }
+    "id": "curry-ramen",
+    "name": "Spiced Veggie Curry Ramen",
+    "originalName": "Curry Ramen",
+    "origin": "Indo-Japanese",
+    "prepTime": "15 mins",
+    "cookTime": "15 mins",
+    "totalTime": "30 mins",
+    "servings": "2 servings",
+    "difficulty": "Intermediate",
+    "allergens": {
+      "contains": [
+        "Gluten (Wheat noodles)",
+        "Soy (Dashi glaze, Tofu)"
+      ],
+      "mayContain": [
+        "Sesame",
+        "Mustard (Curry paste blend)"
+      ],
+      "warning": "Wheat alkaline ramen noodles contain gluten. Soy sauce and tofu contain soy. Check packaged curry pastes for shrimp paste (our recipe is 100% veg).",
+      "swaps": "Use 100% buckwheat soba or brown rice noodles for gluten-free. Use coconut aminos for soy-free."
+    },
+    "pronunciationIPA": "/ˈkʌr.i ˈrɑː.mən/",
+    "phonetic": "kuh-ree RAH-men",
+    "syllables": [
+      "kuh",
+      "ree",
+      "RAH",
+      "men"
     ],
-    recipeSteps: [
-      { step: 1, title: 'Simmer Umami Broth', text: 'Boil vegetable stock with charred onions, ginger, turmeric, cumin, and coconut milk for 20 minutes.', kidSafe: false },
-      { step: 2, title: 'Cook Alkaline Noodles', text: 'Boil ramen noodles for 2.5 minutes until springy; drain and rinse with cold water.', kidSafe: false },
-      { step: 3, title: 'Sear Tofu Topping', text: 'Pan-sear pressed tofu with a dash of soy sauce and tandoori chili crisp until crisp.', kidSafe: false },
-      { step: 4, title: 'Assemble the Ramen Bowl', text: 'Fold noodles in deep bowl, pour steaming curry broth, and arrange tofu, corn, and nori.', kidSafe: true }
+    "audioText": "Curry Ramen",
+    "description": "Springy alkaline wheat noodles immersed in a golden coconut-curry dashi broth, topped with charred bok choy, crispy spiced tofu, and sweet corn.",
+    "availability": "Emerging / Niche",
+    "availabilityClass": "niche",
+    "metros": [
+      "Delhi-NCR",
+      "Mumbai",
+      "Bengaluru"
     ],
-    pantryItems: [
-      { name: 'Ramen Wheat Noodles', isCorrect: true, emoji: '🍜' },
-      { name: 'Coconut-Curry Umami Broth', isCorrect: true, emoji: '🥥' },
-      { name: 'Crispy Seared Tofu / Paneer', isCorrect: true, emoji: '🧈' },
-      { name: 'Sweet Corn & Bok Choy', isCorrect: true, emoji: '🥬' },
-      { name: 'Tandoori Chili Crisp', isCorrect: true, emoji: '🌶️' },
-      // Distractors
-      { name: 'Fish Stock Powder', isCorrect: false, emoji: '🐟', distractorReason: 'Contains non-veg fish extracts! We use shiitake kombu stock.' },
-      { name: 'Maple Syrup', isCorrect: false, emoji: '🍁', distractorReason: 'Too sugary for a savory Japanese-Indian curry ramen!' }
+    "cultureStory": "A collision of Hokkaido Japanese winter ramen with coastal South Indian curry spices and coconut milk.",
+    "originalIngredients": [
+      "Ramen noodles (180g)",
+      "Curry paste (2 tbsp)",
+      "Kombu dashi (500ml)",
+      "Pork/Chicken broth (500ml)",
+      "Chashu (100g)"
     ],
-    scienceNote: 'Ramen noodles contain kansui (alkaline salts: sodium carbonate) which raises pH, giving noodles their yellow hue, firm chew, and resistance to getting soggy in hot broth!'
+    "indianSubstitutes": [
+      {
+        "original": "Meat broth",
+        "originalQty": "500ml",
+        "substitute": "Kombu + roasted onion, garlic & shiitake vegetable broth",
+        "substituteQty": "500ml",
+        "why": "Produces rich savory umami without animal products",
+        "culinaryNote": "Shiitake mushrooms provide natural guanylate umami synergy"
+      },
+      {
+        "original": "Chashu meat",
+        "originalQty": "100g",
+        "substitute": "Soy-glazed crispy paneer or charred smoked tofu slices",
+        "substituteQty": "100g",
+        "why": "Tender interior with deeply caramelized exterior",
+        "culinaryNote": "Smoked tofu absorbs curry broth like a sponge"
+      },
+      {
+        "original": "Japanese curry roux",
+        "originalQty": "2 cubes (40g)",
+        "substitute": "Turmeric, coriander, cumin, ginger paste, and coconut milk reduction",
+        "substituteQty": "3 tbsp blend",
+        "why": "Warmer, fragrant, and familiar to Indian palates",
+        "culinaryNote": "Curcumin from turmeric provides vibrant golden glow"
+      }
+    ],
+    "recipeSteps": [
+      {
+        "step": 1,
+        "title": "Simmer Umami Broth",
+        "text": "Boil vegetable stock with charred onions, ginger, turmeric, cumin, and coconut milk for 20 minutes.",
+        "kidSafe": false
+      },
+      {
+        "step": 2,
+        "title": "Cook Alkaline Noodles",
+        "text": "Boil ramen noodles for 2.5 minutes until springy; drain and rinse with cold water.",
+        "kidSafe": false
+      },
+      {
+        "step": 3,
+        "title": "Sear Tofu Topping",
+        "text": "Pan-sear pressed tofu with a dash of soy sauce and tandoori chili crisp until crisp.",
+        "kidSafe": false
+      },
+      {
+        "step": 4,
+        "title": "Assemble the Ramen Bowl",
+        "text": "Fold noodles in deep bowl, pour steaming curry broth, and arrange tofu, corn, and nori.",
+        "kidSafe": true
+      }
+    ],
+    "pantryItems": [
+      {
+        "name": "Ramen Wheat Noodles",
+        "isCorrect": true,
+        "emoji": "🍜"
+      },
+      {
+        "name": "Coconut-Curry Umami Broth",
+        "isCorrect": true,
+        "emoji": "🥥"
+      },
+      {
+        "name": "Crispy Seared Tofu / Paneer",
+        "isCorrect": true,
+        "emoji": "🧈"
+      },
+      {
+        "name": "Sweet Corn & Bok Choy",
+        "isCorrect": true,
+        "emoji": "🥬"
+      },
+      {
+        "name": "Tandoori Chili Crisp",
+        "isCorrect": true,
+        "emoji": "🌶️"
+      },
+      {
+        "name": "Fish Stock Powder",
+        "isCorrect": false,
+        "emoji": "🐟",
+        "distractorReason": "Contains non-veg fish extracts! We use shiitake kombu stock."
+      },
+      {
+        "name": "Maple Syrup",
+        "isCorrect": false,
+        "emoji": "🍁",
+        "distractorReason": "Too sugary for a savory Japanese-Indian curry ramen!"
+      }
+    ],
+    "scienceNote": "Ramen noodles contain kansui (alkaline salts: sodium carbonate) which raises pH, giving noodles their yellow hue, firm chew, and resistance to getting soggy in hot broth!"
   }
 ];
-
 const CULINARY_SCIENCE_TOPICS = [
   {
     id: 'acid-curing',
@@ -3381,7 +4204,26 @@ class FusionApp {
     }
   }
 
+  
+  exportWebsiteData() {
+    const data = {
+      version: this.state.appVersion,
+      exportedAt: new Date().toISOString(),
+      state: this.state
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `fusionfood_backup_${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('Data backup downloaded successfully!', 'success');
+  }
+
   async clearAllWebsiteData() {
+    // Preserve auto-backup snapshot so user can Undo if accidental
+    this.lastBackupState = JSON.parse(JSON.stringify(this.state));
     try {
       // 1. Clear IndexedDB
       if (this.db) {
@@ -3420,6 +4262,20 @@ class FusionApp {
     this.saveState();
 
     // 5. Re-render all views
+    
+    // Detect URL version parameter or path (/v1, /v2, /v3 or ?v=1, ?v=2, ?v=3)
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const vParam = urlParams.get('v') || urlParams.get('version');
+      const pathname = (window.location.pathname || '').toLowerCase();
+      if (pathname.includes('/v1') || vParam === '1' || vParam === 'v1') {
+        this.state.appVersion = 'v1';
+      } else if (pathname.includes('/v3') || vParam === '3' || vParam === 'v3') {
+        this.state.appVersion = 'v3';
+      } else if (pathname.includes('/v2') || vParam === '2' || vParam === 'v2') {
+        this.state.appVersion = 'v2';
+      }
+    }
     this.applyTheme(this.state.theme);
     this.renderHeader();
     this.renderProgressStrip();
@@ -3427,12 +4283,10 @@ class FusionApp {
     this.renderActiveGame();
     this.renderKitchenLab(this.state.recipeFilter);
     this.renderLeaderboard();
-    this.handleTabSwitch3D(tabId);
-
+    if (this.threeManager && this.threeManager.isSupported()) {
+      this.threeManager.onTabChanged(this.state.currentTab || 'games');
+    }
     sound.playCorrect();
-        if (this.threeManager && this.threeManager.isSupported()) {
-          this.threeManager.triggerIngredientJump(ingName);
-        }
     showToast('✨ All website data, XP, and leaderboards cleared!', 'success');
   }
 
@@ -5941,19 +6795,41 @@ class FusionApp {
     this.state.recipeFilter = filter;
     this.saveState();
 
-    const filteredDishes = filter === 'all' 
+    const query = (this.recipeSearchQuery || '').trim().toLowerCase();
+    let filteredDishes = filter === 'all' 
       ? FUSION_DISHES 
       : FUSION_DISHES.filter(d => d.origin.toLowerCase().includes(filter.toLowerCase()));
+
+    if (query) {
+      filteredDishes = filteredDishes.filter(d =>
+        d.name.toLowerCase().includes(query) ||
+        d.origin.toLowerCase().includes(query) ||
+        d.description.toLowerCase().includes(query) ||
+        (d.indianSubstitutes && d.indianSubstitutes.some(s => s.original.toLowerCase().includes(query) || s.substitute.toLowerCase().includes(query)))
+      );
+    }
+
+    const countIndicator = document.getElementById('recipe-search-count');
+    if (countIndicator) {
+      countIndicator.innerText = `Showing ${filteredDishes.length} of ${FUSION_DISHES.length} dishes`;
+    }
 
     container.innerHTML = filteredDishes.map(dish => `
       <div class="cookbook-recipe-card" data-dish-id="${dish.id}">
         <div>
-          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.65rem;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.45rem;">
             <span class="veg-badge"><span class="veg-icon-dot"></span> 100% Veg</span>
             <span class="pill-badge">${dish.origin}</span>
           </div>
+          <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap; margin-bottom:0.45rem; font-size:0.78rem; color:var(--text-muted);">
+            <span>⏱️ ${dish.prepTime || '15 mins'} prep • 🍳 ${dish.cookTime || '10 mins'} cook</span>
+            <span class="pill-badge" style="font-weight:700;">📊 ${dish.difficulty || 'Beginner'}</span>
+          </div>
           <h3 style="font-size:1.45rem; margin-bottom:0.35rem;">${dish.name}</h3>
-          <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:1.25rem;">${dish.description}</p>
+          <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:0.85rem;">${dish.description}</p>
+          <div style="display:flex; flex-wrap:wrap; gap:0.35rem; margin-bottom:0.95rem;">
+            <span class="allergen-tag-contains">⚠️ Contains: ${(dish.allergens && dish.allergens.contains) ? dish.allergens.contains.join(', ') : 'Dairy, Gluten'}</span>
+          </div>
 
           <h4 style="font-size:1rem; margin-bottom:0.45rem;">🛒 Indian Bazaar Substitutes:</h4>
           <table class="substitutes-table">
@@ -6071,13 +6947,38 @@ class FusionApp {
               <span id="skewer-roast-timer" style="color:#F59E0B; font-weight:700;">Heat Exposure: 0s</span>
             </div>
 
-            <!-- Visual Skewer Representation -->
-            <div id="skewer-stick-wrap" style="position:relative; width:100%; height:80px; display:flex; align-items:center; justify-content:center; touch-action:none; cursor:grab;">
-              <div id="skewer-stick" style="position:relative; width:260px; height:8px; background:#D97706; border-radius:4px; box-shadow:0 2px 8px rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:space-evenly;">
-                <div class="skewer-piece" data-piece="paneer" style="width:36px; height:36px; background:#FEF3C7; border:2px solid #D97706; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; transition:background 0.3s;">🧀</div>
-                <div class="skewer-piece" data-piece="pepper" style="width:34px; height:34px; background:#EF4444; border:2px solid #B91C1C; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; transition:background 0.3s;">🫑</div>
-                <div class="skewer-piece" data-piece="pineapple" style="width:36px; height:36px; background:#FDE047; border:2px solid #CA8A04; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; transition:background 0.3s;">🍍</div>
-                <div class="skewer-piece" data-piece="mushroom" style="width:34px; height:34px; background:#A8A29E; border:2px solid #78716C; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; transition:background 0.3s;">🍄</div>
+            <!-- Visual Skewer Representation (Realistic Culinary Presentation) -->
+            <div id="skewer-stick-wrap" style="position:relative; width:100%; height:88px; display:flex; align-items:center; justify-content:center; touch-action:none; cursor:grab;">
+              <!-- Bamboo Skewer Rod -->
+              <div id="skewer-stick" style="position:relative; width:290px; height:6px; background:linear-gradient(90deg, #78350F 0%, #D97706 45%, #FDE68A 90%, #B45309 100%); border-radius:3px; box-shadow:0 3px 10px rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:space-evenly;">
+                <!-- Sharpened Skewer Tip -->
+                <div style="position:absolute; right:-12px; top:-3px; width:0; height:0; border-top:6px solid transparent; border-bottom:6px solid transparent; border-left:14px solid #B45309;"></div>
+
+                <!-- Realistic Threaded Ingredients with Spice Coating & Grill Marks -->
+                <div class="skewer-piece" data-piece="paneer" title="Tandoori Paneer Tikka" style="width:42px; height:42px; background:radial-gradient(circle, #F97316 20%, #C2410C 85%); border-radius:8px; border:2px solid #EA580C; box-shadow:0 3px 8px rgba(0,0,0,0.4); display:flex; flex-direction:column; align-items:center; justify-content:center; position:relative; overflow:hidden; transition:filter 0.25s;">
+                  <div style="font-size:0.62rem; font-weight:900; color:#FEF3C7; text-shadow:0 1px 2px #000; letter-spacing:0.5px;">TIKKA</div>
+                  <div class="skewer-char-overlay" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; opacity:0; background:repeating-linear-gradient(45deg, rgba(20,10,5,0.85) 0, rgba(20,10,5,0.85) 4px, transparent 4px, transparent 10px); transition:opacity 0.3s;"></div>
+                </div>
+
+                <div class="skewer-piece" data-piece="pepper" title="Flame-Kissed Red Bell Pepper" style="width:38px; height:38px; background:radial-gradient(circle, #EF4444 30%, #991B1B 90%); border-radius:8px; border:2px solid #B91C1C; box-shadow:0 3px 8px rgba(0,0,0,0.4); display:flex; flex-direction:column; align-items:center; justify-content:center; position:relative; overflow:hidden; transition:filter 0.25s;">
+                  <div style="font-size:0.62rem; font-weight:900; color:#FFF; text-shadow:0 1px 2px #000;">PEPPER</div>
+                  <div class="skewer-char-overlay" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; opacity:0; background:repeating-linear-gradient(45deg, rgba(20,10,5,0.85) 0, rgba(20,10,5,0.85) 4px, transparent 4px, transparent 10px); transition:opacity 0.3s;"></div>
+                </div>
+
+                <div class="skewer-piece" data-piece="pineapple" title="Golden Glazed Pineapple" style="width:40px; height:40px; background:radial-gradient(circle, #FBBF24 35%, #D97706 90%); border-radius:8px; border:2px solid #CA8A04; box-shadow:0 3px 8px rgba(0,0,0,0.4); display:flex; flex-direction:column; align-items:center; justify-content:center; position:relative; overflow:hidden; transition:filter 0.25s;">
+                  <div style="font-size:0.6rem; font-weight:900; color:#78350F; text-shadow:0 1px 2px rgba(255,255,255,0.4);">ANANAS</div>
+                  <div class="skewer-char-overlay" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; opacity:0; background:repeating-linear-gradient(45deg, rgba(20,10,5,0.85) 0, rgba(20,10,5,0.85) 4px, transparent 4px, transparent 10px); transition:opacity 0.3s;"></div>
+                </div>
+
+                <div class="skewer-piece" data-piece="mushroom" title="Earthy Button Mushroom" style="width:38px; height:38px; background:radial-gradient(circle, #78716C 35%, #44403C 90%); border-radius:50% 50% 12px 12px; border:2px solid #57534E; box-shadow:0 3px 8px rgba(0,0,0,0.4); display:flex; flex-direction:column; align-items:center; justify-content:center; position:relative; overflow:hidden; transition:filter 0.25s;">
+                  <div style="font-size:0.58rem; font-weight:900; color:#E7E5E4; text-shadow:0 1px 2px #000;">SHROOM</div>
+                  <div class="skewer-char-overlay" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; opacity:0; background:repeating-linear-gradient(45deg, rgba(20,10,5,0.85) 0, rgba(20,10,5,0.85) 4px, transparent 4px, transparent 10px); transition:opacity 0.3s;"></div>
+                </div>
+
+                <div class="skewer-piece" data-piece="green_pepper" title="Crunchy Green Capsicum" style="width:36px; height:36px; background:radial-gradient(circle, #22C55E 35%, #15803D 90%); border-radius:8px; border:2px solid #16A34A; box-shadow:0 3px 8px rgba(0,0,0,0.4); display:flex; flex-direction:column; align-items:center; justify-content:center; position:relative; overflow:hidden; transition:filter 0.25s;">
+                  <div style="font-size:0.58rem; font-weight:900; color:#DCFCE7; text-shadow:0 1px 2px #000;">CHILI</div>
+                  <div class="skewer-char-overlay" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; opacity:0; background:repeating-linear-gradient(45deg, rgba(20,10,5,0.85) 0, rgba(20,10,5,0.85) 4px, transparent 4px, transparent 10px); transition:opacity 0.3s;"></div>
+                </div>
               </div>
             </div>
 
@@ -6137,9 +7038,15 @@ class FusionApp {
       });
     });
 
+    const charOverlays = stage.querySelectorAll('.skewer-char-overlay');
+
     const updateSkewerVisuals = () => {
       const pct = Math.min(150, Math.floor(doneness));
       if (timerText) timerText.innerText = `Heat Exposure: ${(doneness / 10).toFixed(1)}s (${pct}%)`;
+
+      // Dynamic char grill stripes opacity
+      const charOpacity = pct < 35 ? 0 : Math.min(0.95, (pct - 35) / 55);
+      charOverlays.forEach(o => o.style.opacity = `${charOpacity}`);
 
       if (pct < 40) {
         if (statusPill) {
@@ -6154,14 +7061,14 @@ class FusionApp {
           statusPill.style.background = '#10B981';
           statusPill.style.color = '#FFF';
         }
-        pieces.forEach(p => p.style.filter = 'brightness(0.85) sepia(0.5) contrast(1.2)');
+        pieces.forEach(p => p.style.filter = 'brightness(0.9) contrast(1.2)');
       } else {
         if (statusPill) {
           statusPill.innerText = `⚠️ BURNT OVERCOALS! (${pct}%)`;
           statusPill.style.background = '#EF4444';
           statusPill.style.color = '#FFF';
         }
-        pieces.forEach(p => p.style.filter = 'brightness(0.3) contrast(1.8)');
+        pieces.forEach(p => p.style.filter = 'brightness(0.3) contrast(1.8) grayscale(0.5)');
       }
     };
 
@@ -6175,11 +7082,14 @@ class FusionApp {
       startY = clientY;
       isOverCoals = true;
       sound.playSizzle();
+      sound.startContinuousSizzle(0.55, 1.0);
+      sound.triggerHaptic([25, 30]);
       if (!cookInterval) {
         cookInterval = setInterval(() => {
           if (isOverCoals) {
             doneness += 3.5;
             updateSkewerVisuals();
+            sound.updateContinuousSizzle(1.0, 1.0);
           }
         }, 200);
       }
@@ -6194,6 +7104,7 @@ class FusionApp {
     const endDrag = () => {
       isDragging = false;
       isOverCoals = false;
+      sound.stopContinuousSizzle();
       if (stickWrap) stickWrap.style.transform = 'translateY(0px)';
       if (cookInterval) {
         clearInterval(cookInterval);
@@ -6257,6 +7168,7 @@ class FusionApp {
 
     stage.querySelector('#btn-reset-skewer')?.addEventListener('click', () => {
       sound.playClick();
+      sound.stopContinuousSizzle();
       doneness = 0;
       updateSkewerVisuals();
     });
@@ -6320,9 +7232,12 @@ class FusionApp {
       <!-- Header -->
       <div class="recipe-popout-header">
         <div class="recipe-popout-title-wrap">
-          <div class="recipe-popout-meta-row">
+          <div class="recipe-popout-meta-row" style="display:flex; flex-wrap:wrap; gap:0.45rem; align-items:center;">
             <span class="veg-badge"><span class="veg-icon-dot"></span> 100% Pure Veg</span>
             <span class="pill-badge">${dish.origin}</span>
+            <span class="pill-badge">⏱️ ${dish.prepTime || '15 mins'} prep • 🍳 ${dish.cookTime || '10 mins'} cook</span>
+            <span class="pill-badge">🍽️ ${dish.servings || '2 servings'}</span>
+            <span class="pill-badge" style="font-weight:700;">📊 ${dish.difficulty || 'Beginner'}</span>
             <span style="font-size:0.8rem; color:var(--text-muted);">Availability: <strong>${dish.availability}</strong></span>
           </div>
           <h2 id="popout-recipe-title">${dish.name}</h2>
@@ -6339,6 +7254,20 @@ class FusionApp {
       <div class="recipe-popout-grid">
         <!-- Left Column: Detailed Step-by-Step Cooking Guide -->
         <div class="recipe-steps-column">
+          <!-- Comprehensive Food Safety & Allergen Transparency (FF-02, K-08) -->
+          <div class="allergen-warning-box">
+            <h4 style="font-size:0.95rem; margin-bottom:0.45rem; color:#DC2626; display:flex; align-items:center; gap:0.4rem;">
+              <span>🛡️ Food Safety & Allergen Transparency</span>
+            </h4>
+            <div style="font-size:0.84rem; display:flex; flex-direction:column; gap:0.35rem;">
+              <div><strong>⚠️ Contains Allergens:</strong> <span class="allergen-tag-contains">${(dish.allergens && dish.allergens.contains) ? dish.allergens.contains.join(', ') : 'Dairy, Gluten'}</span></div>
+              ${(dish.allergens && dish.allergens.mayContain && dish.allergens.mayContain.length) ? `<div><strong>🏭 May Contain:</strong> <span class="allergen-tag-maycontain">${dish.allergens.mayContain.join(', ')}</span></div>` : ''}
+              <div style="color:var(--text-muted); font-size:0.8rem; line-height:1.4;"><strong>Cross-Contamination Warning:</strong> ${(dish.allergens && dish.allergens.warning) || 'Packaged ingredients may have cross-contact risks.'}</div>
+              <div style="color:var(--accent-green); font-size:0.8rem; line-height:1.4;"><strong>🌱 Allergen Substitutions:</strong> ${(dish.allergens && dish.allergens.swaps) || 'Gluten-free and dairy-free swaps available.'}</div>
+              <div style="font-size:0.76rem; color:var(--text-muted); font-style:italic; margin-top:0.2rem;">📦 Package Reminder: Never present a dish as universally allergen-free without verifying manufacturer packaging.</div>
+            </div>
+          </div>
+
           <!-- Backstory -->
           <div style="background:var(--bg-card-subtle); border:1.5px solid var(--border-color); border-radius:var(--radius-md); padding:1rem 1.25rem; margin-bottom:1.5rem;">
             <h4 style="font-size:0.95rem; margin-bottom:0.35rem; color:var(--primary); display:flex; align-items:center; gap:0.4rem;">
@@ -6796,19 +7725,28 @@ Guidelines:
   async renderLeaderboard() {
     const rosterContainer = document.getElementById('family-roster-display');
     const filter = this.state.leaderboardFilter || 'all';
+    const scope = this.state.leaderboardScope || 'local';
 
     // Update active state on filter chips
     document.querySelectorAll('#leaderboard-filter-tabs .recipe-chip').forEach(btn => {
       const f = btn.getAttribute('data-lb-filter');
-      if (f === filter) {
-        btn.classList.add('active');
-      } else {
-        btn.classList.remove('active');
-      }
+      btn.classList.toggle('active', f === filter);
+    });
+
+    // Update active state on scope toggle buttons
+    document.querySelectorAll('#leaderboard-scope-toggle .scope-btn').forEach(btn => {
+      const s = btn.getAttribute('data-scope');
+      const isActive = s === scope;
+      btn.classList.toggle('active', isActive);
+      btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
     });
 
     if (rosterContainer) {
-      this.renderGlobalLeaderboard(rosterContainer, filter);
+      if (scope === 'global') {
+        await this.renderGlobalLeaderboard(rosterContainer, filter);
+      } else {
+        this.renderLocalFamilyRoster(rosterContainer, filter);
+      }
     }
   }
 
@@ -7390,6 +8328,27 @@ Guidelines:
             </div>
           </div>
 
+          <!-- Data Safety, Backup & Recovery Hub (FF-01) -->
+          <div style="border-top:1px solid var(--border-color); padding-top:1.15rem; margin-top:1rem;">
+            <label style="display:block; font-weight:700; font-size:0.88rem; margin-bottom:0.45rem;">
+              📦 Data Backup, Export & Reset Safety
+            </label>
+            <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:1rem;">
+              <button class="btn btn-secondary" id="admin-export-data-btn" style="padding:0.4rem 0.8rem; font-size:0.8rem; font-weight:700;">
+                📥 Export & Backup Data (JSON)
+              </button>
+              <button class="btn btn-secondary" id="admin-import-data-btn" style="padding:0.4rem 0.8rem; font-size:0.8rem; font-weight:700;">
+                📤 Import Backup (JSON)
+              </button>
+              <input type="file" id="admin-import-file-input" accept=".json" style="display:none;" />
+              ${this.lastBackupState ? `
+                <button class="btn btn-secondary" id="admin-undo-clear-btn" style="color:#10B981; border-color:#10B981; padding:0.4rem 0.8rem; font-size:0.8rem; font-weight:700;">
+                  ↩️ Undo Last Wipe
+                </button>
+              ` : ''}
+            </div>
+          </div>
+
           <div style="border-top:1px solid var(--border-color); padding-top:1.25rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.6rem;">
             <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
               <button class="btn btn-secondary" id="reset-admin-btn" style="color:var(--primary); border-color:var(--primary); padding:0.45rem 0.85rem; font-size:0.82rem;">
@@ -7687,6 +8646,58 @@ Guidelines:
         });
 
         // Clear All Website Data
+        
+        // Export Backup
+        document.getElementById('admin-export-data-btn')?.addEventListener('click', () => {
+          this.exportWebsiteData();
+        });
+
+        // Import Backup
+        document.getElementById('admin-import-data-btn')?.addEventListener('click', () => {
+          document.getElementById('admin-import-file-input')?.click();
+        });
+
+        document.getElementById('admin-import-file-input')?.addEventListener('change', (e) => {
+          const file = e.target.files && e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+              try {
+                const parsed = JSON.parse(event.target.result);
+                if (parsed.state) {
+                  this.state = parsed.state;
+                } else {
+                  this.state = parsed;
+                }
+                this.saveState();
+                this.renderHeader();
+                this.renderProgressStrip();
+                this.renderLeaderboard();
+                this.renderKitchenLab(this.state.recipeFilter);
+                this.renderAdminModalContent(true);
+                showToast('Website data successfully restored from backup!', 'success');
+              } catch (err) {
+                alert('Invalid backup JSON file.');
+              }
+            };
+            reader.readAsText(file);
+          }
+        });
+
+        // Undo Last Wipe
+        document.getElementById('admin-undo-clear-btn')?.addEventListener('click', () => {
+          if (this.lastBackupState) {
+            this.state = JSON.parse(JSON.stringify(this.lastBackupState));
+            this.lastBackupState = null;
+            this.saveState();
+            this.renderHeader();
+            this.renderProgressStrip();
+            this.renderLeaderboard();
+            this.renderKitchenLab(this.state.recipeFilter);
+            this.renderAdminModalContent(true);
+            showToast('Cleared data restored successfully!', 'success');
+          }
+        });
         document.getElementById('clear-all-data-admin-btn')?.addEventListener('click', async () => {
           if (confirm('⚠️ PERMANENT ACTION:\n\nDo you want to completely clear all website data, including database records, XP, levels, leaderboards, and progress?')) {
             await this.clearAllWebsiteData();
@@ -8151,6 +9162,7 @@ Guidelines:
       if (e.target.id === 'ai-face-tour-modal') this.closeTourModal();
     });
 
+    // Global Modal Escape & Focus Trapping (MOD-05, MOD-06, MOD-07)
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         this.closeAdminModal();
@@ -8159,6 +9171,80 @@ Guidelines:
         this.closeCameraScannerModal();
         this.closePortfolioModal();
         this.closeTourModal();
+        this.closeHotPotatoFullscreenModal();
+        document.getElementById('leaderboard-modal')?.classList.remove('open');
+        document.body.classList.remove('has-modal-open');
+        if (this.lastFocusedElement && typeof this.lastFocusedElement.focus === 'function') {
+          this.lastFocusedElement.focus();
+        }
+      } else if (e.key === 'Tab') {
+        const openModal = document.querySelector('.modal-overlay.open');
+        if (openModal) {
+          const focusables = openModal.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])');
+          if (focusables.length > 0) {
+            const first = focusables[0];
+            const last = focusables[focusables.length - 1];
+            if (e.shiftKey && document.activeElement === first) {
+              e.preventDefault();
+              last.focus();
+            } else if (!e.shiftKey && document.activeElement === last) {
+              e.preventDefault();
+              first.focus();
+            }
+          }
+        }
+      }
+    });
+
+    // Hero Dual Action CTAs (FF-10)
+    document.getElementById('hero-primary-cta')?.addEventListener('click', () => {
+      sound.playClick();
+      this.switchMainTab('games');
+    });
+    document.getElementById('hero-secondary-cta')?.addEventListener('click', () => {
+      sound.playClick();
+      this.switchMainTab('kitchen');
+    });
+
+    // Kitchen Instant Recipe Search (K-03)
+    document.getElementById('kitchen-recipe-search')?.addEventListener('input', (e) => {
+      this.recipeSearchQuery = e.target.value;
+      this.renderKitchenLab(this.state.recipeFilter);
+    });
+
+    // Footer Architecture Version Switcher (Audit 9 & 11)
+    document.querySelectorAll('.footer-version-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        sound.playClick();
+        const ver = btn.getAttribute('data-ver');
+        this.state.appVersion = ver;
+        this.saveState();
+        this.applyV2FeatureVisibility();
+        document.querySelectorAll('.footer-version-btn').forEach(b => {
+          b.classList.toggle('active', b.getAttribute('data-ver') === ver);
+        });
+        showToast(`Switched architecture to ${ver.toUpperCase()}`, 'info');
+      });
+    });
+
+    // Leaderboard Global Publish Button (FF-13)
+    document.getElementById('publish-global-score-btn')?.addEventListener('click', async () => {
+      sound.playClick();
+      const profile = this.getActiveProfile();
+      const nickname = prompt(`Publish ${profile.name}'s score to the Global Hall of Fame?\n\nEnter public display nickname (or leave blank for "Anonymous Chef"):`, profile.name);
+      if (nickname !== null) {
+        const publicName = nickname.trim() || 'Anonymous Chef';
+        await this.postLeaderboardScore({
+          player_name: publicName,
+          score: profile.xp,
+          game_category: 'level_overall',
+          role: profile.role,
+          level: this.getCurrentRank(profile.xp, profile.role).level
+        });
+        showToast(`Published score for ${publicName} to Global Hall of Fame!`, 'success');
+        this.state.leaderboardScope = 'global';
+        this.saveState();
+        this.renderLeaderboard();
       }
     });
 
@@ -8241,7 +9327,7 @@ Guidelines:
       { id: 'stat-counter-labs', target: 5, suffix: '' },
       { id: 'stat-counter-recipes', target: 8, suffix: '' },
       { id: 'stat-counter-veg', target: 100, suffix: '%' },
-      { id: 'stat-counter-allergens', target: 0, suffix: '' }
+      { id: 'stat-counter-allergens', target: 100, suffix: '%' }
     ];
 
     counters.forEach(c => {
@@ -8393,23 +9479,39 @@ Guidelines:
 
     container.innerHTML = `
       <div class="model-3d-hud">
-        <div style="display:flex; align-items:center; gap:0.5rem; pointer-events:auto;">
+        <div style="display:flex; align-items:center; gap:0.5rem; pointer-events:auto; flex-wrap:wrap;">
           <span class="model-3d-badge" style="background:linear-gradient(135deg, #B91C1C, #D97706); border:none; box-shadow:0 2px 10px rgba(185,28,28,0.5);">🔥 3D Tandoor Hearth</span>
           <span class="model-3d-badge" id="tandoor-temp-display">Tandoori Roast: 350°C</span>
+          <span class="model-3d-badge" id="tandoor-thermometer-pill" style="background:rgba(15,23,42,0.85); border:1px solid #F59E0B; color:#F59E0B;">🌡️ Skewer Core: 25°C</span>
         </div>
-        <div style="display:flex; align-items:center; gap:0.5rem; pointer-events:auto;">
+        <div style="display:flex; align-items:center; gap:0.5rem; pointer-events:auto; flex-wrap:wrap;">
+          <span class="model-3d-badge" id="tandoor-roll-badge" style="background:rgba(30,41,59,0.9); border:1px solid rgba(255,255,255,0.18); color:#38BDF8;">🔄 Roll: 0°</span>
           <span class="model-3d-badge" id="tandoor-skewer-badge" style="background:rgba(30,41,59,0.9); border:1px solid rgba(255,255,255,0.18); color:#F8FAFC; transition:all 0.3s;">🍢 Skewer: Resting (Click Roast)</span>
         </div>
       </div>
 
+      <!-- Floating sensory feedback popups container -->
+      <div id="tandoor-floating-feedback" style="position:absolute; top:28%; left:50%; width:0; height:0; pointer-events:none; z-index:30;"></div>
+
       <div class="tandoor-controls-dock" style="position:absolute; bottom:0.65rem; left:50%; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; gap:0.45rem; z-index:10; width:92%; max-width:680px; pointer-events:none;">
-        <!-- Live Doneness Progress Bar -->
-        <div id="tandoor-doneness-wrap" style="width:100%; max-width:440px; background:rgba(15,23,42,0.88); backdrop-filter:blur(8px); border:1px solid rgba(255,255,255,0.15); border-radius:10px; padding:0.25rem 0.65rem; display:flex; align-items:center; gap:0.6rem; box-shadow:0 4px 20px rgba(0,0,0,0.5); pointer-events:auto;">
-          <span style="font-size:0.72rem; font-weight:800; color:#F8FAFC; white-space:nowrap;" id="tandoor-roast-timer-text">Exposure: 0.0s</span>
-          <div style="flex:1; height:8px; background:rgba(255,255,255,0.12); border-radius:4px; overflow:hidden; position:relative;">
-            <div id="tandoor-doneness-fill" style="width:0%; height:100%; background:linear-gradient(90deg, #38BDF8, #F59E0B, #10B981); border-radius:4px; transition:width 0.15s ease, background 0.3s ease;"></div>
+        <!-- Live Doneness & Thermometer Progress Bar -->
+        <div id="tandoor-doneness-wrap" style="width:100%; max-width:480px; background:rgba(15,23,42,0.92); backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,0.18); border-radius:12px; padding:0.35rem 0.85rem; display:flex; flex-direction:column; gap:0.25rem; box-shadow:0 6px 24px rgba(0,0,0,0.6); pointer-events:auto;">
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.75rem; font-weight:800;">
+            <span style="color:#F8FAFC;" id="tandoor-roast-timer-text">Exposure: 0.0s</span>
+            <span style="color:#38BDF8;" id="tandoor-doneness-pct">0% Raw Marinated</span>
           </div>
-          <span style="font-size:0.72rem; font-weight:800; color:#38BDF8; white-space:nowrap;" id="tandoor-doneness-pct">0% Raw</span>
+          <div style="width:100%; height:9px; background:rgba(255,255,255,0.12); border-radius:6px; overflow:hidden; position:relative;">
+            <div id="tandoor-doneness-fill" style="width:0%; height:100%; background:linear-gradient(90deg, #38BDF8, #F59E0B, #10B981); border-radius:6px; transition:width 0.15s ease, background 0.3s ease;"></div>
+            <!-- Golden Char Target Marker -->
+            <div style="position:absolute; left:75%; top:0; width:25%; height:100%; border-left:2px dashed #FFF; background:rgba(16,185,129,0.15); pointer-events:none;" title="Golden Char Pitmaster Zone (75-100%)"></div>
+          </div>
+          <!-- Live Ingredients Char Status Strip -->
+          <div id="tandoor-ingredients-status-strip" style="display:flex; justify-content:space-between; font-size:0.68rem; color:#94A3B8; font-weight:700;">
+            <span>🧀 Paneer: Raw</span>
+            <span>🫑 Pepper: Fresh</span>
+            <span>🍍 Pineapple: Glazed</span>
+            <span>🍄 Mushroom: Earthy</span>
+          </div>
         </div>
 
         <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; justify-content:center; pointer-events:auto;">
@@ -8425,13 +9527,18 @@ Guidelines:
             <span>🔥</span> <span id="tandoor-roast-btn-label">Roast on Charcoal</span>
           </button>
 
+          <!-- 360° Skewer Roll Button -->
+          <button id="btn-tandoor-roll-action" class="tandoor-skewer-rotate-btn" title="Rotate skewer 90° for uniform 360° charring">
+            <span>🔄</span> <span>Roll 90°</span>
+          </button>
+
           <!-- Reset Skewer Button -->
           <button id="btn-tandoor-reset-action" class="btn" title="Reset Skewer" style="background:rgba(30,41,59,0.85); color:#94A3B8; border:1px solid rgba(255,255,255,0.15); border-radius:999px; padding:0.35rem 0.65rem; font-size:0.8rem; cursor:pointer;">
             🔄
           </button>
         </div>
       </div>
-      <div class="model-3d-hint" style="bottom:3.6rem;">💡 Click "Roast on Charcoal" or tap the skewer to gracefully lower it onto glowing coals!</div>
+      <div class="model-3d-hint" style="bottom:4.8rem;">💡 Click "Roast on Charcoal" to lower skewer. Click "Roll 90°" to cook all 4 sides evenly!</div>
     `;
 
     const width = container.clientWidth || 800;
@@ -8632,64 +9739,357 @@ Guidelines:
     const smokePoints = new THREE.Points(smokeGeo, smokeMat);
     scene.add(smokePoints);
 
-    // 5. High-Fidelity 3D Tandoori Skewer (Marinated & Charred)
+    // 5. Procedural Culinary Texture Generator for High Realism
+    const createFoodCanvasTexture = (type) => {
+      const canvas = document.createElement('canvas');
+      canvas.width = 256;
+      canvas.height = 256;
+      const ctx = canvas.getContext('2d');
+
+      const redraw = (pct = 0) => {
+        ctx.clearRect(0, 0, 256, 256);
+        const charRatio = Math.min(1.5, pct / 100);
+
+        if (type === 'paneer') {
+          // Rich Tandoori Tikka Marinade
+          const grad = ctx.createLinearGradient(0, 0, 256, 256);
+          grad.addColorStop(0, '#E65100');
+          grad.addColorStop(0.5, '#F57C00');
+          grad.addColorStop(1, '#D84315');
+          ctx.fillStyle = grad;
+          ctx.fillRect(0, 0, 256, 256);
+
+          // Curd micro-porosity
+          for (let i = 0; i < 350; i++) {
+            const x = Math.random() * 256;
+            const y = Math.random() * 256;
+            ctx.fillStyle = Math.random() > 0.4 ? 'rgba(255, 248, 225, 0.24)' : 'rgba(216, 67, 21, 0.35)';
+            ctx.beginPath();
+            ctx.arc(x, y, 1 + Math.random() * 2.2, 0, Math.PI * 2);
+            ctx.fill();
+          }
+
+          // Dried Kasuri Methi (Fenugreek Flakes)
+          for (let i = 0; i < 85; i++) {
+            ctx.fillStyle = Math.random() > 0.5 ? '#33691E' : '#2E7D32';
+            ctx.save();
+            ctx.translate(Math.random() * 256, Math.random() * 256);
+            ctx.rotate(Math.random() * Math.PI);
+            ctx.fillRect(-2, -1, 3.5 + Math.random() * 3, 1.5 + Math.random() * 2);
+            ctx.restore();
+          }
+
+          // Coarse Black Pepper & Roasted Cumin
+          for (let i = 0; i < 110; i++) {
+            ctx.fillStyle = Math.random() > 0.5 ? '#1B0E07' : '#3E2723';
+            ctx.fillRect(Math.random() * 256, Math.random() * 256, 1.8, 1.8);
+          }
+
+          // Glistening Mustard Oil Sheen
+          for (let i = 0; i < 20; i++) {
+            const rx = Math.random() * 256;
+            const ry = Math.random() * 256;
+            const rad = 3 + Math.random() * 5;
+            const g = ctx.createRadialGradient(rx, ry, 0, rx, ry, rad);
+            g.addColorStop(0, 'rgba(255, 255, 255, 0.6)');
+            g.addColorStop(0.5, 'rgba(255, 235, 59, 0.2)');
+            g.addColorStop(1, 'rgba(255, 235, 59, 0)');
+            ctx.fillStyle = g;
+            ctx.beginPath();
+            ctx.arc(rx, ry, rad, 0, Math.PI * 2);
+            ctx.fill();
+          }
+
+          // Dynamic Maillard Grill Marks & Charcoal Blistering
+          if (pct > 35) {
+            const charAlpha = Math.min(0.95, (pct - 35) / 55);
+            ctx.strokeStyle = `rgba(38, 14, 5, ${charAlpha * 0.92})`;
+            ctx.lineWidth = 14 + charRatio * 6;
+            ctx.lineCap = 'round';
+            [50, 120, 195].forEach(yPos => {
+              ctx.beginPath();
+              ctx.moveTo(10, yPos - 30);
+              ctx.bezierCurveTo(90, yPos - 10, 170, yPos + 10, 246, yPos + 25);
+              ctx.stroke();
+            });
+
+            if (pct >= 65 && pct <= 105) {
+              ctx.strokeStyle = `rgba(255, 87, 34, ${0.45 * charAlpha})`;
+              ctx.lineWidth = 6;
+              [50, 120, 195].forEach(yPos => {
+                ctx.beginPath();
+                ctx.moveTo(10, yPos - 30);
+                ctx.bezierCurveTo(90, yPos - 10, 170, yPos + 10, 246, yPos + 25);
+                ctx.stroke();
+              });
+            }
+          }
+
+          if (pct > 100) {
+            const over = Math.min(1.0, (pct - 100) / 40);
+            ctx.fillStyle = `rgba(18, 9, 6, ${over * 0.78})`;
+            ctx.fillRect(0, 0, 256, 256);
+          }
+        } else if (type === 'red_pepper') {
+          // Glossy Crimson Bell Pepper Skin
+          const grad = ctx.createLinearGradient(0, 0, 0, 256);
+          grad.addColorStop(0, '#B71C1C');
+          grad.addColorStop(0.4, '#C62828');
+          grad.addColorStop(1, '#880E4F');
+          ctx.fillStyle = grad;
+          ctx.fillRect(0, 0, 256, 256);
+
+          // Waxy vegetable sheen
+          const gSpec = ctx.createLinearGradient(0, 40, 256, 70);
+          gSpec.addColorStop(0, 'rgba(255, 255, 255, 0)');
+          gSpec.addColorStop(0.5, 'rgba(255, 255, 255, 0.42)');
+          gSpec.addColorStop(1, 'rgba(255, 255, 255, 0)');
+          ctx.fillStyle = gSpec;
+          ctx.fillRect(0, 30, 256, 50);
+
+          if (pct > 35) {
+            const charAlpha = Math.min(0.92, (pct - 35) / 55);
+            ctx.fillStyle = `rgba(20, 8, 4, ${charAlpha})`;
+            for (let i = 0; i < 28; i++) {
+              const bx = (i * 37) % 240 + 10;
+              const by = (i * 47) % 230 + 15;
+              ctx.beginPath();
+              ctx.ellipse(bx, by, 7 + (i % 6), 4 + (i % 4), Math.PI / 4, 0, Math.PI * 2);
+              ctx.fill();
+            }
+          }
+        } else if (type === 'green_pepper') {
+          // Emerald Green Capsicum
+          const grad = ctx.createLinearGradient(0, 0, 256, 256);
+          grad.addColorStop(0, '#1B5E20');
+          grad.addColorStop(0.5, '#2E7D32');
+          grad.addColorStop(1, '#004D40');
+          ctx.fillStyle = grad;
+          ctx.fillRect(0, 0, 256, 256);
+
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.28)';
+          ctx.fillRect(0, 60, 256, 22);
+
+          if (pct > 35) {
+            const charAlpha = Math.min(0.9, (pct - 35) / 55);
+            ctx.fillStyle = `rgba(18, 12, 4, ${charAlpha})`;
+            for (let i = 0; i < 24; i++) {
+              const bx = (i * 41) % 235 + 10;
+              const by = (i * 53) % 235 + 12;
+              ctx.beginPath();
+              ctx.ellipse(bx, by, 6 + (i % 5), 3 + (i % 4), Math.PI / 6, 0, Math.PI * 2);
+              ctx.fill();
+            }
+          }
+        } else if (type === 'pineapple') {
+          // Sweet Caramelizing Pineapple
+          const grad = ctx.createLinearGradient(0, 0, 256, 256);
+          grad.addColorStop(0, '#FFB300');
+          grad.addColorStop(0.6, '#FFA000');
+          grad.addColorStop(1, '#FF8F00');
+          ctx.fillStyle = grad;
+          ctx.fillRect(0, 0, 256, 256);
+
+          for (let i = 0; i < 20; i++) {
+            ctx.strokeStyle = 'rgba(255, 248, 225, 0.4)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(i * 14, 0);
+            ctx.lineTo(i * 14 + 18, 256);
+            ctx.stroke();
+          }
+
+          if (pct > 30) {
+            const sugarChar = Math.min(0.92, (pct - 30) / 60);
+            ctx.strokeStyle = `rgba(78, 32, 7, ${sugarChar})`;
+            ctx.lineWidth = 12;
+            [60, 140, 210].forEach(y => {
+              ctx.beginPath();
+              ctx.moveTo(10, y - 20);
+              ctx.lineTo(246, y + 20);
+              ctx.stroke();
+            });
+          }
+        } else if (type === 'mushroom') {
+          // Earthy Button Mushroom Cap
+          const grad = ctx.createRadialGradient(128, 128, 10, 128, 128, 140);
+          grad.addColorStop(0, '#795548');
+          grad.addColorStop(0.7, '#5D4037');
+          grad.addColorStop(1, '#3E2723');
+          ctx.fillStyle = grad;
+          ctx.fillRect(0, 0, 256, 256);
+
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.22)';
+          ctx.beginPath();
+          ctx.arc(128, 110, 55, 0, Math.PI * 2);
+          ctx.fill();
+
+          if (pct > 35) {
+            const charAlpha = Math.min(0.9, (pct - 35) / 55);
+            ctx.strokeStyle = `rgba(26, 12, 6, ${charAlpha})`;
+            ctx.lineWidth = 14;
+            ctx.beginPath();
+            ctx.moveTo(20, 128);
+            ctx.lineTo(236, 128);
+            ctx.stroke();
+          }
+        } else if (type === 'onion') {
+          // Sirka Red Pickled Onion Rings
+          const grad = ctx.createLinearGradient(0, 0, 0, 256);
+          grad.addColorStop(0, '#880E4F');
+          grad.addColorStop(0.3, '#AD1457');
+          grad.addColorStop(0.7, '#C2185B');
+          grad.addColorStop(1, '#F8BBD0');
+          ctx.fillStyle = grad;
+          ctx.fillRect(0, 0, 256, 256);
+
+          for (let i = 0; i < 6; i++) {
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(128, 256, 40 + i * 35, Math.PI, Math.PI * 2);
+            ctx.stroke();
+          }
+
+          if (pct > 35) {
+            const charAlpha = Math.min(0.9, (pct - 35) / 55);
+            ctx.fillStyle = `rgba(24, 7, 12, ${charAlpha})`;
+            ctx.fillRect(0, 0, 256, 24 + charRatio * 18);
+          }
+        }
+      };
+
+      redraw(0);
+      const texture = new THREE.CanvasTexture(canvas);
+      texture.wrapS = THREE.RepeatWrapping;
+      texture.wrapT = THREE.RepeatWrapping;
+      return { texture, redraw, canvas };
+    };
+
+    // 6. Ultra-Realistic Forged Steel Tandoori Skewer (Seekh)
     const skewerGroup = new THREE.Group();
 
-    // Forged Stainless Steel Square Skewer Rod
-    const rodGeo = new THREE.BoxGeometry(3.6, 3.6, 175);
+    // Forged Stainless Steel Square Seekh Rod
+    const rodGeo = new THREE.BoxGeometry(3.2, 3.2, 185);
     const rodMat = new THREE.MeshStandardMaterial({
-      color: 0xDCDDE1,
-      metalness: 0.92,
+      color: 0xE2E8F0,
+      metalness: 0.95,
       roughness: 0.18
     });
     const rodMesh = new THREE.Mesh(rodGeo, rodMat);
     rodMesh.rotation.y = Math.PI / 2;
     skewerGroup.add(rodMesh);
 
-    // Forged Iron Ring Loop Handle
-    const handleGeo = new THREE.TorusGeometry(6.5, 1.6, 12, 24);
-    const handleMat = new THREE.MeshStandardMaterial({
-      color: 0x2A2A30,
-      metalness: 0.85,
-      roughness: 0.3
+    // Sharp Pyramidal Needle Spear Tip
+    const tipGeo = new THREE.ConeGeometry(2.3, 14, 4);
+    const tipMat = new THREE.MeshStandardMaterial({
+      color: 0xCBD5E1,
+      metalness: 0.92,
+      roughness: 0.22
     });
+    const tipMesh = new THREE.Mesh(tipGeo, tipMat);
+    tipMesh.rotation.z = -Math.PI / 2;
+    tipMesh.rotation.y = Math.PI / 4;
+    tipMesh.position.set(99.5, 0, 0);
+    skewerGroup.add(tipMesh);
+
+    // Forged Iron Stopper Flange Washer
+    const flangeGeo = new THREE.CylinderGeometry(5.2, 5.2, 2.2, 16);
+    const flangeMat = new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.85, roughness: 0.35 });
+    const flangeMesh = new THREE.Mesh(flangeGeo, flangeMat);
+    flangeMesh.rotation.z = Math.PI / 2;
+    flangeMesh.position.set(-68, 0, 0);
+    skewerGroup.add(flangeMesh);
+
+    // Forged Twist Spiral Shank Section
+    const spiralGeo = new THREE.TorusGeometry(3.6, 1.2, 8, 16);
+    const spiralMat = new THREE.MeshStandardMaterial({ color: 0x2A2A30, metalness: 0.88, roughness: 0.3 });
+    const spiralMesh1 = new THREE.Mesh(spiralGeo, spiralMat);
+    spiralMesh1.position.set(-77, 0, 0);
+    spiralMesh1.rotation.y = Math.PI / 2;
+    skewerGroup.add(spiralMesh1);
+
+    // Heavy Ring Loop Handle
+    const handleGeo = new THREE.TorusGeometry(7.5, 2.0, 16, 28);
+    const handleMat = new THREE.MeshStandardMaterial({ color: 0x1E293B, metalness: 0.9, roughness: 0.25 });
     const handleMesh = new THREE.Mesh(handleGeo, handleMat);
-    handleMesh.position.set(-87.5, 0, 0);
+    handleMesh.position.set(-97, 0, 0);
     handleMesh.rotation.y = Math.PI / 2;
     skewerGroup.add(handleMesh);
 
+    // Helper for organic hand-cut paneer cubes
+    const createOrganicBox = (w, h, d) => {
+      const geo = new THREE.BoxGeometry(w, h, d, 4, 4, 4);
+      const pos = geo.attributes.position;
+      for (let i = 0; i < pos.count; i++) {
+        const jitter = (Math.sin(i * 3.7) * 0.5 + Math.cos(i * 5.1) * 0.5) * 0.75;
+        pos.setXYZ(i, pos.getX(i) + jitter, pos.getY(i) + jitter, pos.getZ(i) + jitter);
+      }
+      geo.computeVertexNormals();
+      return geo;
+    };
+
     // Authentic Threaded Food Items
     const foodItems = [];
-    const createFoodItem = (geo, baseHex, xPos, name) => {
+    const createRealisticFood = (geo, type, xPos, name) => {
+      const texData = createFoodCanvasTexture(type);
       const mat = new THREE.MeshStandardMaterial({
-        color: baseHex,
-        roughness: 0.48,
-        metalness: 0.08,
+        map: texData.texture,
+        roughness: 0.42,
+        metalness: 0.05,
         emissive: 0x000000,
         emissiveIntensity: 0
       });
       const mesh = new THREE.Mesh(geo, mat);
       mesh.position.set(xPos, 0, 0);
-      mesh.userData = { name, baseHex, mat };
+      mesh.userData = { name, type, mat, texData, xPos };
       skewerGroup.add(mesh);
       foodItems.push(mesh);
       return mesh;
     };
 
-    // 1. Paneer Tikka Cube 1
-    createFoodItem(new THREE.BoxGeometry(16, 16, 16), 0xE67E22, -44, 'Paneer Tikka');
-    // 2. Red Bell Pepper Chunk
-    createFoodItem(new THREE.BoxGeometry(14, 15, 14), 0xC0392B, -26, 'Red Bell Pepper');
-    // 3. Golden Tandoori Pineapple
-    createFoodItem(new THREE.BoxGeometry(15, 16, 15), 0xF1C40F, -8, 'Golden Pineapple');
-    // 4. Button Mushroom Cap (Dome)
-    createFoodItem(new THREE.CylinderGeometry(9.5, 7.5, 12, 20), 0x6D4C41, 10, 'Button Mushroom');
-    // 5. Paneer Tikka Cube 2
-    createFoodItem(new THREE.BoxGeometry(16, 16, 16), 0xE67E22, 28, 'Paneer Tikka');
-    // 6. Crunchy Green Capsicum
-    createFoodItem(new THREE.BoxGeometry(14, 15, 14), 0x27AE60, 46, 'Green Pepper');
-    // 7. Sirka Red Onion Petal
-    createFoodItem(new THREE.CylinderGeometry(8, 10, 10, 16), 0x8E44AD, 62, 'Sirka Onion');
+    // 1. Marinated Paneer Tikka Cube 1
+    createRealisticFood(createOrganicBox(17, 17, 17), 'paneer', -50, 'Paneer Tikka');
+    // 2. Flame-Kissed Red Bell Pepper Chunk
+    createRealisticFood(createOrganicBox(15, 16, 14), 'red_pepper', -32, 'Red Bell Pepper');
+    // 3. Caramelized Golden Pineapple
+    createRealisticFood(new THREE.CylinderGeometry(14, 14, 15, 20), 'pineapple', -14, 'Golden Pineapple');
+    // 4. Earthy Button Mushroom Cap
+    const mushGroup = new THREE.Group();
+    const mushTex = createFoodCanvasTexture('mushroom');
+    const capMesh = new THREE.Mesh(
+      new THREE.SphereGeometry(10.5, 20, 16, 0, Math.PI * 2, 0, Math.PI * 0.6),
+      new THREE.MeshStandardMaterial({ map: mushTex.texture, roughness: 0.48 })
+    );
+    capMesh.rotation.x = Math.PI;
+    mushGroup.add(capMesh);
+    const stemMesh = new THREE.Mesh(
+      new THREE.CylinderGeometry(3.5, 4.0, 7.5, 14),
+      new THREE.MeshStandardMaterial({ color: 0xEFEBE9, roughness: 0.6 })
+    );
+    stemMesh.position.y = -3;
+    mushGroup.add(stemMesh);
+    mushGroup.position.set(6, 0, 0);
+    skewerGroup.add(mushGroup);
+    capMesh.userData = { name: 'Button Mushroom', type: 'mushroom', mat: capMesh.material, texData: mushTex };
+    foodItems.push(capMesh);
+
+    // 5. Marinated Paneer Tikka Cube 2
+    createRealisticFood(createOrganicBox(17, 17, 17), 'paneer', 26, 'Paneer Tikka');
+    // 6. Crunchy Green Capsicum Chunk
+    createRealisticFood(createOrganicBox(15, 16, 14), 'green_pepper', 45, 'Green Pepper');
+    // 7. Sirka Red Pickled Onion Petal
+    createRealisticFood(new THREE.CylinderGeometry(10, 12, 12, 16, 1, true, 0, Math.PI * 0.85), 'onion', 64, 'Sirka Onion');
+
+    // Sizzling Grease Droplets Simulation (4 pooled droplets)
+    const drippingDrops = [];
+    for (let i = 0; i < 4; i++) {
+      const dropGeo = new THREE.SphereGeometry(0.9, 8, 8);
+      const dropMat = new THREE.MeshBasicMaterial({ color: 0xFFB300, transparent: true, opacity: 0 });
+      const dropMesh = new THREE.Mesh(dropGeo, dropMat);
+      scene.add(dropMesh);
+      drippingDrops.push({ mesh: dropMesh, active: false, vy: 0, x: 0, z: 0 });
+    }
 
     // Positions for Animation: Resting vs Gracefully Sitting on Coals
     const REST_POS = { y: 47, rotX: 0.14, rotZ: -0.09 };
@@ -8699,7 +10099,7 @@ Guidelines:
     skewerGroup.rotation.set(REST_POS.rotX, 0, REST_POS.rotZ);
     scene.add(skewerGroup);
 
-    // 6. Animation & Roast Controller Engine
+    // 7. Animation, Rotation & Roast Controller Engine
     let heatMultiplier = 1.0;
     let animId = null;
     let isPaused = false;
@@ -8708,48 +10108,94 @@ Guidelines:
     let targetAnim = 0.0;
     let doneness = 0.0;
     let lastSizzleTime = 0;
+    let lastDropTime = 0;
     let hasTouchedDown = false;
+    let currentRollAngle = 0;
+    let targetRollAngle = 0;
 
     // Smooth Cubic Spline Easing
     const easeInOutCubic = (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 
     const roastBtn = container.querySelector('#btn-tandoor-roast-action');
     const roastBtnLabel = container.querySelector('#tandoor-roast-btn-label');
+    const rollBtn = container.querySelector('#btn-tandoor-roll-action');
     const resetBtn = container.querySelector('#btn-tandoor-reset-action');
     const timerText = container.querySelector('#tandoor-roast-timer-text');
     const donenessFill = container.querySelector('#tandoor-doneness-fill');
     const donenessPct = container.querySelector('#tandoor-doneness-pct');
     const skewerBadge = container.querySelector('#tandoor-skewer-badge');
     const tempDisplay = container.querySelector('#tandoor-temp-display');
+    const thermoPill = container.querySelector('#tandoor-thermometer-pill');
+    const rollBadge = container.querySelector('#tandoor-roll-badge');
+    const statusStrip = container.querySelector('#tandoor-ingredients-status-strip');
+    const floatingContainer = container.querySelector('#tandoor-floating-feedback');
 
-    // Procedural Maillard Charring
+    // Floating sensory toast spawner
+    const spawnFloatingToast = (text, bg = '#10B981') => {
+      if (!floatingContainer) return;
+      const toast = document.createElement('div');
+      toast.className = 'tandoor-floating-toast';
+      toast.style.background = bg;
+      toast.style.color = '#FFFFFF';
+      toast.innerText = text;
+      floatingContainer.appendChild(toast);
+      setTimeout(() => toast.remove(), 1600);
+    };
+
+    // Procedural Maillard Charring & Thermometer Feedback
+    let lastToastStage = 0;
     const updateFoodCharring = () => {
       const pct = Math.min(150, Math.floor(doneness));
       const charRatio = Math.min(1.0, doneness / 100);
 
+      // Redraw procedural food canvas textures
       foodItems.forEach(item => {
+        if (item.userData && item.userData.texData && item.userData.texData.redraw) {
+          item.userData.texData.redraw(pct);
+          item.userData.texData.texture.needsUpdate = true;
+        }
+
         const mat = item.userData.mat;
-        if (pct < 40) {
-          mat.color.setHex(item.userData.baseHex);
-          mat.roughness = 0.48;
-          mat.emissive.setHex(0x000000);
-          mat.emissiveIntensity = 0;
-        } else if (pct <= 100) {
-          const baseCol = new THREE.Color(item.userData.baseHex);
-          const charredCol = new THREE.Color(0x8A3B0D);
-          baseCol.lerp(charredCol, (pct - 40) / 60);
-          mat.color.copy(baseCol);
-          mat.roughness = 0.58;
-          mat.emissive.setHex(0xFF4500);
-          mat.emissiveIntensity = 0.25 * charRatio;
-        } else {
-          const burntCol = new THREE.Color(0x180E09);
-          mat.color.lerp(burntCol, 0.45);
-          mat.roughness = 0.85;
-          mat.emissive.setHex(0xFF2200);
-          mat.emissiveIntensity = 0.45;
+        if (mat) {
+          if (pct < 40) {
+            mat.roughness = 0.42;
+            mat.emissive.setHex(0x000000);
+            mat.emissiveIntensity = 0;
+          } else if (pct <= 100) {
+            mat.roughness = 0.52;
+            mat.emissive.setHex(0xFF4500);
+            mat.emissiveIntensity = 0.22 * charRatio;
+          } else {
+            mat.roughness = 0.85;
+            mat.emissive.setHex(0xFF2200);
+            mat.emissiveIntensity = 0.42;
+          }
         }
       });
+
+      // Update Thermometer Core Temp
+      const coreTemp = Math.round(25 + Math.min(140, (doneness * 1.15) * heatMultiplier));
+      if (thermoPill) {
+        thermoPill.innerText = `🌡️ Skewer Core: ${coreTemp}°C`;
+        if (coreTemp < 60) thermoPill.style.color = '#38BDF8';
+        else if (coreTemp <= 110) thermoPill.style.color = '#10B981';
+        else thermoPill.style.color = '#EF4444';
+      }
+
+      // Sensory Floating Popups on Key Cooking Stages
+      if (pct >= 40 && lastToastStage < 1) {
+        lastToastStage = 1;
+        spawnFloatingToast('🔥 Searing at 350°C (+5 XP)', '#F59E0B');
+        sound.triggerHaptic([30]);
+      } else if (pct >= 75 && lastToastStage < 2) {
+        lastToastStage = 2;
+        spawnFloatingToast('✨ Maillard Caramelization Active (+25 XP)', '#10B981');
+        sound.triggerHaptic([40, 30, 40]);
+      } else if (pct >= 98 && lastToastStage < 3) {
+        lastToastStage = 3;
+        spawnFloatingToast('🏆 100% PERFECT GOLDEN CHAR! LIFT NOW!', '#059669');
+        sound.triggerHaptic([50, 40, 80]);
+      }
 
       if (timerText) timerText.innerText = `Exposure: ${(doneness / 10).toFixed(1)}s`;
       if (donenessFill) {
@@ -8764,17 +10210,49 @@ Guidelines:
       }
       if (donenessPct) {
         if (pct < 40) {
-          donenessPct.innerText = `${pct}% Raw`;
+          donenessPct.innerText = `${pct}% Raw Marinated`;
           donenessPct.style.color = '#38BDF8';
         } else if (pct <= 100) {
-          donenessPct.innerText = `✨ ${pct}% Golden Char`;
+          donenessPct.innerText = `✨ ${pct}% Golden Char (Pitmaster Zone)`;
           donenessPct.style.color = '#10B981';
         } else {
-          donenessPct.innerText = `⚠️ ${pct}% Burnt!`;
+          donenessPct.innerText = `⚠️ ${pct}% Overcharred!`;
           donenessPct.style.color = '#EF4444';
         }
       }
+
+      // Live ingredient breakdown strip
+      if (statusStrip) {
+        if (pct < 40) {
+          statusStrip.innerHTML = '<span>🧀 Paneer: Marinated</span><span>🫑 Pepper: Raw</span><span>🍍 Pineapple: Glazed</span><span>🍄 Mushroom: Earthy</span>';
+        } else if (pct <= 100) {
+          statusStrip.innerHTML = '<span style="color:#10B981;">🧀 Paneer: Blistered</span><span style="color:#10B981;">🫑 Pepper: Charred</span><span style="color:#10B981;">🍍 Pineapple: Caramel</span><span style="color:#10B981;">🍄 Mushroom: Sizzling</span>';
+        } else {
+          statusStrip.innerHTML = '<span style="color:#EF4444;">🧀 Paneer: Ash</span><span style="color:#EF4444;">🫑 Pepper: Scorched</span><span style="color:#EF4444;">🍍 Pineapple: Burnt</span><span style="color:#EF4444;">🍄 Mushroom: Dry</span>';
+        }
+      }
     };
+
+    // 360° Skewer Roll Execution
+    const rollSkewer = () => {
+      targetRollAngle += Math.PI / 2;
+      sound.playSkewerClink();
+      sound.triggerHaptic([25, 35]);
+
+      const degrees = Math.round((targetRollAngle / (Math.PI / 2)) * 90) % 360;
+      if (rollBadge) {
+        rollBadge.innerText = `🔄 Roll: ${degrees}°`;
+        rollBadge.style.color = '#38BDF8';
+      }
+
+      spawnFloatingToast('🔄 Rolled 90°! Uniform 360° Char (+15 XP)', '#38BDF8');
+      this.addXP(15, '🍢 Skewer Roll');
+    };
+
+    rollBtn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      rollSkewer();
+    });
 
     // Toggle Roasting Action
     const toggleRoast = () => {
@@ -8784,6 +10262,7 @@ Guidelines:
       if (isRoasting) {
         hasTouchedDown = false;
         sound.playClick();
+        sound.startContinuousSizzle(0.5, heatMultiplier);
         if (roastBtnLabel) roastBtnLabel.innerText = 'Lift Skewer';
         if (roastBtn) {
           roastBtn.style.background = 'linear-gradient(135deg, #10B981, #059669)';
@@ -8795,6 +10274,7 @@ Guidelines:
         }
       } else {
         sound.playClick();
+        sound.stopContinuousSizzle();
         if (roastBtnLabel) roastBtnLabel.innerText = 'Roast on Charcoal';
         if (roastBtn) {
           roastBtn.style.background = 'linear-gradient(135deg, #DC2626, #EA580C)';
@@ -8805,6 +10285,7 @@ Guidelines:
         if (pct >= 80 && pct <= 105) {
           sound.playFanfare();
           launchConfetti();
+          sound.triggerHaptic([50, 40, 60, 40, 100]);
           showToast('✨ MASTERPIECE! Perfect Golden Char (+100 XP)', 'success');
           this.addXP(100, '🔥 Tandoor Pitmaster');
           if (skewerBadge) {
@@ -8828,10 +10309,14 @@ Guidelines:
     resetBtn?.addEventListener('click', (e) => {
       e.stopPropagation();
       sound.playClick();
+      sound.stopContinuousSizzle();
       doneness = 0;
       isRoasting = false;
       targetAnim = 0.0;
       hasTouchedDown = false;
+      lastToastStage = 0;
+      currentRollAngle = 0;
+      targetRollAngle = 0;
       if (roastBtnLabel) roastBtnLabel.innerText = 'Roast on Charcoal';
       if (roastBtn) {
         roastBtn.style.background = 'linear-gradient(135deg, #DC2626, #EA580C)';
@@ -8840,6 +10325,9 @@ Guidelines:
       if (skewerBadge) {
         skewerBadge.innerText = '🍢 Skewer: Resting';
         skewerBadge.style.background = '#1E293B';
+      }
+      if (rollBadge) {
+        rollBadge.innerText = '🔄 Roll: 0°';
       }
       updateFoodCharring();
     });
@@ -8888,7 +10376,7 @@ Guidelines:
       }
     });
 
-    // Touch/drag orbit on tandoor pot
+    // Touch/drag orbit on tandoor pot or horizontal swipe to roll skewer
     let isDragging = false;
     let prevX = 0;
     renderer.domElement.addEventListener('pointerdown', (e) => {
@@ -8904,7 +10392,7 @@ Guidelines:
     });
     window.addEventListener('pointerup', () => { isDragging = false; });
 
-    // 7. Real-Time Rendering & Animation Loop
+    // 8. Real-Time Rendering & Animation Loop
     const animate = () => {
       if (isPaused) return;
       animId = requestAnimationFrame(animate);
@@ -8924,17 +10412,18 @@ Guidelines:
         c.material.emissiveIntensity = u.baseIntensity * pulse * heatMultiplier * contactBoost;
       });
 
-      // Smooth Graceful Skewer Animation Interpolation
+      // Smooth Graceful Skewer Vertical Animation
       if (Math.abs(animProgress - targetAnim) > 0.002) {
         animProgress += (targetAnim - animProgress) * 0.065;
         const ease = easeInOutCubic(animProgress);
         skewerGroup.position.y = REST_POS.y + (COAL_POS.y - REST_POS.y) * ease;
-        skewerGroup.rotation.x = REST_POS.rotX + (COAL_POS.rotX - REST_POS.rotX) * ease;
         skewerGroup.rotation.z = REST_POS.rotZ + (COAL_POS.rotZ - REST_POS.rotZ) * ease;
 
         if (targetAnim === 1.0 && animProgress > 0.94 && !hasTouchedDown) {
           hasTouchedDown = true;
           sound.playSizzle();
+          sound.playSkewerClink();
+          sound.triggerHaptic([35, 45]);
           lastSizzleTime = Date.now();
           if (skewerBadge) {
             skewerBadge.innerText = '🔥 Sizzling Gracefully on Charcoal Coals!';
@@ -8945,17 +10434,55 @@ Guidelines:
         animProgress = targetAnim;
       }
 
-      // Roasting over coals physics & continuous sizzle
+      // Smooth Skewer 360° Roll Interpolation
+      if (Math.abs(currentRollAngle - targetRollAngle) > 0.01) {
+        currentRollAngle += (targetRollAngle - currentRollAngle) * 0.12;
+      } else {
+        currentRollAngle = targetRollAngle;
+      }
+      const easeY = easeInOutCubic(animProgress);
+      skewerGroup.rotation.x = (REST_POS.rotX + (COAL_POS.rotX - REST_POS.rotX) * easeY) + currentRollAngle;
+
+      // Roasting over coals physics & continuous sizzle modulation
       if (isRoasting && animProgress > 0.85) {
         skewerGroup.position.y = COAL_POS.y + Math.sin(Date.now() * 0.045) * 0.35;
         doneness += 0.26 * heatMultiplier;
         updateFoodCharring();
+        sound.updateContinuousSizzle(animProgress, heatMultiplier);
+
+        // Dripping Oil Simulation
+        if (Date.now() - lastDropTime > 2200 / heatMultiplier) {
+          lastDropTime = Date.now();
+          const inactiveDrop = drippingDrops.find(d => !d.active);
+          if (inactiveDrop) {
+            inactiveDrop.active = true;
+            inactiveDrop.x = Math.random() > 0.5 ? -50 : 26;
+            inactiveDrop.z = (Math.random() - 0.5) * 8;
+            inactiveDrop.mesh.position.set(inactiveDrop.x, COAL_POS.y, inactiveDrop.z);
+            inactiveDrop.mesh.material.opacity = 0.95;
+            inactiveDrop.vy = -1.2;
+          }
+        }
 
         if (Date.now() - lastSizzleTime > 1400) {
           sound.playSizzle();
           lastSizzleTime = Date.now();
         }
       }
+
+      // Update Dripping Oil Drops Physics
+      drippingDrops.forEach(d => {
+        if (!d.active) return;
+        d.mesh.position.y += d.vy;
+        d.vy -= 0.12; // gravity
+        if (d.mesh.position.y <= -36) {
+          // Hit hot coals: flash ember & pop!
+          d.active = false;
+          d.mesh.material.opacity = 0;
+          fireLight.intensity += 1.8;
+          sound.playOilFlarePop();
+        }
+      });
 
       // Rising Convection Sparks Physics
       const pArr = sparkGeo.attributes.position.array;
@@ -9012,11 +10539,18 @@ Guidelines:
     this.active3DScenes.set('tandoor', {
       dispose: () => {
         cancelAnimationFrame(animId);
+        sound.stopContinuousSizzle();
+        drippingDrops.forEach(d => {
+          scene.remove(d.mesh);
+          d.mesh.geometry.dispose();
+          d.mesh.material.dispose();
+        });
         renderer.dispose();
       },
       setPaused: (p) => {
         isPaused = p;
         if (!p) animate();
+        else sound.stopContinuousSizzle();
       },
       handleResize
     });
@@ -9893,9 +11427,92 @@ Guidelines:
     sound.playClick();
     const modal = document.getElementById('camera-scanner-modal');
     if (!modal) return;
+    this.lastFocusedElement = document.activeElement;
     document.body.classList.add('has-modal-open');
     modal.classList.add('open');
-    this.initCameraScanner();
+    this.renderCameraConsentScreen();
+  }
+
+  renderCameraConsentScreen() {
+    const body = document.getElementById('camera-scanner-modal-body');
+    if (!body) return;
+
+    body.innerHTML = `
+      <div class="camera-consent-card" style="padding:1.25rem; text-align:center;">
+        <div style="font-size:3rem; margin-bottom:0.5rem;" aria-hidden="true">📸</div>
+        <h3 style="font-size:1.35rem; margin-bottom:0.5rem;">Chef Hat AR Camera & Age Scanner</h3>
+        <p style="font-size:0.88rem; color:var(--text-muted); line-height:1.5; margin-bottom:1rem;">
+          Try on interactive 3D virtual chef hats and test our playful facial animation studio!
+        </p>
+
+        <div style="background:var(--bg-card-subtle); border:1.5px solid var(--border-color); border-radius:var(--radius-md); padding:1rem; margin-bottom:1.25rem; text-align:left; font-size:0.84rem; line-height:1.55;">
+          <div style="display:flex; align-items:center; gap:0.45rem; margin-bottom:0.4rem; color:var(--primary); font-weight:800;">
+            <span aria-hidden="true">🔒</span>
+            <span>100% On-Device Privacy Guarantee</span>
+          </div>
+          <ul style="margin:0.25rem 0 0.5rem 1.25rem; padding:0; color:var(--text-muted); display:flex; flex-direction:column; gap:0.35rem;">
+            <li>All video streams and canvas rendering run <strong>entirely inside your browser's local memory</strong>.</li>
+            <li>Zero photos, video recordings, or facial scans are ever uploaded, transmitted, or saved to any server.</li>
+            <li><strong>Notice:</strong> The age scanner and chef hat filter are playful entertainment features, not a biometric identification or age-verification system.</li>
+          </ul>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:0.65rem;">
+          <button class="btn btn-primary" id="btn-grant-camera" style="padding:0.75rem 1.25rem; font-size:0.92rem; font-weight:800;">
+            📸 Enable Webcam & Try Chef Hat AR
+          </button>
+          <button class="btn btn-secondary" id="btn-skip-camera" style="padding:0.65rem 1.25rem; font-size:0.88rem;">
+            🧑‍🍳 Continue in Non-Camera Virtual Mode
+          </button>
+        </div>
+      </div>
+    `;
+
+    body.querySelector('#btn-grant-camera')?.addEventListener('click', () => {
+      sound.playClick();
+      this.initCameraScanner();
+    });
+
+    body.querySelector('#btn-skip-camera')?.addEventListener('click', () => {
+      sound.playClick();
+      this.initVirtualChefAvatar(body);
+    });
+  }
+
+  initVirtualChefAvatar(body) {
+    const profile = this.getActiveProfile();
+    body.innerHTML = `
+      <div style="display:flex; flex-direction:column; gap:1rem; text-align:center; padding:1rem;">
+        <div style="position:relative; width:100%; height:260px; background:radial-gradient(circle at center, #1E293B, #0F172A); border-radius:var(--radius-md); overflow:hidden; border:2px solid var(--border-color); display:flex; flex-direction:column; align-items:center; justify-content:center;">
+          <div style="font-size:5rem; position:relative;" id="virtual-avatar-container">
+            ${profile.avatar || '🧑‍🍳'}
+            <div style="position:absolute; top:-36px; left:50%; transform:translateX(-50%); font-size:3.5rem; animation:floatUpFade 3s infinite ease-in-out;">👨‍🍳</div>
+          </div>
+          <div style="margin-top:0.75rem; color:#E2E8F0; font-weight:700; font-size:1rem;">
+            ${profile.name} (Virtual Chef Mode)
+          </div>
+          <div style="font-size:0.78rem; color:#94A3B8;">
+            Zero camera access used • Privacy Certified
+          </div>
+        </div>
+
+        <div style="display:flex; gap:0.5rem;">
+          <button class="btn btn-primary" id="btn-snap-virtual-avatar" style="flex:1; padding:0.5rem; font-size:0.85rem; font-weight:800;">
+            ✅ Set as Active Chef Avatar
+          </button>
+          <button class="btn btn-secondary" id="btn-close-virtual" style="padding:0.5rem 0.85rem; font-size:0.85rem;">
+            Close
+          </button>
+        </div>
+      </div>
+    `;
+
+    body.querySelector('#btn-snap-virtual-avatar')?.addEventListener('click', () => {
+      sound.playSuccess();
+      showToast(`${profile.name}'s Chef Avatar updated!`, 'success');
+      this.closeCameraScannerModal();
+    });
+    body.querySelector('#btn-close-virtual')?.addEventListener('click', () => this.closeCameraScannerModal());
   }
 
   closeCameraScannerModal() {
@@ -9936,9 +11553,12 @@ Guidelines:
           </span>
         </div>
 
-        <div style="display:flex; gap:0.5rem;">
+        <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
           <button class="btn btn-primary" id="btn-snap-chef-photo" style="flex:1; padding:0.5rem; font-size:0.85rem; font-weight:800;">
             📸 Snap Certified Chef Avatar
+          </button>
+          <button class="btn btn-secondary" id="btn-stop-camera-stream" style="color:#DC2626; border-color:#DC2626; padding:0.5rem 0.85rem; font-size:0.85rem; font-weight:700;">
+            ⏹️ Stop Camera
           </button>
           <button class="btn btn-secondary" id="btn-close-scanner" style="padding:0.5rem 0.85rem; font-size:0.85rem;">
             Close
@@ -9948,6 +11568,15 @@ Guidelines:
     `;
 
     body.querySelector('#btn-close-scanner')?.addEventListener('click', () => this.closeCameraScannerModal());
+    body.querySelector('#btn-stop-camera-stream')?.addEventListener('click', () => {
+      sound.playClick();
+      if (this.cameraMediaStream) {
+        this.cameraMediaStream.getTracks().forEach(t => t.stop());
+        this.cameraMediaStream = null;
+      }
+      this.renderCameraConsentScreen();
+      showToast('Webcam stream stopped.', 'info');
+    });
 
     const video = body.querySelector('#ar-camera-video');
     const canvas = body.querySelector('#ar-camera-canvas');

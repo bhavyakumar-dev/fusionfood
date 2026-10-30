@@ -1,6 +1,9 @@
 // Fusion Food Family Lab - High Performance Celebration Confetti (Zero Dependency)
 
 export function launchConfetti(originX = window.innerWidth / 2, originY = window.innerHeight / 2) {
+  if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    return; // Respect accessibility preference for reduced motion
+  }
   let canvas = document.getElementById('fusion-confetti-canvas');
   if (!canvas) {
     canvas = document.createElement('canvas');
