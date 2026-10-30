@@ -5853,6 +5853,14 @@ Guidelines:
           const aScore = aBests.trivia || 0;
           const bScore = bBests.trivia || 0;
           return bScore - aScore || (bRank.level || 1) - (aRank.level || 1) || b.xp - a.xp;
+        } else if (filter === 'pronunciation') {
+          const aScore = aBests.pronunciation || 0;
+          const bScore = bBests.pronunciation || 0;
+          return bScore - aScore || (bRank.level || 1) - (aRank.level || 1) || b.xp - a.xp;
+        } else if (filter === 'scienceSpins') {
+          const aScore = aBests.scienceSpins || 0;
+          const bScore = bBests.scienceSpins || 0;
+          return bScore - aScore || (bRank.level || 1) - (aRank.level || 1) || b.xp - a.xp;
         }
         // Overall: rank by level DESC, then XP DESC
         return (bRank.level || 1) - (aRank.level || 1) || b.xp - a.xp;
@@ -5883,6 +5891,16 @@ Guidelines:
           metricDisplay = `
             <div style="font-weight:900; color:var(--primary); font-size:1.35rem;">🧠 ${bests.trivia || 0}/10 Correct</div>
             <div style="font-size:0.78rem; color:var(--text-muted);">Trivia Score</div>
+          `;
+        } else if (filter === 'pronunciation') {
+          metricDisplay = `
+            <div style="font-weight:900; color:var(--primary); font-size:1.35rem;">🗣️ ${bests.pronunciation || 0} Solved</div>
+            <div style="font-size:0.78rem; color:var(--text-muted);">Phonetic Sequences</div>
+          `;
+        } else if (filter === 'scienceSpins') {
+          metricDisplay = `
+            <div style="font-weight:900; color:var(--accent-green); font-size:1.35rem;">🔬 ${bests.scienceSpins || 0} Mastered</div>
+            <div style="font-size:0.78rem; color:var(--text-muted);">Culinary Chemistry</div>
           `;
         }
 
@@ -5966,6 +5984,16 @@ Guidelines:
           metricDisplay = `
             <div style="font-weight:900; color:var(--primary); font-size:1.35rem;">🧠 ${p.score}/10 Correct</div>
             <div style="font-size:0.78rem; color:var(--text-muted);">Trivia Accuracy</div>
+          `;
+        } else if (filter === 'pronunciation') {
+          metricDisplay = `
+            <div style="font-weight:900; color:var(--primary); font-size:1.35rem;">🗣️ ${p.score} Solved</div>
+            <div style="font-size:0.78rem; color:var(--text-muted);">Phonetic Sequences</div>
+          `;
+        } else if (filter === 'scienceSpins') {
+          metricDisplay = `
+            <div style="font-weight:900; color:var(--accent-green); font-size:1.35rem;">🔬 ${p.score} Mastered</div>
+            <div style="font-size:0.78rem; color:var(--text-muted);">Culinary Chemistry</div>
           `;
         }
 

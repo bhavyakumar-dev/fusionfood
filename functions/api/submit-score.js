@@ -37,12 +37,14 @@ export async function onRequestPost(context) {
 
   const userId = (body.userId || body.id || '').toString().trim();
   const userName = (body.userName || body.name || '').toString().trim();
-  const gameType = (body.gameType || '').toString().trim();
+  let gameType = (body.gameType || '').toString().trim();
+  if (gameType === 'all') gameType = 'overall';
   const avatar = (body.avatar || '🎒').toString().trim();
   const role = body.role === 'parent' ? 'parent' : 'student';
   const country = (body.country || 'Global').toString().trim();
   const score = parseInt(body.score, 10);
-  const xpGained = Math.max(0, parseInt(body.xpGained, 10) || 0);
+  // Only 'overall' updates cumulative XP to prevent double XP granting from mini-game submissions
+  const xpGained = (gameType === 'overall') ? Math.max(0, parseInt(body.xpGained, 10) || 0) : 0;
 
   if (!userId || !userName) {
     return jsonResponse({ success: false, error: 'Fields "userId" and "userName" are required' }, 400);
@@ -113,7 +115,7 @@ export async function onRequestPost(context) {
     // 3. Update profile table with new XP, level, and updated bests
     if (profile) {
       const bests = parseJsonField(profile.bests_json, {});
-      if (gameType !== 'overall' && gameType !== 'all') {
+      if (gameType !== 'overall') {
         bests[gameType] = Math.max(parseInt(bests[gameType], 10) || 0, finalScore);
       }
 
@@ -122,8 +124,19 @@ export async function onRequestPost(context) {
         SET xp = ?, level = ?, bests_json = ?, updated_at = datetime('now')
         WHERE id = ?
       `).bind(newXP, userLevel, JSON.stringify(bests), userId).run();
+    } else {
+      const initialBests = {};
+      if (gameType !== 'overall') {
+        initialBests[gameType] = finalScore;
+      }
+      await db.prepare(`
+        INSERT INTO profiles (id, name, role, avatar, level, xp, streak, bests_json, badges_json, country, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, '[]', ?, datetime('now'))
+      `).bind(userId, userName, role, avatar, userLevel, newXP, currentStreak, JSON.stringify(initialBests), country).run();
+    }
 
-      // Also ensure overall leaderboard is updated with level
+    // Ensure overall leaderboard is updated with level if this was an arcade mini-game submission
+    if (gameType !== 'overall') {
       await db.prepare(`
         INSERT INTO leaderboard (user_id, user_name, avatar, role, level, game_type, score, xp, streak, country, updated_at)
         VALUES (?, ?, ?, ?, ?, 'overall', ?, ?, ?, ?, datetime('now'))
