@@ -4438,7 +4438,6 @@ input:checked + .slider:before {
   gap: 0.45rem;
   cursor: pointer;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}bezier(0.4, 0, 0.2, 1);
 }
 .tandoor-roast-main-btn:hover {
   transform: translateY(-2px) scale(1.03);
