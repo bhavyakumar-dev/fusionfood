@@ -1662,7 +1662,34 @@ class SoundEngine {
     this.muted = localStorage.getItem('fusion_muted') === 'true';
   }
 
+  updateDailyStreak() {
+    try {
+      const today = new Date().toISOString().slice(0, 10);
+      const lastDate = this.state.lastActiveDate;
+      if (!lastDate) {
+        this.state.lastActiveDate = today;
+        return;
+      }
+      if (lastDate === today) return;
+
+      const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+      const prof = this.getActiveProfile();
+      if (prof) {
+        if (lastDate === yesterday) {
+          prof.streak = (prof.streak || 1) + 1;
+        } else {
+          prof.streak = 1;
+        }
+      }
+      this.state.lastActiveDate = today;
+      this.saveState();
+    } catch (e) {
+      console.warn('Could not update daily streak:', e);
+    }
+  }
+
   init() {
+    this.updateDailyStreak();
     if (!this.audioCtx) {
       const AudioContext = window.AudioContext || window.webkitAudioContext;
       if (AudioContext) {
@@ -2300,6 +2327,7 @@ const DEFAULT_STATE = {
     buildDish: true,
     pronunciation: true,
     trivia: true,
+    indiaMap: true,
     hotPotato: true,
     spinScience: true
   },
@@ -3304,7 +3332,13 @@ class Fusion3DManager {
   }
 
   isSupported() {
-    return typeof THREE !== 'undefined' && typeof THREE.WebGLRenderer !== 'undefined';
+    if (typeof THREE === 'undefined' || typeof THREE.WebGLRenderer === 'undefined') return false;
+    try {
+      const canvas = document.createElement('canvas');
+      return !!(window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
+    } catch (e) {
+      return false;
+    }
   }
 
   clampDPR() {
@@ -4134,6 +4168,9 @@ class FusionApp {
         if (parsed.gameToggles && parsed.gameToggles.hotPotato === undefined) {
           parsed.gameToggles.hotPotato = true;
         }
+        if (parsed.gameToggles && parsed.gameToggles.indiaMap === undefined) {
+          parsed.gameToggles.indiaMap = true;
+        }
         if (!parsed.apiKeys || !Array.isArray(parsed.apiKeys) || parsed.apiKeys.length === 0) {
           parsed.apiKeys = DEFAULT_STATE.apiKeys;
         }
@@ -4300,6 +4337,7 @@ class FusionApp {
     this.renderActiveGame();
     this.renderKitchenLab(this.state.recipeFilter);
     this.renderLeaderboard();
+    this.renderFusionExplorer();
     this.bindEvents();
     this.initWheel();
     this.initScrolltideShowcase();
@@ -4349,16 +4387,18 @@ class FusionApp {
 
   switchMainTab(tabId, playSound = true) {
     if (playSound) sound.playClick();
+    if (this.triviaTimer) {
+      clearInterval(this.triviaTimer);
+      this.triviaTimer = null;
+    }
     this.state.currentTab = tabId;
     this.saveState();
 
     // Update Nav Buttons across both site-nav and mobile-bottom-nav
     document.querySelectorAll('.nav-link[data-tab-target]').forEach(btn => {
-      if (btn.getAttribute('data-tab-target') === tabId) {
-        btn.classList.add('active');
-      } else {
-        btn.classList.remove('active');
-      }
+      const isTarget = btn.getAttribute('data-tab-target') === tabId;
+      btn.classList.toggle('active', isTarget);
+      btn.setAttribute('aria-selected', isTarget ? 'true' : 'false');
     });
 
     // Update Tab Panes
@@ -4372,8 +4412,18 @@ class FusionApp {
       targetPane.classList.add('active');
     }
 
-    // Scroll back to top of main content smoothly
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (tabId === 'fusion') {
+      this.renderFusionExplorer();
+      this.renderFeedbackSection();
+    }
+
+    // Scroll to tab navigation bar smoothly rather than forcing page back to hero
+    if (playSound) {
+      const navBar = document.getElementById('main-nav-bar');
+      if (navBar && tabId !== 'games') {
+        navBar.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
   }
 
   getActiveProfile() {
@@ -4429,9 +4479,9 @@ class FusionApp {
   }
 
   closeProfileModal() {
-    sound.playClick();
     const modal = document.getElementById('profile-modal');
-    if (!modal) return;
+    if (!modal || !modal.classList.contains('open')) return;
+    sound.playClick();
     modal.classList.remove('open');
     document.body.classList.remove('has-modal-open');
   }
@@ -4452,18 +4502,18 @@ class FusionApp {
         <label style="display:block; font-weight:700; font-size:0.9rem; margin-bottom:0.5rem; color:var(--text-main);">
           Choose Chef Identity:
         </label>
-        <div class="profile-role-grid">
-          <div class="profile-role-card ${currentRole === 'student' ? 'selected' : ''}" id="role-select-student">
+        <div class="profile-role-grid" role="radiogroup" aria-label="Choose Chef Identity">
+          <button type="button" class="profile-role-card ${currentRole === 'student' ? 'selected' : ''}" id="role-select-student" role="radio" aria-checked="${currentRole === 'student' ? 'true' : 'false'}" style="text-align:center; font-family:inherit;">
             <div style="font-size:2rem; margin-bottom:0.35rem;">🎒</div>
             <strong style="font-size:1rem; display:block;">Student / Kid Chef</strong>
             <span style="font-size:0.78rem; color:var(--text-muted);">Forgiving Timers (50s) & Safe Steps</span>
-          </div>
+          </button>
 
-          <div class="profile-role-card ${currentRole === 'parent' ? 'selected' : ''}" id="role-select-parent">
+          <button type="button" class="profile-role-card ${currentRole === 'parent' ? 'selected' : ''}" id="role-select-parent" role="radio" aria-checked="${currentRole === 'parent' ? 'true' : 'false'}" style="text-align:center; font-family:inherit;">
             <div style="font-size:2rem; margin-bottom:0.35rem;">👨‍🍳</div>
             <strong style="font-size:1rem; display:block;">Parent / Adult Guide</strong>
             <span style="font-size:0.78rem; color:var(--text-muted);">Pro Challenge (25s) & Tricky Impostors</span>
-          </div>
+          </button>
         </div>
 
         <div class="profile-form-group">
@@ -4507,7 +4557,9 @@ class FusionApp {
       sound.playClick();
       selectedRole = 'student';
       cardStudent.classList.add('selected');
+      cardStudent.setAttribute('aria-checked', 'true');
       cardParent.classList.remove('selected');
+      cardParent.setAttribute('aria-checked', 'false');
       updateRankDropdown('student');
     });
 
@@ -4515,7 +4567,9 @@ class FusionApp {
       sound.playClick();
       selectedRole = 'parent';
       cardParent.classList.add('selected');
+      cardParent.setAttribute('aria-checked', 'true');
       cardStudent.classList.remove('selected');
+      cardStudent.setAttribute('aria-checked', 'false');
       updateRankDropdown('parent');
     });
 
@@ -4709,6 +4763,7 @@ class FusionApp {
       { id: 'buildDish', name: 'Build-a-Dish', icon: '🥘', desc: 'Pantry Rush & Recipe Simulation', activeDesc: 'Timed hunt + step sequence' },
       { id: 'pronunciation', name: 'Pronounce Lab', icon: '🗣️', desc: 'Phonetic Matching & Voice Check', activeDesc: 'Listen, reorder & speak' },
       { id: 'trivia', name: 'Family Trivia', icon: '🧠', desc: '10 Qs with Soft Timer & Hints', activeDesc: 'Food science & origins' },
+      { id: 'indiaMap', name: 'India Fusion Map', icon: '🗺️', desc: 'Metro Quests & Bazaar Markets', activeDesc: 'City quests & ingredients' },
       { id: 'hotPotato', name: 'Hot Potato Rush', icon: '🥔', desc: 'Whack, Cook in Coals & Serve Golden', activeDesc: 'Cook on coals, serve golden' },
       { id: 'spinScience', name: 'Science Wheel', icon: '🎡', desc: 'Food Chemistry Explanations', activeDesc: 'Spin & discover reactions' }
     ];
@@ -4718,7 +4773,7 @@ class FusionApp {
       const isActive = this.state.activeGameTab === g.id;
 
       return `
-        <div class="game-card-tab ${isActive ? 'active' : ''}" data-game-id="${g.id}">
+        <button type="button" class="game-card-tab ${isActive ? 'active' : ''}" data-game-id="${g.id}" role="tab" aria-selected="${isActive ? 'true' : 'false'}" aria-label="${g.name}: ${g.desc}">
           ${!isEnabled ? `
             <div class="game-disabled-overlay">
               <span style="font-size:1.5rem;">🔒</span>
@@ -4738,7 +4793,7 @@ class FusionApp {
               </span>
             ` : '<span>Start →</span>'}
           </div>
-        </div>
+        </button>
       `;
     }).join('');
 
@@ -4785,6 +4840,11 @@ class FusionApp {
     const arena = document.getElementById('play-arena-container');
     if (!arena) return;
 
+    if (this.triviaTimer) {
+      clearInterval(this.triviaTimer);
+      this.triviaTimer = null;
+    }
+
     if (!this.state.gameToggles[this.state.activeGameTab]) {
       const firstEnabled = Object.keys(this.state.gameToggles).find(k => this.state.gameToggles[k]);
       if (firstEnabled) {
@@ -4812,8 +4872,10 @@ class FusionApp {
       case 'trivia':
         this.renderTriviaGame(arena);
         break;
+      case 'indiaMap':
+        this.renderIndiaMapGame(arena);
+        break;
       case 'hotPotato':
-      case 'indiaMap': // Backward compatibility
         this.renderHotPotatoGame(arena);
         break;
       case 'spinScience':
@@ -4888,7 +4950,8 @@ class FusionApp {
               }).join('')}
             </div>
 
-            <div id="pantry-feedback" style="margin-top:1rem; min-height:48px; font-size:0.88rem; font-weight:700;"></div>
+            <div id="pantry-feedback" style="margin-top:1rem; min-height:48px; font-size:0.88rem; font-weight:700;">${this.lastPantryFeedback || ''}</div>
+              <div id="dish-3d-canvas-container" class="dish-3d-canvas-container" style="min-height:160px; margin-top:0.75rem;"></div>
           </div>
 
           <!-- Cauldron & Steps -->
@@ -4936,11 +4999,14 @@ class FusionApp {
       </div>
     `;
 
+    setTimeout(() => { if (this.initDish3DIngredients) this.initDish3DIngredients(); }, 60);
+
     arena.querySelectorAll('.recipe-chip').forEach(btn => {
       btn.addEventListener('click', () => {
         sound.playClick();
         this.selectedDishIndex = parseInt(btn.getAttribute('data-dish-idx'));
         this.buildDishSelectedIngredients = [];
+        this.lastPantryFeedback = '';
         this.renderBuildDishGame(arena);
       });
     });
@@ -4956,7 +5022,8 @@ class FusionApp {
           this.buildDishSelectedIngredients.push(name);
           this.update3DIngredient(name);
           this.animate3DIngredientJump();
-          feedbackBox.innerHTML = `<span style="color:var(--accent-green);">✨ Great choice! Added ${name} to the prep bowl.</span>`;
+          this.lastPantryFeedback = `<span style="color:var(--accent-green);">✨ Great choice! Added ${name} to the prep bowl.</span>`;
+          feedbackBox.innerHTML = this.lastPantryFeedback;
           
           if (this.buildDishSelectedIngredients.length === correctItems.length) {
             launchConfetti();
@@ -5204,40 +5271,69 @@ class FusionApp {
 
   startVoicePractice(targetWord) {
     const resultBox = document.getElementById('mic-result');
+    const btn = document.getElementById('voice-practice-btn');
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
     if (!SpeechRecognition) {
-      resultBox.innerHTML = `⚠️ Microphone recognition not supported in this browser. Practice saying "${targetWord}" aloud with family!`;
+      if (resultBox) resultBox.innerHTML = `⚠️ Microphone recognition not supported in this browser. Practice saying "${targetWord}" aloud with family!`;
       return;
     }
 
-    resultBox.innerHTML = '🎙️ Listening... Speak clearly now into your microphone!';
+    if (this.isVoiceListening) {
+      return;
+    }
+    this.isVoiceListening = true;
+    if (btn) {
+      btn.disabled = true;
+      btn.style.opacity = '0.6';
+    }
+
+    if (resultBox) resultBox.innerHTML = '🎙️ Listening... Speak clearly now into your microphone!';
     try {
       const recognition = new SpeechRecognition();
       recognition.lang = 'en-US';
       recognition.maxAlternatives = 3;
 
+      const resetListening = () => {
+        this.isVoiceListening = false;
+        if (btn) {
+          btn.disabled = false;
+          btn.style.opacity = '1';
+        }
+      };
+
       recognition.onresult = (event) => {
+        resetListening();
         const transcript = event.results[0][0].transcript.toLowerCase();
-        resultBox.innerHTML = `Heard: "<strong>${transcript}</strong>"`;
+        if (resultBox) resultBox.innerHTML = `Heard: "<strong>${this.escapeHtml(transcript)}</strong>"`;
 
         if (transcript.includes(targetWord.toLowerCase()) || targetWord.toLowerCase().includes(transcript)) {
           sound.playCorrect();
           launchConfetti();
-          resultBox.innerHTML += ` — <span style="color:var(--accent-green); font-weight:800;">🌟 Outstanding pronunciation! (+25 Bonus XP)</span>`;
-          this.addXP(25);
+          if (resultBox) resultBox.innerHTML += ` — <span style="color:var(--accent-green); font-weight:800;">🌟 Outstanding pronunciation! (+25 Bonus XP)</span>`;
+          this.addXP(25, 'Pronounce Master');
         } else {
-          resultBox.innerHTML += ` — <span style="color:var(--secondary);">Good try! Listen to the audio and try once more.</span>`;
+          if (resultBox) resultBox.innerHTML += ` — <span style="color:var(--secondary);">Good try! Listen to the audio and try once more.</span>`;
         }
       };
 
       recognition.onerror = () => {
-        resultBox.innerHTML = `⚠️ Mic permission needed or silence detected. Say it aloud with family!`;
+        resetListening();
+        if (resultBox) resultBox.innerHTML = `⚠️ Mic permission needed or silence detected. Say it aloud with family!`;
+      };
+
+      recognition.onend = () => {
+        resetListening();
       };
 
       recognition.start();
     } catch (e) {
-      resultBox.innerHTML = `⚠️ Could not start microphone: ${e.message}`;
+      this.isVoiceListening = false;
+      if (btn) {
+        btn.disabled = false;
+        btn.style.opacity = '1';
+      }
+      if (resultBox) resultBox.innerHTML = `⚠️ Could not start microphone: ${e.message}`;
     }
   }
 
@@ -5367,6 +5463,7 @@ class FusionApp {
         if (selectedIdx === q.correctIndex) {
           sound.playCorrect();
           btn.classList.add('correct');
+          btn.innerHTML += ' <span aria-hidden="true" style="float:right; font-weight:900;">✓</span>';
           this.triviaScore++;
           const speedBonus = this.triviaTimeLeft > (diff.triviaTimer / 2) ? 10 : 0;
           this.addXP(25 + speedBonus, q.badge);
@@ -5385,15 +5482,19 @@ class FusionApp {
         } else {
           sound.playWrong();
           btn.classList.add('wrong');
-          allBtns[q.correctIndex].classList.add('correct');
+          btn.innerHTML += ' <span aria-hidden="true" style="float:right; font-weight:900;">✕</span>';
+          if (allBtns[q.correctIndex]) {
+            allBtns[q.correctIndex].classList.add('correct');
+            allBtns[q.correctIndex].innerHTML += ' <span aria-hidden="true" style="float:right; font-weight:900;">✓</span>';
+          }
           this.deductScoreAndXP(10, 'Wrong Trivia Answer');
 
           feedbackBox.innerHTML = `
-            <div style="background:#FEF2F2; border:1.5px solid #F87171; border-radius:var(--radius-md); padding:1.15rem; margin-top:1rem;">
+            <div class="trivia-wrong-feedback-card" style="border-radius:var(--radius-md); padding:1.15rem; margin-top:1rem;">
               <div style="color:#DC2626; font-weight:800; margin-bottom:0.25rem; font-size:1.05rem;">
                 ❌ Not quite right! (-10 XP)
               </div>
-              <div style="font-size:0.88rem; color:var(--text-muted);">${q.explanation}</div>
+              <div style="font-size:0.88rem; color:#881337;">${q.explanation}</div>
               <button class="btn btn-primary" id="next-trivia-btn" style="margin-top:0.85rem; padding:0.45rem 1.15rem; font-size:0.85rem;">
                 Continue to Next Question →
               </button>
@@ -5427,6 +5528,297 @@ class FusionApp {
         }
       }
     }, 1000);
+  }
+
+
+  // ========================================================
+  // GAME 4: INDIA AVAILABILITY MAP & CITY QUEST
+  // ========================================================
+  renderIndiaMapGame(arena) {
+    if (!this.selectedMetro) {
+      this.selectedMetro = INDIA_METROS_DATA[0];
+    }
+    const metro = this.selectedMetro;
+    const isQuestDone = this.state.completedCityQuests && this.state.completedCityQuests.includes(metro.id);
+
+    arena.innerHTML = `
+      <div class="arena-header">
+        <div class="arena-title-group">
+          <span class="arena-icon">🗺️</span>
+          <div>
+            <h3>India Culinary Availability Map & City Quest</h3>
+            <p style="font-size:0.85rem; color:var(--text-muted);">Explore regional fusion adoption & local Indian ingredient bazaars</p>
+          </div>
+        </div>
+        <div class="arena-badges" style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+          <button class="btn btn-secondary" id="toggle-map-tut-btn" style="padding:0.35rem 0.85rem; font-size:0.8rem; border-color:var(--primary); color:var(--primary);">
+            💡 ${this.showMapTutorial ? 'Hide Tutorial' : 'How to Play Tutorial'}
+          </button>
+          <span class="pill-badge" style="color:var(--primary); font-weight:800;">7 Metro Hubs</span>
+          <span class="pill-badge">Bazaar Substitutes</span>
+        </div>
+      </div>
+
+      ${this.showMapTutorial ? `
+        <div class="map-tutorial-banner" id="map-tutorial-box">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+            <h4 style="font-size:1.05rem; display:flex; align-items:center; gap:0.5rem;">
+              <span>🧭</span> <span>How to Play India City Quest:</span>
+            </h4>
+            <button class="btn btn-secondary" id="close-map-tut-btn" style="padding:0.25rem 0.65rem; font-size:0.75rem;">Dismiss ✕</button>
+          </div>
+          <div class="tutorial-steps-grid">
+            <div class="tutorial-step-card">
+              <div class="tut-num">1</div>
+              <div>
+                <strong>Tap City Pins 📍</strong>
+                <p>Click any pulsating metro pin on India's map (Mumbai, Delhi-NCR, Bengaluru, Goa, Pune, Hyderabad, Kolkata).</p>
+              </div>
+            </div>
+            <div class="tutorial-step-card">
+              <div class="tut-num">2</div>
+              <div>
+                <strong>Scout Local Bazaars 🛒</strong>
+                <p>Discover authentic desi ingredient markets (Crawford Market, INA Bazaar, Begum Bazaar) for fusion cooking.</p>
+              </div>
+            </div>
+            <div class="tutorial-step-card">
+              <div class="tut-num">3</div>
+              <div>
+                <strong>Compare Dish Trends 📊</strong>
+                <p>Check the availability level for Nikkei Ceviche, Butter Paneer Tacos, Naanza, and Spiced Ramen in that city.</p>
+              </div>
+            </div>
+            <div class="tutorial-step-card">
+              <div class="tut-num">4</div>
+              <div>
+                <strong>Earn Explorer XP 🌟</strong>
+                <p>Hit "Complete City Quest" to earn +20 XP toward leveling up your Master Chef rank on the Leaderboard!</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      ` : ''}
+
+      <div class="map-quest-layout">
+        <!-- Interactive Authentic SVG Map of India -->
+        <div class="india-svg-card">
+          <h4 style="margin-bottom:0.35rem; font-size:1.15rem;">Interactive Map: Tap Any Metro Hub</h4>
+          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1.25rem;">Click glowing markers to discover regional fusion trends</p>
+
+          <div class="svg-map-wrapper">
+            <svg viewBox="0 0 540 640" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="indiaMapGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="var(--bg-card-subtle)" stop-opacity="0.95" />
+                  <stop offset="100%" stop-color="var(--bg-card)" stop-opacity="0.98" />
+                </linearGradient>
+              </defs>
+
+              <!-- Detailed Realistic Mainland India Outline -->
+              <path class="india-mainland" d="
+                M 242 38
+                C 255 30, 275 28, 290 35
+                C 305 42, 318 55, 326 72
+                C 334 88, 330 108, 322 120
+                C 316 130, 312 142, 318 152
+                C 324 162, 338 170, 344 185
+                C 350 200, 346 212, 358 220
+                C 375 228, 405 238, 424 246
+                C 434 248, 440 238, 446 226
+                C 450 220, 458 222, 460 234
+                C 464 245, 478 244, 486 238
+                C 498 228, 516 212, 532 210
+                C 546 210, 554 224, 548 242
+                C 542 258, 528 276, 530 295
+                C 532 312, 538 332, 528 350
+                C 520 360, 508 358, 504 342
+                C 498 325, 485 312, 470 312
+                C 450 312, 438 324, 425 338
+                C 414 350, 402 372, 390 395
+                C 380 415, 364 438, 352 465
+                C 340 492, 322 528, 312 558
+                C 302 585, 292 612, 275 632
+                C 270 638, 260 640, 256 632
+                C 250 620, 245 598, 238 578
+                C 230 558, 220 532, 215 508
+                C 210 482, 206 456, 198 432
+                C 192 408, 180 388, 168 378
+                C 156 368, 138 372, 124 362
+                C 108 352, 105 334, 118 322
+                C 130 310, 150 314, 158 296
+                C 164 282, 150 270, 134 264
+                C 118 256, 122 242, 134 234
+                C 148 226, 164 220, 172 202
+                C 178 184, 184 160, 196 140
+                C 206 122, 216 98, 218 78
+                C 222 58, 228 42, 242 38
+                Z"
+                fill="url(#indiaMapGrad)"
+                stroke="var(--border-color)"
+                stroke-width="3"
+                stroke-linejoin="round"
+              />
+
+              <!-- Tropic of Cancer Reference Line -->
+              <path d="M 115 330 Q 270 340 475 320" stroke="var(--border-dashed)" stroke-width="1.2" stroke-dasharray="4 4" opacity="0.45" />
+
+              <!-- Culinary Fusion Trade Routes (Corridors connecting hubs) -->
+              <line x1="236" y1="195" x2="194" y2="412" stroke="var(--border-dashed)" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.6" />
+              <line x1="194" y1="412" x2="224" y2="428" stroke="var(--border-dashed)" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.6" />
+              <line x1="224" y1="428" x2="216" y2="492" stroke="var(--border-dashed)" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.6" />
+              <line x1="216" y1="492" x2="262" y2="552" stroke="var(--border-dashed)" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.6" />
+              <line x1="194" y1="412" x2="292" y2="450" stroke="var(--border-dashed)" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.6" />
+              <line x1="292" y1="450" x2="262" y2="552" stroke="var(--border-dashed)" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.6" />
+              <line x1="236" y1="195" x2="416" y2="338" stroke="var(--border-dashed)" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.6" />
+              <line x1="416" y1="338" x2="292" y2="450" stroke="var(--border-dashed)" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.6" />
+
+              <!-- Andaman & Nicobar Islands -->
+              <ellipse cx="488" cy="510" rx="3.5" ry="12" fill="url(#indiaMapGrad)" stroke="var(--border-color)" stroke-width="1.5" />
+              <ellipse cx="496" cy="542" rx="3" ry="10" fill="url(#indiaMapGrad)" stroke="var(--border-color)" stroke-width="1.5" />
+
+              <!-- Lakshadweep Islands -->
+              <circle cx="162" cy="540" r="3" fill="url(#indiaMapGrad)" stroke="var(--border-color)" stroke-width="1.5" />
+              <circle cx="158" cy="554" r="2.5" fill="url(#indiaMapGrad)" stroke="var(--border-color)" stroke-width="1.5" />
+              <circle cx="164" cy="566" r="3" fill="url(#indiaMapGrad)" stroke="var(--border-color)" stroke-width="1.5" />
+
+              <!-- Interactive Metro Pins -->
+              ${INDIA_METROS_DATA.map(m => {
+                const isSel = m.id === metro.id;
+                const isVisited = this.state.completedCityQuests && this.state.completedCityQuests.includes(m.id);
+                const pinColor = isSel ? 'var(--primary)' : (isVisited ? 'var(--accent-green)' : 'var(--secondary)');
+
+                return `
+                  <g class="metro-pin ${isSel ? 'selected' : ''}" data-metro-id="${m.id}" tabindex="0" role="button" aria-label="${m.name} Hub">
+                    <circle class="pin-halo" cx="${m.x}" cy="${m.y}" r="${isSel ? '18' : '12'}" fill="${pinColor}" opacity="${isSel ? '0.45' : '0.22'}" />
+                    <circle class="pin-core" cx="${m.x}" cy="${m.y}" r="${isSel ? '8' : '6'}" fill="${pinColor}" stroke="#FFFFFF" stroke-width="${isSel ? '2.5' : '1.5'}" />
+                    <text x="${m.x}" y="${m.y - 12}" text-anchor="middle" font-size="${isSel ? '13' : '11'}" font-weight="${isSel ? '900' : '700'}" fill="var(--text-main)">
+                      ${m.name} ${isVisited ? '✓' : ''}
+                    </text>
+                  </g>
+                `;
+              }).join('')}
+            </svg>
+          </div>
+
+          <div style="margin-top:1.25rem; font-size:0.84rem; color:var(--text-muted); display:flex; justify-content:center; gap:1.25rem; flex-wrap:wrap;">
+            <span>🟢 Green ✓: Quest Mastered</span>
+            <span>🔵 Blue: Active Hub</span>
+            <span>🟠 Orange: Unscouted</span>
+          </div>
+        </div>
+
+        <!-- Selected Metro Details & Quest Challenge -->
+        <div class="metro-details-card">
+          <div style="border-bottom:2px dashed var(--border-dashed); padding-bottom:1rem; margin-bottom:1.25rem;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.35rem;">
+              <span class="pill-badge" style="color:var(--primary); font-weight:800;">📍 ${metro.state}</span>
+              ${isQuestDone ? `
+                <span class="pill-badge" style="color:var(--accent-green); background:var(--accent-green-light); font-weight:800;">
+                  🌟 Quest Complete (+20 XP Earned)
+                </span>
+              ` : `
+                <span class="pill-badge" style="color:var(--secondary); background:var(--secondary-light);">
+                  ⏳ Incomplete Quest
+                </span>
+              `}
+            </div>
+            <h3 style="font-size:1.65rem; margin-top:0.25rem;">${metro.name}</h3>
+            <p style="font-weight:700; color:var(--secondary); font-size:0.95rem;">"${metro.tagline}"</p>
+          </div>
+
+          <!-- Famous Fusion Epicenters -->
+          <div style="margin-bottom:1.15rem;">
+            <h4 style="font-size:0.92rem; text-transform:uppercase; color:var(--text-muted); letter-spacing:0.05em; margin-bottom:0.35rem;">
+              🍽️ Famous Food Hubs & Gastropubs
+            </h4>
+            <p style="font-size:0.92rem; font-weight:600;">${metro.famousHubs}</p>
+          </div>
+
+          <!-- Premier Desi Ingredient Sourcing Bazaar -->
+          <div style="background:var(--bg-card); border:1.5px solid var(--border-color); border-radius:var(--radius-md); padding:1rem 1.15rem; margin-bottom:1.25rem;">
+            <h4 style="font-size:0.92rem; color:var(--primary); margin-bottom:0.25rem; display:flex; align-items:center; gap:0.4rem;">
+              <span>🛒 Premier Sourcing Bazaar:</span>
+            </h4>
+            <p style="font-size:0.9rem; font-weight:700; color:var(--text-main); margin-bottom:0.35rem;">
+              ${metro.topMarket}
+            </p>
+            <div style="font-size:0.82rem; color:var(--text-muted); line-height:1.45;">
+              💡 <em>${metro.questTip}</em>
+            </div>
+          </div>
+
+          <!-- Dishes Available in this City -->
+          <div style="margin-bottom:1.5rem;">
+            <h4 style="font-size:0.92rem; text-transform:uppercase; color:var(--text-muted); letter-spacing:0.05em; margin-bottom:0.6rem;">
+              📊 Fusion Dish Availability Index
+            </h4>
+            <div style="display:flex; flex-direction:column; gap:0.5rem;">
+              ${metro.dishesAvailable.map(d => `
+                <div style="display:flex; justify-content:space-between; align-items:center; background:var(--bg-card); padding:0.55rem 0.85rem; border-radius:var(--radius-sm); border:1px solid var(--border-color); font-size:0.84rem;">
+                  <strong>${d.name}</strong>
+                  <span class="pill-badge" style="font-size:0.75rem;">${d.level}</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Quest Action Button -->
+          ${isQuestDone ? `
+            <button class="btn btn-secondary" style="width:100%; padding:0.75rem; font-size:0.9rem;" disabled>
+              ✅ Quest Verified (+20 XP Recorded)
+            </button>
+          ` : `
+            <button class="btn btn-primary" id="claim-city-xp-btn" style="width:100%; padding:0.75rem; font-size:0.95rem; font-weight:800;">
+              ✨ Complete ${metro.name} Quest (+20 XP)
+            </button>
+          `}
+        </div>
+      </div>
+    `;
+
+    // Toggle Tutorial listener
+    arena.querySelector('#toggle-map-tut-btn')?.addEventListener('click', () => {
+      sound.playClick();
+      this.showMapTutorial = !this.showMapTutorial;
+      this.renderIndiaMapGame(arena);
+    });
+
+    arena.querySelector('#close-map-tut-btn')?.addEventListener('click', () => {
+      sound.playClick();
+      this.showMapTutorial = false;
+      this.renderIndiaMapGame(arena);
+    });
+
+    arena.querySelectorAll('.metro-pin').forEach(pin => {
+      pin.addEventListener('click', () => {
+        sound.playClick();
+        const id = pin.getAttribute('data-metro-id');
+        this.selectedMetro = INDIA_METROS_DATA.find(m => m.id === id) || INDIA_METROS_DATA[0];
+        this.renderIndiaMapGame(arena);
+      });
+      pin.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          pin.click();
+        }
+      });
+    });
+
+    arena.querySelector('#claim-city-xp-btn')?.addEventListener('click', () => {
+      sound.playFanfare();
+      launchConfetti();
+      if (!this.state.completedCityQuests) {
+        this.state.completedCityQuests = [];
+      }
+      if (!this.state.completedCityQuests.includes(metro.id)) {
+        this.state.completedCityQuests.push(metro.id);
+        this.saveState();
+      }
+      this.addXP(20, `🗺️ ${metro.name} Explorer`);
+      showToast(`Completed ${metro.name} Quest! +20 XP`, 'success');
+      this.renderIndiaMapGame(arena);
+    });
   }
 
   // ========================================================
@@ -6153,12 +6545,17 @@ class FusionApp {
 
   closeHotPotatoFullscreenModal() {
     const modal = document.getElementById('hot-potato-modal');
-    if (!modal) return;
+    if (!modal || !modal.classList.contains('open')) return;
+    sound.playClick();
     modal.classList.remove('open');
     document.body.classList.remove('has-modal-open');
     if (this.standaloneHPLoop) {
       cancelAnimationFrame(this.standaloneHPLoop);
       this.standaloneHPLoop = null;
+    }
+    if (this.standaloneHPAudioCtx) {
+      try { this.standaloneHPAudioCtx.close(); } catch (e) {}
+      this.standaloneHPAudioCtx = null;
     }
     if (document.fullscreenElement) {
       document.exitFullscreen().catch(() => {});
@@ -6179,9 +6576,11 @@ class FusionApp {
     // Procedural Web Audio API sound synthesizer
     let AC = null, masterGain = null, sizzleGain = null;
     const initAudio = () => {
+      if (typeof sound !== 'undefined' && sound.isMuted()) return;
       if (AC) return;
       try {
         AC = new (window.AudioContext || window.webkitAudioContext)();
+        this.standaloneHPAudioCtx = AC;
         masterGain = AC.createGain();
         masterGain.gain.value = 0.5;
         masterGain.connect(AC.destination);
@@ -6685,10 +7084,17 @@ class FusionApp {
 
     const targetIndex = Math.floor(Math.random() * totalSegments);
     const extraSpins = 3 + Math.floor(Math.random() * 2);
-    const targetAngle = (extraSpins * 360) + (360 - (targetIndex * arcDeg) - (arcDeg / 2) - 90);
+
+    if (!this.wheelCurrentAngle) this.wheelCurrentAngle = 0;
+    const desiredFinalNormalized = (360 - (targetIndex * arcDeg) - (arcDeg / 2) - 90) % 360;
+    const currentNormalized = this.wheelCurrentAngle % 360;
+    let forwardDelta = desiredFinalNormalized - currentNormalized;
+    if (forwardDelta < 0) forwardDelta += 360;
+    const totalRotation = (extraSpins * 360) + forwardDelta;
+    this.wheelCurrentAngle += totalRotation;
 
     canvas.style.transition = 'transform 1.35s cubic-bezier(0.12, 0.9, 0.2, 1)';
-    canvas.style.transform = `rotate(${targetAngle}deg)`;
+    canvas.style.transform = `rotate(${this.wheelCurrentAngle}deg)`;
 
     let tickCount = 0;
     const tickInterval = setInterval(() => {
@@ -7112,9 +7518,15 @@ class FusionApp {
       }
     };
 
+    if (this._skewerMoveHandler) {
+      window.removeEventListener('pointermove', this._skewerMoveHandler);
+      window.removeEventListener('pointerup', this._skewerUpHandler);
+    }
+    this._skewerMoveHandler = (e) => moveDrag(e.clientY);
+    this._skewerUpHandler = () => endDrag();
     stickWrap?.addEventListener('pointerdown', (e) => startDrag(e.clientY));
-    window.addEventListener('pointermove', (e) => moveDrag(e.clientY));
-    window.addEventListener('pointerup', () => endDrag());
+    window.addEventListener('pointermove', this._skewerMoveHandler);
+    window.addEventListener('pointerup', this._skewerUpHandler);
 
     // Plate & Save Dish
     stage.querySelector('#btn-plate-tandoor-dish')?.addEventListener('click', () => {
@@ -7280,7 +7692,11 @@ class FusionApp {
           <div style="margin-bottom:1.75rem;">
             <h4 style="font-size:1.1rem; margin-bottom:0.65rem; display:flex; align-items:center; gap:0.5rem;">
               <span>🛒 Indian Bazaar Substitutions & Secrets</span>
-            </h4>
+              </h4>
+              <button class="btn btn-secondary" id="btn-copy-shopping-list" style="padding:0.35rem 0.75rem; font-size:0.78rem; font-weight:700;">
+                📋 Copy Bazaar Shopping List
+              </button>
+            </div>
             <p style="font-size:0.84rem; color:var(--text-muted); margin-bottom:0.85rem;">
               Exact swaps found in everyday Indian local sabzi mandis, dairies, and grocers:
             </p>
@@ -7409,15 +7825,68 @@ class FusionApp {
     this.bindRecipePopoutEvents(dish);
   }
 
-  closeRecipePopout() {
+
+  copyShoppingList(dish) {
+    if (!dish) return;
     sound.playClick();
-    document.getElementById('recipe-popout-modal')?.classList.remove('open');
+    const lines = [
+      `🛒 BAZAAR SHOPPING LIST: ${dish.name} (${dish.origin})`,
+      `⏱️ Prep: ${dish.prepTime || '15m'} | Cook: ${dish.cookTime || '10m'} | Servings: ${dish.servings || '2'}`,
+      '',
+      '--- DESI INGREDIENTS & LOCAL SUBSTITUTES ---'
+    ];
+    if (dish.indianSubstitutes && dish.indianSubstitutes.length > 0) {
+      dish.indianSubstitutes.forEach((s, idx) => {
+        lines.push(`${idx + 1}. ${s.substitute} [Replaces: ${s.original}] - Why: ${s.why}`);
+      });
+    }
+    lines.push('');
+    lines.push('⚠️ Allergen Notice: Always verify package ingredient labels before cooking.');
+    lines.push('🥘 FusionFood Family Lab (100% Pure Vegetarian)');
+    const text = lines.join('\n');
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('📋 Shopping list copied to clipboard! Ready for WhatsApp or bazaar.', 'success');
+      }).catch(() => {
+        this.fallbackCopyText(text);
+      });
+    } else {
+      this.fallbackCopyText(text);
+    }
+  }
+
+  fallbackCopyText(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    try {
+      document.execCommand('copy');
+      showToast('📋 Shopping list copied to clipboard!', 'success');
+    } catch (e) {
+      prompt('Copy your bazaar shopping list:', text);
+    }
+    document.body.removeChild(ta);
+  }
+
+  closeRecipePopout() {
+    const modal = document.getElementById('recipe-popout-modal');
+    if (!modal || !modal.classList.contains('open')) return;
+    sound.playClick();
+    modal.classList.remove('open');
+    document.body.classList.remove('has-modal-open');
   }
 
   bindRecipePopoutEvents(dish) {
     const modal = document.getElementById('recipe-popout-modal');
     const closeBtn = document.getElementById('close-recipe-popout-btn');
     closeBtn?.addEventListener('click', () => this.closeRecipePopout());
+    document.getElementById('btn-copy-shopping-list')?.addEventListener('click', () => {
+      this.copyShoppingList(dish);
+    });
 
     // Pronunciation audio
     document.getElementById('popout-pronounce-btn')?.addEventListener('click', () => {
@@ -7468,22 +7937,32 @@ class FusionApp {
     }
     const list = this.state.recipeCompletedSteps[dishId];
     const index = list.indexOf(stepNumber);
+    const dish = FUSION_DISHES.find(d => d.id === dishId);
+
     if (index === -1) {
       list.push(stepNumber);
       sound.playCorrect();
-      this.addXP(25, 'Recipe Explorer');
+      this.addXP(25, 'Recipe Step');
       showToast(`Step ${stepNumber} completed! (+25 XP)`, 'success');
-      launchConfetti();
+
+      // Reserve confetti & big fanfare for 100% recipe completion
+      if (dish && list.length === dish.recipeSteps.length) {
+        launchConfetti();
+        sound.playFanfare();
+        this.addXP(50, 'Master Recipe Completion');
+        showToast(`🎉 Mastered entire recipe for ${dish.name}! (+50 Bonus XP)`, 'success');
+      }
     } else {
       list.splice(index, 1);
       sound.playClick();
+      this.deductScoreAndXP(25, `Step ${stepNumber} unchecked`);
+      showToast(`Step ${stepNumber} unchecked (-25 XP)`, 'info');
     }
     this.saveState();
 
     // Update UI
     const card = document.getElementById(`step-card-${stepNumber}`);
     const btn = card?.querySelector('.step-checkbox-btn');
-    const dish = FUSION_DISHES.find(d => d.id === dishId);
     if (card && btn && dish) {
       const isDone = list.includes(stepNumber);
       card.classList.toggle('completed', isDone);
@@ -7834,7 +8313,7 @@ Guidelines:
               <div style="display:flex; align-items:center; gap:0.85rem;">
                 <span style="font-size:2.2rem;">${p.avatar}</span>
                 <div>
-                  <strong style="font-size:1.05rem;">${p.name}</strong>
+                  <strong style="font-size:1.05rem;">${this.escapeHtml(p.name)}</strong>
                   <div style="font-size:0.82rem; color:var(--text-muted);">👑 Level ${pRank.level} — ${pRank.title} • ${p.role === 'parent' ? 'Parent Guide' : 'Student Chef'}</div>
                 </div>
               </div>
@@ -7932,7 +8411,7 @@ Guidelines:
               <div style="display:flex; align-items:center; gap:0.85rem;">
                 <span style="font-size:2.2rem;">${p.avatar || '👨‍🍳'}</span>
                 <div>
-                  <strong style="font-size:1.05rem;">${p.userName || p.name}</strong>
+                  <strong style="font-size:1.05rem;">${this.escapeHtml(p.userName || p.name)}</strong>
                   <div style="font-size:0.82rem; color:var(--text-muted); display:flex; gap:0.4rem; align-items:center; flex-wrap:wrap;">
                     <span>📍 ${p.country || 'Global'}</span>
                     <span>•</span>
@@ -8018,7 +8497,7 @@ Guidelines:
                     <div style="display:flex; align-items:center; gap:0.85rem;">
                       <span style="font-size:2.2rem;">${p.avatar || '👨‍🍳'}</span>
                       <div>
-                        <strong style="font-size:1.05rem;">${p.userName || p.name}</strong>
+                        <strong style="font-size:1.05rem;">${this.escapeHtml(p.userName || p.name)}</strong>
                         <div style="font-size:0.82rem; color:var(--text-muted); display:flex; gap:0.4rem; align-items:center; flex-wrap:wrap;">
                           <span>📍 ${p.country || 'Global'}</span>
                           <span>•</span>
@@ -8103,10 +8582,11 @@ Guidelines:
   }
 
   closeAdminModal() {
-    sound.playClick();
     const modal = document.getElementById('admin-modal');
-    if (!modal) return;
+    if (!modal || !modal.classList.contains('open')) return;
+    sound.playClick();
     modal.classList.remove('open');
+    document.body.classList.remove('has-modal-open');
   }
 
   renderAdminModalContent(isAuthenticated = false) {
@@ -8196,6 +8676,13 @@ Guidelines:
               <span>🧠 Family Trivia Quiz (10 Qs)</span>
               <label class="switch">
                 <input type="checkbox" id="toggle-trivia" ${this.state.gameToggles.trivia ? 'checked' : ''} />
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="toggle-row">
+              <span>🗺️ India Fusion Map & City Quests</span>
+              <label class="switch">
+                <input type="checkbox" id="toggle-indiaMap" ${this.state.gameToggles.indiaMap !== false ? 'checked' : ''} />
                 <span class="slider"></span>
               </label>
             </div>
@@ -8610,6 +9097,7 @@ Guidelines:
           this.state.gameToggles.buildDish = document.getElementById('toggle-buildDish')?.checked ?? true;
           this.state.gameToggles.pronunciation = document.getElementById('toggle-pronunciation')?.checked ?? true;
           this.state.gameToggles.trivia = document.getElementById('toggle-trivia')?.checked ?? true;
+          this.state.gameToggles.indiaMap = document.getElementById('toggle-indiaMap')?.checked ?? true;
           this.state.gameToggles.hotPotato = document.getElementById('toggle-hotPotato')?.checked ?? true;
           this.state.gameToggles.spinScience = document.getElementById('toggle-spinScience')?.checked ?? true;
 
@@ -11080,9 +11568,9 @@ Guidelines:
   }
 
   closePortfolioModal() {
-    sound.playClick();
     const modal = document.getElementById('portfolio-modal');
-    if (!modal) return;
+    if (!modal || !modal.classList.contains('open')) return;
+    sound.playClick();
     modal.classList.remove('open');
     document.body.classList.remove('has-modal-open');
   }
@@ -11305,6 +11793,204 @@ Guidelines:
     });
   }
 
+
+  // ========================================================
+  // TAB PANE 4: FUSION FOOD EXPLORER & EDIBLE UNIVERSE
+  // ========================================================
+  renderFusionExplorer() {
+    const container = document.getElementById('fusion-explorer-content');
+    if (!container) return;
+
+    if (!this.selectedExplorerMetro) {
+      this.selectedExplorerMetro = INDIA_METROS_DATA[0];
+    }
+    const metro = this.selectedExplorerMetro;
+
+    container.innerHTML = `
+      <!-- 1. Regional Indian Metro Culinary Hubs Deck -->
+      <div style="background:var(--bg-card); border:2px solid var(--border-color); border-radius:var(--radius-lg); padding:1.75rem; margin-bottom:2rem; box-shadow:0 8px 30px rgba(0,0,0,0.05);">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1rem; margin-bottom:1.5rem; border-bottom:1px solid var(--border-color); padding-bottom:1rem;">
+          <div>
+            <div style="display:flex; align-items:center; gap:0.5rem;">
+              <span style="font-size:1.6rem;">🏙️</span>
+              <h3 style="margin:0; font-size:1.35rem;">India Metro Culinary Hubs & Local Bazaars</h3>
+            </div>
+            <p style="margin:0.25rem 0 0; font-size:0.85rem; color:var(--text-muted);">
+              Explore how global culinary traditions take root in India's top 7 gastronomic capitals.
+            </p>
+          </div>
+          <span class="pill-badge" style="color:var(--primary); font-weight:800;">7 Metros Tracked</span>
+        </div>
+
+        <!-- Metro Selector Tabs -->
+        <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:1.5rem;" role="tablist" aria-label="India Metros">
+          ${INDIA_METROS_DATA.map(m => `
+            <button type="button" class="recipe-chip ${m.id === metro.id ? 'active' : ''} metro-select-btn" data-metro-id="${m.id}" role="tab" aria-selected="${m.id === metro.id ? 'true' : 'false'}">
+              <span>📍 ${m.name}</span>
+            </button>
+          `).join('')}
+        </div>
+
+        <!-- Selected Metro Spotlight Card -->
+        <div class="metro-spotlight-card" style="background:var(--bg-card-subtle); border:1.5px solid var(--border-color); border-radius:var(--radius-md); padding:1.35rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.75rem;">
+            <div>
+              <h4 style="margin:0; font-size:1.4rem;">${metro.name} <span style="font-size:0.85rem; color:var(--text-muted); font-weight:400;">(${metro.state})</span></h4>
+              <p style="margin:0.2rem 0 0; font-size:0.92rem; color:var(--secondary); font-weight:700;">"${metro.tagline}"</p>
+            </div>
+            <span class="pill-badge" style="color:var(--primary); font-weight:800;">🍽️ Prime Hubs: ${metro.famousHubs.split(',')[0]}</span>
+          </div>
+
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:1.25rem; margin-top:1rem;">
+            <div style="background:var(--bg-card); padding:1rem; border-radius:var(--radius-sm); border:1px solid var(--border-color);">
+              <strong style="color:var(--primary); font-size:0.88rem; display:block; margin-bottom:0.35rem;">🛒 Signature Ingredient Bazaar:</strong>
+              <div style="font-weight:700; font-size:0.92rem;">${metro.topMarket}</div>
+              <div style="font-size:0.82rem; color:var(--text-muted); margin-top:0.35rem;">💡 ${metro.questTip}</div>
+            </div>
+
+            <div style="background:var(--bg-card); padding:1rem; border-radius:var(--radius-sm); border:1px solid var(--border-color);">
+              <strong style="color:var(--primary); font-size:0.88rem; display:block; margin-bottom:0.35rem;">📊 Fusion Dish Penetration:</strong>
+              <div style="display:flex; flex-direction:column; gap:0.35rem; font-size:0.82rem;">
+                ${metro.dishesAvailable.slice(0, 3).map(d => `
+                  <div style="display:flex; justify-content:space-between; gap:0.5rem;">
+                    <span>${d.name}:</span>
+                    <strong style="color:var(--secondary);">${d.level.split('(')[0]}</strong>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Trending Vegetarian Fusion Dishes Matrix -->
+      <div style="background:var(--bg-card); border:2px solid var(--border-color); border-radius:var(--radius-lg); padding:1.75rem; margin-bottom:2rem; box-shadow:0 8px 30px rgba(0,0,0,0.05);">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1.5rem; border-bottom:1px solid var(--border-color); padding-bottom:1rem;">
+          <div>
+            <div style="display:flex; align-items:center; gap:0.5rem;">
+              <span style="font-size:1.6rem;">🥘</span>
+              <h3 style="margin:0; font-size:1.35rem;">Trending Fusion Dishes Availability Matrix</h3>
+            </div>
+            <p style="margin:0.25rem 0 0; font-size:0.85rem; color:var(--text-muted);">
+              All 6 master vegetarian creations, their global roots, and everyday desi bazaar substitutes.
+            </p>
+          </div>
+          <span class="veg-badge"><span class="veg-icon-dot"></span> 100% Pure Vegetarian</span>
+        </div>
+
+        <div class="table-responsive-wrapper">
+          <table class="substitutes-table" style="font-size:0.88rem; width:100%;">
+            <thead>
+              <tr>
+                <th>Fusion Dish</th>
+                <th>Global Roots</th>
+                <th>National Availability</th>
+                <th>Desi Sourcing Secret</th>
+                <th>Cookbook Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${FUSION_DISHES.map(dish => {
+                const badgeColor = dish.availabilityClass === 'universal' ? 'var(--accent-green)' : (dish.availabilityClass === 'niche' ? '#8B5CF6' : 'var(--secondary)');
+                return `
+                  <tr>
+                    <td>
+                      <strong>${dish.name}</strong>
+                      <div style="font-size:0.75rem; color:var(--text-muted);">⏱️ ${dish.prepTime || '15m'} • 📊 ${dish.difficulty || 'Beginner'}</div>
+                    </td>
+                    <td>
+                      <span class="pill-badge" style="font-size:0.78rem;">${dish.origin}</span>
+                    </td>
+                    <td>
+                      <span class="pill-badge" style="font-size:0.75rem; color:${badgeColor}; font-weight:800;">
+                        ${dish.availability}
+                      </span>
+                    </td>
+                    <td style="font-size:0.82rem; color:var(--text-muted);">
+                      ${dish.indianSubstitutes[0].original} → <strong style="color:var(--accent-green);">${dish.indianSubstitutes[0].substitute}</strong>
+                    </td>
+                    <td>
+                      <button class="btn btn-secondary open-matrix-dish-btn" data-dish-id="${dish.id}" style="padding:0.35rem 0.75rem; font-size:0.78rem; font-weight:700;">
+                        📖 View Recipe →
+                      </button>
+                    </td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 3. Culinary Harmony & Flavor Pairing Compass -->
+      <div style="background:var(--bg-card); border:2px solid var(--border-color); border-radius:var(--radius-lg); padding:1.75rem; box-shadow:0 8px 30px rgba(0,0,0,0.05);">
+        <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:1rem;">
+          <span style="font-size:1.6rem;">🧭</span>
+          <h3 style="margin:0; font-size:1.35rem;">The Global Flavor Pairing Compass</h3>
+        </div>
+        <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:1.25rem;">
+          How international culinary techniques harmonize with Indian spices at a molecular level:
+        </p>
+
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:1rem;">
+          <div style="background:var(--bg-card-subtle); padding:1rem; border-radius:var(--radius-md); border:1px solid var(--border-color);">
+            <div style="font-size:1.5rem; margin-bottom:0.25rem;">🍋 + 🌶️</div>
+            <strong style="display:block; font-size:0.95rem; margin-bottom:0.25rem;">Citrus Cure + Desi Chilis</strong>
+            <p style="font-size:0.82rem; color:var(--text-muted); margin:0;">
+              Peruvian Aji Amarillo meets Gondhoraj lime to denature mushroom proteins without heat.
+            </p>
+          </div>
+
+          <div style="background:var(--bg-card-subtle); padding:1rem; border-radius:var(--radius-md); border:1px solid var(--border-color);">
+            <div style="font-size:1.5rem; margin-bottom:0.25rem;">🍅 + 🧈</div>
+            <strong style="display:block; font-size:0.95rem; margin-bottom:0.25rem;">Pomodoro + Makhani Gravy</strong>
+            <p style="font-size:0.82rem; color:var(--text-muted); margin:0;">
+              Italian stewed Roma tomatoes emulsified with creamy cashew paste and Punjabi makhani butter.
+            </p>
+          </div>
+
+          <div style="background:var(--bg-card-subtle); padding:1rem; border-radius:var(--radius-md); border:1px solid var(--border-color);">
+            <div style="font-size:1.5rem; margin-bottom:0.25rem;">🌽 + 🧀</div>
+            <strong style="display:block; font-size:0.95rem; margin-bottom:0.25rem;">Corn Masa + Charred Tikka</strong>
+            <p style="font-size:0.82rem; color:var(--text-muted); margin:0;">
+              Mexican nixtamalized corn tortillas paired with clay tandoor charred paneer and mint salsa.
+            </p>
+          </div>
+
+          <div style="background:var(--bg-card-subtle); padding:1rem; border-radius:var(--radius-md); border:1px solid var(--border-color);">
+            <div style="font-size:1.5rem; margin-bottom:0.25rem;">🍜 + 🌿</div>
+            <strong style="display:block; font-size:0.95rem; margin-bottom:0.25rem;">Miso Umami + Garam Masala</strong>
+            <p style="font-size:0.82rem; color:var(--text-muted); margin:0;">
+              Fermented Japanese dashi broth deepened with roasted whole cumin, cloves, and star anise.
+            </p>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Bind Metro Selection Buttons
+    container.querySelectorAll('.metro-select-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        sound.playClick();
+        const mId = btn.getAttribute('data-metro-id');
+        this.selectedExplorerMetro = INDIA_METROS_DATA.find(m => m.id === mId) || INDIA_METROS_DATA[0];
+        this.renderFusionExplorer();
+      });
+    });
+
+    // Bind Jump to Recipe Buttons
+    container.querySelectorAll('.open-matrix-dish-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        sound.playClick();
+        const dishId = btn.getAttribute('data-dish-id');
+        this.switchMainTab('kitchen');
+        setTimeout(() => {
+          this.openRecipePopout(dishId);
+        }, 120);
+      });
+    });
+  }
+
   renderFeedbackSection() {
     const section = document.getElementById('fusion-feedback-section');
     if (!section) return;
@@ -11516,9 +12202,9 @@ Guidelines:
   }
 
   closeCameraScannerModal() {
-    sound.playClick();
     const modal = document.getElementById('camera-scanner-modal');
-    if (!modal) return;
+    if (!modal || !modal.classList.contains('open')) return;
+    sound.playClick();
     modal.classList.remove('open');
     document.body.classList.remove('has-modal-open');
     if (this.cameraMediaStream) {
