@@ -8761,11 +8761,6 @@ Guidelines:
         } catch (error) { message.textContent = 'Unable to verify this local PIN in the current browser.'; }
       });
     } else {
-          sound.playWrong();
-          document.getElementById('pin-error-msg').innerText = '❌ Incorrect PIN. Please try again.';
-        }
-      });
-    } else {
       if (!this.adminSubTab) this.adminSubTab = 'features';
 
       const navHtml = `
