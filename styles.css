@@ -2077,6 +2077,15 @@ button {
   box-shadow: 0 4px 14px var(--primary-glow);
 }
 
+.active-rank-tag {
+  color: var(--primary-text) !important;
+  font-weight: 900;
+}
+
+[data-theme="dark"] .active-rank-tag {
+  color: #38BDF8 !important;
+}
+
 .rank-tier-item.locked {
   opacity: 0.5;
 }

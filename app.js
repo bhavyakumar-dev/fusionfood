@@ -5804,7 +5804,7 @@ Guidelines:
               </div>
               <div style="font-size:0.78rem; color:var(--text-muted);">${r.perks}</div>
             </div>
-            ${isCurrent ? '<span style="font-size:0.78rem; color:var(--primary); font-weight:800;">★ Active</span>' : ''}
+            ${isCurrent ? '<span class="active-rank-tag" style="font-size:0.8rem; font-weight:900;">★ Active</span>' : ''}
           </div>
         `;
       }).join('');
