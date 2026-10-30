@@ -4127,7 +4127,11 @@ class FusionApp {
           parsed.gameToggles.indiaMap = true;
         }
         delete parsed.adminPin;
-        parsed.apiKeys = [];
+        if (Array.isArray(parsed.apiKeys)) {
+          parsed.apiKeys = parsed.apiKeys.filter(key => !['key_master_admin', 'key_public_ro'].includes(key.keyId) && !/^ff_live_(adm|ro)_/.test(key.token || ''));
+        } else {
+          parsed.apiKeys = [];
+        }
         if (Array.isArray(parsed.guestReviews)) parsed.guestReviews = parsed.guestReviews.filter(r => !['rev_01', 'rev_02', 'rev_03'].includes(r.id));
         else parsed.guestReviews = [];
         if (Array.isArray(parsed.kidScoreVerifications)) parsed.kidScoreVerifications = parsed.kidScoreVerifications.filter(r => !['sc_kid_01', 'sc_kid_02'].includes(r.scoreId));
@@ -6159,7 +6163,6 @@ class FusionApp {
         </div>
       `;
 
-      this.pauseHotPotatoSession = pauseGame;
       arena.querySelector('#hp-resume-btn')?.addEventListener('click', () => {
         sound.playClick();
         startOverlay.style.display = 'none';
@@ -6211,6 +6214,7 @@ class FusionApp {
       });
     };
 
+    this.pauseHotPotatoSession = pauseGame;
     stopBtn?.addEventListener('click', () => pauseGame());
 
     const gameOver = (reason) => {
