@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS leaderboard (
 
 CREATE INDEX IF NOT EXISTS idx_leaderboard_level_xp ON leaderboard (level DESC, xp DESC);
 CREATE INDEX IF NOT EXISTS idx_leaderboard_xp ON leaderboard (xp DESC);
-CREATE INDEX IF NOT EXISTS idx_leaderboard_game_score ON leaderboard (game_type, level DESC, score DESC, xp DESC);
+CREATE INDEX IF NOT EXISTS idx_leaderboard_game_score ON leaderboard (game_type, score DESC, level DESC, xp DESC);
 CREATE INDEX IF NOT EXISTS idx_leaderboard_user ON leaderboard (user_id);
 CREATE INDEX IF NOT EXISTS idx_leaderboard_game_type ON leaderboard (game_type);
 

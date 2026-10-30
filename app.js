@@ -4035,7 +4035,11 @@ class FusionApp {
         if (this.assembledSyllables.length === dish.syllables.length && isMatchSoFar) {
           launchConfetti();
           sound.playFanfare();
+          const prof = this.getActiveProfile();
+          if (!prof.bests) prof.bests = {};
+          prof.bests.pronunciation = (prof.bests.pronunciation || 0) + 1;
           this.addXP(30, '🗣️ Accent Virtuoso');
+          this.submitScoreToGlobal('pronunciation', prof.bests.pronunciation, 30).catch(() => {});
         }
 
         this.renderPronunciationGame(arena);
@@ -5066,7 +5070,11 @@ class FusionApp {
         if (selected === topic.question.correctIndex) {
           sound.playCorrect();
           btn.classList.add('correct');
+          const prof = this.getActiveProfile();
+          if (!prof.bests) prof.bests = {};
+          prof.bests.scienceSpins = (prof.bests.scienceSpins || 0) + 1;
           this.addXP(50, `🔬 ${topic.shortName} Master`);
+          this.submitScoreToGlobal('scienceSpins', prof.bests.scienceSpins, 50).catch(() => {});
           feedback.innerHTML = `
             <div style="color:var(--accent-green); font-size:0.88rem; font-weight:800;">
               🎉 Absolutely Correct! (+50 XP). ${topic.question.explanation}
@@ -6158,7 +6166,7 @@ Guidelines:
           <input type="password" id="admin-pin-field" class="pin-input" placeholder="••••••••" maxlength="16" />
           <button class="btn btn-primary" id="admin-submit-pin-btn">Unlock 🔓</button>
         </div>
-        <div id="pin-error-msg" style="color:#DC2626; font-size:0.85rem; font-weight:700; min-height:22px;"></div>
+        <div id="pin-error-msg" class="admin-error-text" style="font-size:0.85rem; font-weight:700; min-height:22px;"></div>
       `;
 
       document.getElementById('admin-submit-pin-btn')?.addEventListener('click', () => {

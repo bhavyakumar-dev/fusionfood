@@ -18,7 +18,7 @@ function parseJsonField(val, fallback) {
   }
 }
 
-const ALLOWED_GAMES = new Set(['hotPotato', 'buildDish', 'trivia', 'pronunciation', 'scienceSpins']);
+const ALLOWED_GAMES = new Set(['overall', 'all', 'hotPotato', 'buildDish', 'trivia', 'pronunciation', 'scienceSpins']);
 
 export async function onRequestPost(context) {
   const { request, env } = context;
@@ -113,7 +113,9 @@ export async function onRequestPost(context) {
     // 3. Update profile table with new XP, level, and updated bests
     if (profile) {
       const bests = parseJsonField(profile.bests_json, {});
-      bests[gameType] = Math.max(parseInt(bests[gameType], 10) || 0, finalScore);
+      if (gameType !== 'overall' && gameType !== 'all') {
+        bests[gameType] = Math.max(parseInt(bests[gameType], 10) || 0, finalScore);
+      }
 
       await db.prepare(`
         UPDATE profiles
@@ -139,9 +141,14 @@ export async function onRequestPost(context) {
     }
 
     // 4. Calculate dynamic rank for this game
-    const rankResult = await db.prepare(
-      'SELECT COUNT(*) + 1 as rank FROM leaderboard WHERE game_type = ? AND score > ?'
-    ).bind(gameType, finalScore).first();
+    const isOverall = gameType === 'overall' || gameType === 'all';
+    const rankResult = isOverall
+      ? await db.prepare(
+          'SELECT COUNT(*) + 1 as rank FROM leaderboard WHERE game_type = "overall" AND (level > ? OR (level = ? AND xp > ?))'
+        ).bind(userLevel, userLevel, newXP).first()
+      : await db.prepare(
+          'SELECT COUNT(*) + 1 as rank FROM leaderboard WHERE game_type = ? AND score > ?'
+        ).bind(gameType, finalScore).first();
 
     const rank = rankResult ? (Number(rankResult.rank) || 1) : 1;
 

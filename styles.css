@@ -1123,7 +1123,12 @@ button {
   font-weight: 600 !important;
 }
 
-[data-theme="dark"] .admin-error-text {
+.admin-error-text, #pin-error-msg {
+  color: #DC2626;
+}
+
+[data-theme="dark"] .admin-error-text,
+[data-theme="dark"] #pin-error-msg {
   color: #FCA5A5 !important;
 }
 
@@ -1943,7 +1948,7 @@ button {
 
 [data-theme="dark"] .badge-parent-assist {
   background: rgba(225, 29, 72, 0.16) !important;
-  color: #FB7185 !important;
+  color: #FDA4AF !important;
   border-color: rgba(251, 113, 133, 0.35) !important;
 }
 
@@ -2302,9 +2307,9 @@ input:checked + .slider:before {
 }
 
 /* ========================================================
-   CROSS-PLATFORM & MOBILE RESPONSIVE ENGINE (iOS, Android, Tablets, Landscape)
+   CROSS-PLATFORM & MOBILE RESPONSIVE ENGINE (iOS, Android, Tablets, Portrait)
    ======================================================== */
-@media (max-width: 1024px), (orientation: landscape) and (max-height: 600px), (max-height: 520px) {
+@media (max-width: 1024px) and (orientation: portrait), (max-width: 500px) {
   body {
     padding-bottom: 5.5rem; /* Dedicated clearance for the thumb-friendly bottom nav bar */
   }
@@ -3152,8 +3157,14 @@ input:checked + .slider:before {
 
 .api-key-pill.active {
   background: rgba(34, 197, 94, 0.15);
-  color: #16a34a;
+  color: #15803D;
   border-color: #86efac;
+}
+
+[data-theme="dark"] .api-key-pill.active {
+  color: #4ADE80 !important;
+  border-color: rgba(74, 222, 128, 0.4) !important;
+  background: rgba(34, 197, 94, 0.2) !important;
 }
 
 .api-key-box {
@@ -3806,9 +3817,9 @@ input:checked + .slider:before {
 }
 
 /* ========================================================
-   MOBILE LANDSCAPE (844x390) NAVIGATION DOCKING FIX
+   MOBILE LANDSCAPE (844x390, 667x375) NAVIGATION DOCKING & OVERFLOW FIX
    ======================================================== */
-@media (orientation: landscape) and (max-height: 520px) {
+@media (orientation: landscape) and (max-height: 600px) {
   body {
     padding-bottom: 0 !important;
   }
@@ -3819,7 +3830,7 @@ input:checked + .slider:before {
 
   .site-header {
     top: 0.15rem !important;
-    padding: 0 0.75rem !important;
+    padding: 0 0.5rem !important;
   }
 
   .site-header .site-nav {
@@ -3836,6 +3847,36 @@ input:checked + .slider:before {
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
+  }
+
+  /* Narrow Landscape Phones (e.g. 667x375, 640x360) Header Compression */
+  @media (max-width: 750px) {
+    .brand-text h1 {
+      display: none !important;
+    }
+    .site-header .site-nav .nav-link span {
+      display: none !important;
+    }
+    .site-header .site-nav {
+      gap: 0.25rem !important;
+    }
+    .site-header .site-nav .nav-link {
+      padding: 0.35rem 0.55rem !important;
+      min-width: 32px !important;
+    }
+    .profile-pill span:not(.profile-avatar) {
+      max-width: 44px !important;
+    }
+    .header-actions {
+      gap: 0.2rem !important;
+    }
+    #hp-canvas-container, .hot-potato-canvas-container {
+      min-height: 180px !important;
+      max-height: 52vh !important;
+    }
+    .cooking-board-layout {
+      grid-template-columns: 1fr 1fr !important;
+    }
   }
 
   .scrolltide-hero-showcase {
@@ -3950,9 +3991,9 @@ input:checked + .slider:before {
 }
 
 .tandoor-heat-btn.active {
-  background: #DC2626;
+  background: #991B1B;
   color: #FFFFFF;
-  box-shadow: 0 0 10px rgba(220, 38, 38, 0.6);
+  box-shadow: 0 0 10px rgba(153, 27, 27, 0.7);
 }
 
 /* 3D Model HUD Elements */
