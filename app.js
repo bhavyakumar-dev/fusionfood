@@ -4366,6 +4366,33 @@ class FusionApp {
       });
     });
 
+    // WAI-ARIA APG Roving Tabindex & Arrow Key Navigation
+    const navBar = document.getElementById('main-nav-bar');
+    if (navBar) {
+      navBar.addEventListener('keydown', (e) => {
+        const tabs = Array.from(navBar.querySelectorAll('[role="tab"]'));
+        const currIdx = tabs.indexOf(document.activeElement);
+        if (currIdx === -1) return;
+
+        let targetIdx = -1;
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+          targetIdx = (currIdx + 1) % tabs.length;
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+          targetIdx = (currIdx - 1 + tabs.length) % tabs.length;
+        } else if (e.key === 'Home') {
+          targetIdx = 0;
+        } else if (e.key === 'End') {
+          targetIdx = tabs.length - 1;
+        }
+
+        if (targetIdx !== -1) {
+          e.preventDefault();
+          tabs[targetIdx].focus();
+          tabs[targetIdx].click();
+        }
+      });
+    }
+
     // Also support footer links
     document.querySelectorAll('.footer-nav-link[data-tab]').forEach(link => {
       link.addEventListener('click', (e) => {
@@ -4394,11 +4421,12 @@ class FusionApp {
     this.state.currentTab = tabId;
     this.saveState();
 
-    // Update Nav Buttons across both site-nav and mobile-bottom-nav
+    // Update Nav Buttons across both site-nav and mobile-bottom-nav with roving tabindex
     document.querySelectorAll('.nav-link[data-tab-target]').forEach(btn => {
       const isTarget = btn.getAttribute('data-tab-target') === tabId;
       btn.classList.toggle('active', isTarget);
       btn.setAttribute('aria-selected', isTarget ? 'true' : 'false');
+      btn.setAttribute('tabindex', isTarget ? '0' : '-1');
     });
 
     // Update Tab Panes
@@ -5022,7 +5050,7 @@ class FusionApp {
               }).join('')}
             </div>
 
-            <div id="pantry-feedback" style="margin-top:1rem; min-height:48px; font-size:0.88rem; font-weight:700;">${this.lastPantryFeedback || ''}</div>
+            <div id="pantry-feedback" role="status" aria-live="polite" aria-atomic="true" style="margin-top:1rem; min-height:48px; font-size:0.88rem; font-weight:700;">${this.lastPantryFeedback || ''}</div>
               <div id="dish-3d-canvas-container" class="dish-3d-canvas-container" style="min-height:160px; margin-top:0.75rem;"></div>
           </div>
 
@@ -5178,7 +5206,7 @@ class FusionApp {
             </button>
           </div>
 
-          <div id="mic-result" style="font-size:0.9rem; min-height:26px; font-weight:700; color:var(--secondary);"></div>
+          <div id="mic-result" role="status" aria-live="polite" aria-atomic="true" style="font-size:0.9rem; min-height:26px; font-weight:700; color:var(--secondary);"></div>
         </div>
 
         <!-- Syllable Builder -->
@@ -5509,7 +5537,7 @@ class FusionApp {
             <strong>👨‍🍳 Parent Clue:</strong> ${q.parentHint}
           </div>
 
-          <div id="trivia-feedback-box" style="margin-top:1.5rem;"></div>
+          <div id="trivia-feedback-box" role="status" aria-live="polite" aria-atomic="true" style="margin-top:1.5rem;"></div>
         </div>
       </div>
     `;
@@ -7346,9 +7374,16 @@ class FusionApp {
 
     // Clicking the card or the button pops out the full recipe & AI Chatbot
     container.querySelectorAll('.cookbook-recipe-card').forEach(card => {
-      card.addEventListener('click', () => {
+      card.addEventListener('click', (e) => {
         const dishId = card.getAttribute('data-dish-id');
-        this.openRecipePopout(dishId);
+        if (dishId) this.openRecipePopout(dishId);
+      });
+      card.querySelectorAll('.open-recipe-popout-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const dishId = btn.getAttribute('data-dish-id');
+          if (dishId) this.openRecipePopout(dishId);
+        });
       });
     });
 
@@ -7887,8 +7922,8 @@ class FusionApp {
 
           <!-- Chat Input Bar -->
           <form class="chat-input-bar" id="recipe-chat-form">
-            <input type="text" id="recipe-chat-input" class="chat-input" placeholder="Ask Sous-Chef anything about this recipe..." autocomplete="off">
-            <button type="submit" class="chat-send-btn" id="recipe-chat-send-btn" title="Send Question">➤</button>
+            <input type="text" id="recipe-chat-input" class="chat-input" placeholder="Ask Sous-Chef anything about this recipe..." aria-label="Ask AI Sous-Chef a question about this recipe" autocomplete="off">
+            <button type="submit" class="chat-send-btn" id="recipe-chat-send-btn" title="Send Question" aria-label="Send Question to AI Sous-Chef">➤</button>
           </form>
         </div>
       </div>
@@ -8682,7 +8717,7 @@ Guidelines:
           Enter your secret Admin PIN to manage game visibility toggles, change settings, or reset household scores.
         </p>
         <div class="pin-input-group">
-          <input type="password" id="admin-pin-field" class="pin-input" placeholder="••••••••" maxlength="16" />
+          <input type="password" id="admin-pin-field" class="pin-input" placeholder="••••••••" maxlength="16" aria-label="Enter 8-character Secret Admin PIN" />
           <button class="btn btn-primary" id="admin-submit-pin-btn">Unlock 🔓</button>
         </div>
         <div id="pin-error-msg" class="admin-error-text" style="font-size:0.85rem; font-weight:700; min-height:22px;"></div>
@@ -8742,45 +8777,45 @@ Guidelines:
           <h4 style="font-size:0.9rem; margin:0 0 0.5rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Arcade Game Toggles</h4>
           <div class="admin-toggles-list" style="margin-bottom:1.25rem;">
             <div class="toggle-row">
-              <span>🥘 Build-a-Dish (Pantry Rush & Steps)</span>
+              <span id="lbl-toggle-buildDish">🥘 Build-a-Dish (Pantry Rush & Steps)</span>
               <label class="switch">
-                <input type="checkbox" id="toggle-buildDish" ${this.state.gameToggles.buildDish ? 'checked' : ''} />
-                <span class="slider"></span>
+                <input type="checkbox" id="toggle-buildDish" aria-labelledby="lbl-toggle-buildDish" ${this.state.gameToggles.buildDish ? 'checked' : ''} />
+                <span class="slider" aria-hidden="true"></span>
               </label>
             </div>
             <div class="toggle-row">
-              <span>🗣️ Pronunciation Challenge & Audio</span>
+              <span id="lbl-toggle-pronunciation">🗣️ Pronunciation Challenge & Audio</span>
               <label class="switch">
-                <input type="checkbox" id="toggle-pronunciation" ${this.state.gameToggles.pronunciation ? 'checked' : ''} />
-                <span class="slider"></span>
+                <input type="checkbox" id="toggle-pronunciation" aria-labelledby="lbl-toggle-pronunciation" ${this.state.gameToggles.pronunciation ? 'checked' : ''} />
+                <span class="slider" aria-hidden="true"></span>
               </label>
             </div>
             <div class="toggle-row">
-              <span>🧠 Family Trivia Quiz (10 Qs)</span>
+              <span id="lbl-toggle-trivia">🧠 Family Trivia Quiz (10 Qs)</span>
               <label class="switch">
-                <input type="checkbox" id="toggle-trivia" ${this.state.gameToggles.trivia ? 'checked' : ''} />
-                <span class="slider"></span>
+                <input type="checkbox" id="toggle-trivia" aria-labelledby="lbl-toggle-trivia" ${this.state.gameToggles.trivia ? 'checked' : ''} />
+                <span class="slider" aria-hidden="true"></span>
               </label>
             </div>
             <div class="toggle-row">
-              <span>🗺️ India Fusion Map & City Quests</span>
+              <span id="lbl-toggle-indiaMap">🗺️ India Fusion Map & City Quests</span>
               <label class="switch">
-                <input type="checkbox" id="toggle-indiaMap" ${this.state.gameToggles.indiaMap !== false ? 'checked' : ''} />
-                <span class="slider"></span>
+                <input type="checkbox" id="toggle-indiaMap" aria-labelledby="lbl-toggle-indiaMap" ${this.state.gameToggles.indiaMap !== false ? 'checked' : ''} />
+                <span class="slider" aria-hidden="true"></span>
               </label>
             </div>
             <div class="toggle-row">
-              <span>🥔 Hot Potato Rush (Arcade Cooking)</span>
+              <span id="lbl-toggle-hotPotato">🥔 Hot Potato Rush (Arcade Cooking)</span>
               <label class="switch">
-                <input type="checkbox" id="toggle-hotPotato" ${this.state.gameToggles.hotPotato !== false ? 'checked' : ''} />
-                <span class="slider"></span>
+                <input type="checkbox" id="toggle-hotPotato" aria-labelledby="lbl-toggle-hotPotato" ${this.state.gameToggles.hotPotato !== false ? 'checked' : ''} />
+                <span class="slider" aria-hidden="true"></span>
               </label>
             </div>
             <div class="toggle-row">
-              <span>🎡 Spin the Wheel & Food Science</span>
+              <span id="lbl-toggle-spinScience">🎡 Spin the Wheel & Food Science</span>
               <label class="switch">
-                <input type="checkbox" id="toggle-spinScience" ${this.state.gameToggles.spinScience ? 'checked' : ''} />
-                <span class="slider"></span>
+                <input type="checkbox" id="toggle-spinScience" aria-labelledby="lbl-toggle-spinScience" ${this.state.gameToggles.spinScience ? 'checked' : ''} />
+                <span class="slider" aria-hidden="true"></span>
               </label>
             </div>
           </div>
@@ -8789,52 +8824,52 @@ Guidelines:
           <h4 style="font-size:0.9rem; margin:0 0 0.5rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Granular Modular Sub-Toggles</h4>
           <div class="admin-toggles-list" style="margin-bottom:1.25rem;">
             <div class="toggle-row">
-              <span>🏆 Header Leaderboard Pill</span>
+              <span id="lbl-toggle-v2-header-lb">🏆 Header Leaderboard Pill</span>
               <label class="switch">
-                <input type="checkbox" id="toggle-v2-header-lb" ${v2.leaderboardInHeader !== false ? 'checked' : ''} />
-                <span class="slider"></span>
+                <input type="checkbox" id="toggle-v2-header-lb" aria-labelledby="lbl-toggle-v2-header-lb" ${v2.leaderboardInHeader !== false ? 'checked' : ''} />
+                <span class="slider" aria-hidden="true"></span>
               </label>
             </div>
             <div class="toggle-row">
-              <span>🌍 Fusion Explorer Tab</span>
+              <span id="lbl-toggle-v2-fusion-tab">🌍 Fusion Explorer Tab</span>
               <label class="switch">
-                <input type="checkbox" id="toggle-v2-fusion-tab" ${v2.fusionExplorerTab !== false ? 'checked' : ''} />
-                <span class="slider"></span>
+                <input type="checkbox" id="toggle-v2-fusion-tab" aria-labelledby="lbl-toggle-v2-fusion-tab" ${v2.fusionExplorerTab !== false ? 'checked' : ''} />
+                <span class="slider" aria-hidden="true"></span>
               </label>
             </div>
             <div class="toggle-row">
-              <span>🍢 Tandoori Skewer & Plating Studio</span>
+              <span id="lbl-toggle-v2-skewer">🍢 Tandoori Skewer & Plating Studio</span>
               <label class="switch">
-                <input type="checkbox" id="toggle-v2-skewer" ${v2.tandoorSkewerGame !== false ? 'checked' : ''} />
-                <span class="slider"></span>
+                <input type="checkbox" id="toggle-v2-skewer" aria-labelledby="lbl-toggle-v2-skewer" ${v2.tandoorSkewerGame !== false ? 'checked' : ''} />
+                <span class="slider" aria-hidden="true"></span>
               </label>
             </div>
             <div class="toggle-row">
-              <span>📸 Chef Hat AR Camera & Age Scanner</span>
+              <span id="lbl-toggle-v2-camera">📸 Chef Hat AR Camera & Age Scanner</span>
               <label class="switch">
-                <input type="checkbox" id="toggle-v2-camera" ${v2.chefHatCameraFilter !== false ? 'checked' : ''} />
-                <span class="slider"></span>
+                <input type="checkbox" id="toggle-v2-camera" aria-labelledby="lbl-toggle-v2-camera" ${v2.chefHatCameraFilter !== false ? 'checked' : ''} />
+                <span class="slider" aria-hidden="true"></span>
               </label>
             </div>
             <div class="toggle-row">
-              <span>🛡️ AI Facial Landmark Anti-Duplication Protection</span>
+              <span id="lbl-toggle-v2-face-dupe">🛡️ AI Facial Landmark Anti-Duplication Protection</span>
               <label class="switch">
-                <input type="checkbox" id="toggle-v2-face-dupe" ${v2.faceVectorAntiDuplication !== false ? 'checked' : ''} />
-                <span class="slider"></span>
+                <input type="checkbox" id="toggle-v2-face-dupe" aria-labelledby="lbl-toggle-v2-face-dupe" ${v2.faceVectorAntiDuplication !== false ? 'checked' : ''} />
+                <span class="slider" aria-hidden="true"></span>
               </label>
             </div>
             <div class="toggle-row">
-              <span>📄 PDF Portfolio & Career Roadmap Export</span>
+              <span id="lbl-toggle-v2-pdf">📄 PDF Portfolio & Career Roadmap Export</span>
               <label class="switch">
-                <input type="checkbox" id="toggle-v2-pdf" ${v2.pdfPortfolioExport !== false ? 'checked' : ''} />
-                <span class="slider"></span>
+                <input type="checkbox" id="toggle-v2-pdf" aria-labelledby="lbl-toggle-v2-pdf" ${v2.pdfPortfolioExport !== false ? 'checked' : ''} />
+                <span class="slider" aria-hidden="true"></span>
               </label>
             </div>
             <div class="toggle-row">
-              <span>🤖 AI Face Guided Tour & Self-Explaining Overlay</span>
+              <span id="lbl-toggle-v2-tour">🤖 AI Face Guided Tour & Self-Explaining Overlay</span>
               <label class="switch">
-                <input type="checkbox" id="toggle-v2-tour" ${v2.aiFaceExplainerTour !== false ? 'checked' : ''} />
-                <span class="slider"></span>
+                <input type="checkbox" id="toggle-v2-tour" aria-labelledby="lbl-toggle-v2-tour" ${v2.aiFaceExplainerTour !== false ? 'checked' : ''} />
+                <span class="slider" aria-hidden="true"></span>
               </label>
             </div>
           </div>
@@ -9790,7 +9825,6 @@ Guidelines:
       }
     };
     document.addEventListener('keydown', handleModalKeydown);
-    window.addEventListener('keydown', handleModalKeydown);
 
     // Hero Dual Action CTAs (FF-10)
     document.getElementById('hero-primary-cta')?.addEventListener('click', () => {

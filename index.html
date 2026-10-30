@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;0,9..144,800;0,9..144,900;1,9..144,600&family=Kalam:wght@400;700&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Rozha+One&display=optional" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🥘</text></svg>">
   <!-- Three.js r128 Library for Interactive 3D Culinary Elements -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -18,13 +18,13 @@
   <!-- Sticky Floating Header with Instant Tab Navigation -->
   <header class="site-header">
     <div class="header-inner">
-      <a href="javascript:void(0)" class="brand-logo" id="logo-home-link">
-        <div class="brand-icon">🥘</div>
+      <button type="button" class="brand-logo" id="logo-home-link" aria-label="Fusion Food Lab - Return to Games Hub">
+        <div class="brand-icon" aria-hidden="true">🥘</div>
         <div class="brand-text">
-          <h1>Fusion Food Lab</h1>
-          <span>Family Kitchen & Games</span>
+          <span class="brand-title">Fusion Food Lab</span>
+          <span class="brand-sub">Family Kitchen &amp; Games</span>
         </div>
-      </a>
+      </button>
 
       <!-- Main View Tabs (Instant Tab Switcher - No Endless Scrolling) -->
       <nav class="site-nav" id="main-nav-bar" aria-label="Main Navigation" role="tablist">
@@ -104,16 +104,16 @@
           <span class="scrolltide-badge badge-float-4">🎮 3D WebGL Labs</span>
         </div>
 
-        <h2 class="scrolltide-hero-title">
+        <h1 class="scrolltide-hero-title">
           Where Global Flavors Meet<br>
           <span class="scrolltide-gradient-text">Indian Culinary Chemistry</span>
-        </h2>
+        </h1>
         <p class="scrolltide-hero-desc">
           An interactive edible universe engineered for families and food enthusiasts. Discover molecular gastronomy secrets, master authentic Indian bazaar ingredient swaps, and conquer high-velocity 3D culinary challenges.
         </p>
 
         <!-- Primary & Secondary Action CTAs (FF-10) -->
-        <div class="hero-cta-group" style="display:flex; gap:0.85rem; justify-content:center; align-items:center; flex-wrap:wrap; margin:1.25rem 0 1.5rem;">
+        <div class="hero-cta-group">
           <button class="btn btn-primary hero-main-cta" id="hero-primary-cta" data-target-tab="games" aria-label="Play Arcade Games">
             🎮 Play Arcade Games
           </button>
@@ -250,7 +250,7 @@
         <div id="tandoor-skewer-game-container" style="margin-bottom:2rem;"></div>
 
         <!-- Instant Recipe Search Bar (K-03) -->
-        <div class="recipe-search-container" style="margin-bottom:1rem; display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap;">
+        <div class="recipe-search-bar">
           <div style="position:relative; flex:1; max-width:480px;">
             <input type="search" id="kitchen-recipe-search" placeholder="🔍 Search dishes, ingredients, or cuisines..." aria-label="Search recipes, ingredients, or cuisines" style="width:100%; padding:0.5rem 1rem 0.5rem 2.2rem; border-radius:var(--radius-full); border:1.5px solid var(--border-color); background:var(--bg-card-subtle); color:var(--text-main); font-size:0.88rem;">
             <span style="position:absolute; left:0.75rem; top:50%; transform:translateY(-50%); pointer-events:none; font-size:0.9rem;" aria-hidden="true">🔎</span>
@@ -308,7 +308,7 @@
             </div>
 
             <!-- Privacy & Global Publishing Notice (FF-13) -->
-            <div class="leaderboard-privacy-banner" style="background:var(--bg-card-subtle); border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:0.65rem 0.95rem; margin-bottom:1.15rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.6rem; font-size:0.82rem; color:var(--text-muted);">
+            <div class="leaderboard-privacy-box">
               <div style="display:flex; align-items:center; gap:0.45rem;">
                 <span aria-hidden="true">🔒</span>
                 <span><strong>Privacy Shield:</strong> Local family scores are kept private on this device. Publishing to the Global Hall of Fame requires parental confirmation.</span>
@@ -507,16 +507,16 @@
         <div>
           <h4 style="font-size:1.05rem; margin-bottom:0.85rem;">Navigation Views</h4>
           <ul style="list-style:none; font-size:0.88rem; display:flex; flex-direction:column; gap:0.5rem;">
-            <li><a href="javascript:void(0)" class="footer-nav-link" data-tab="games">🎮 Games Hub (5 Arcade Labs)</a></li>
-            <li><a href="javascript:void(0)" class="footer-nav-link" data-tab="kitchen">📖 Kitchen Lab (Recipes & Substitutes)</a></li>
-            <li><a href="javascript:void(0)" class="footer-nav-link" data-tab="leaderboard">🏆 Family Leaderboard & Ranks</a></li>
+            <li><button type="button" class="footer-nav-link" data-tab="games">🎮 Games Hub (5 Arcade Labs)</button></li>
+            <li><button type="button" class="footer-nav-link" data-tab="kitchen">📖 Kitchen Lab (Recipes &amp; Substitutes)</button></li>
+            <li><button type="button" class="footer-nav-link" data-tab="leaderboard">🏆 Family Leaderboard &amp; Ranks</button></li>
           </ul>
         </div>
 
         <div>
-          <h4 style="font-size:1.05rem; margin-bottom:0.85rem;">Parent & Admin</h4>
+          <h4 style="font-size:1.05rem; margin-bottom:0.85rem;">Parent &amp; Admin</h4>
           <ul style="list-style:none; font-size:0.88rem; display:flex; flex-direction:column; gap:0.5rem;">
-            <li><a href="javascript:void(0)" id="admin-footer-link">🔒 Admin Settings</a></li>
+            <li><button type="button" class="footer-nav-link" id="admin-footer-link">🔒 Admin Settings</button></li>
             <li>🌿 100% Pure Vegetarian Safe</li>
             <li>👶 Kid-Friendly Cooking Guide</li>
             <li>🧪 Food Science Explanations</li>
