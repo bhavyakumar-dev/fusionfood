@@ -2044,11 +2044,13 @@ button {
 }
 
 /* ========================================================
-   FAMILY LEADERBOARD
+   GLOBAL LEADERBOARD
    ======================================================== */
 .scoreboard-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
+  max-width: 960px;
+  margin: 0 auto;
   gap: 2.25rem;
 }
 
@@ -2058,7 +2060,7 @@ button {
   }
 }
 
-.rank-ladder-card, .family-roster-card {
+.family-roster-card {
   background: var(--bg-card);
   border: 2.5px solid var(--border-color);
   border-radius: var(--radius-lg);
@@ -2593,7 +2595,7 @@ input:checked + .slider:before {
     gap: 1.25rem;
   }
 
-  .rank-ladder-card, .family-roster-card {
+  .family-roster-card {
     padding: 1.25rem 1rem;
   }
 

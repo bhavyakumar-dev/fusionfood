@@ -243,38 +243,19 @@
         </div>
 
         <div class="scoreboard-grid">
-          <!-- 6-Tier Rank Ladder -->
-          <div class="rank-ladder-card">
-            <h3 style="font-size:1.4rem; margin-bottom:0.5rem; display:flex; align-items:center; gap:0.6rem;">
-              <span>🏆 6-Tier Culinary Master Ladder</span>
-            </h3>
-            <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:1.5rem;">
-              Earn XP across trivia, pronunciation, pantry rush, and wheel spins to climb tiers:
-            </p>
-            <div id="rank-ladder-display">
-              <!-- Rendered dynamically by bundle.js -->
-            </div>
-          </div>
-
-          <!-- Family Roster & Personal Bests -->
+          <!-- Global Leaderboard & Hall of Fame -->
           <div class="family-roster-card">
             <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.5rem;">
               <h3 style="font-size:1.4rem; display:flex; align-items:center; gap:0.6rem; margin:0;">
-                <span>👨‍👩‍👧 Family Roster & Personal Bests</span>
+                <span>🏆 Global Hall of Fame & Leaderboard</span>
               </h3>
               <button id="clear-website-data-btn" class="btn btn-secondary" style="color:#DC2626; border-color:rgba(220,38,38,0.35); padding:0.35rem 0.8rem; font-size:0.78rem; font-weight:700;">
                 🗑️ Clear All Website Data
               </button>
             </div>
 
-            <!-- Leaderboard Scope Toggle (Local vs Global) -->
-            <div class="leaderboard-scope-toggle" id="leaderboard-scope-toggle">
-              <button class="scope-btn active" data-scope="local">🏠 Family Roster</button>
-              <button class="scope-btn" data-scope="global">🌐 Global Hall of Fame</button>
-            </div>
-
             <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:1rem;">
-              Filter personal bests and arcade high scores across challenges:
+              Filter global rankings and arcade high scores across challenges:
             </p>
             <div class="leaderboard-filter-tabs" id="leaderboard-filter-tabs" style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:1.25rem;">
               <button class="recipe-chip active" data-lb-filter="all">👑 Level Leaderboard</button>

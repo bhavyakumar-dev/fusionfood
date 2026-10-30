@@ -1221,7 +1221,7 @@ const DEFAULT_STATE = {
   onboarded: false,
   hpMode: 'native', // 'native' or 'itch'
   leaderboardFilter: 'all', // 'all', 'hotPotato', 'buildDish', 'trivia'
-  leaderboardScope: 'local', // 'local' (Family Roster) or 'global' (Global Hall of Fame)
+  leaderboardScope: 'global', // 'global' (Global Hall of Fame)
   profiles: {
     kid: {
       name: 'Maya',
@@ -5668,25 +5668,8 @@ Guidelines:
   // FAMILY SCOREBOARD & LEADERBOARD
   // ========================================================
   async renderLeaderboard() {
-    const ladderContainer = document.getElementById('rank-ladder-display');
     const rosterContainer = document.getElementById('family-roster-display');
-    const profile = this.getActiveProfile();
-    const currentRank = this.getCurrentRank(profile.xp, profile.role);
-    const roleRanks = profile.role === 'parent' ? PARENT_RANKS : STUDENT_RANKS;
     const filter = this.state.leaderboardFilter || 'all';
-    const scope = this.state.leaderboardScope || 'local';
-
-    // Update active state on scope toggle buttons
-    const scopeToggle = document.getElementById('leaderboard-scope-toggle');
-    if (scopeToggle) {
-      scopeToggle.querySelectorAll('.scope-btn').forEach(btn => {
-        if (btn.getAttribute('data-scope') === scope) {
-          btn.classList.add('active');
-        } else {
-          btn.classList.remove('active');
-        }
-      });
-    }
 
     // Update active state on filter chips
     document.querySelectorAll('#leaderboard-filter-tabs .recipe-chip').forEach(btn => {
@@ -5698,33 +5681,8 @@ Guidelines:
       }
     });
 
-    if (ladderContainer) {
-      ladderContainer.innerHTML = roleRanks.map(r => {
-        const isCurrent = r.level === currentRank.level;
-        const isUnlocked = profile.xp >= r.minXP;
-
-        return `
-          <div class="rank-tier-item ${isCurrent ? 'current-tier' : ''} ${!isUnlocked ? 'locked' : ''}">
-            <div style="font-size:1.85rem;">${r.badge}</div>
-            <div style="flex:1;">
-              <div style="display:flex; justify-content:space-between;">
-                <span style="font-size:1.02rem;">${r.title}</span>
-                <span style="font-size:0.82rem; color:var(--text-muted);">${r.minXP} - ${r.maxXP < 99999 ? r.maxXP : '∞'} XP</span>
-              </div>
-              <div style="font-size:0.78rem; color:var(--text-muted);">${r.perks}</div>
-            </div>
-            ${isCurrent ? '<span class="active-rank-tag" style="font-size:0.8rem; font-weight:900;">★ Active</span>' : ''}
-          </div>
-        `;
-      }).join('');
-    }
-
     if (rosterContainer) {
-      if (scope === 'global') {
-        this.renderGlobalLeaderboard(rosterContainer, filter);
-      } else {
-        this.renderLocalFamilyRoster(rosterContainer, filter);
-      }
+      this.renderGlobalLeaderboard(rosterContainer, filter);
     }
   }
 
@@ -5832,6 +5790,11 @@ Guidelines:
   }
 
   async renderGlobalLeaderboard(rosterContainer, filter) {
+    if (window.location.protocol === 'file:') {
+      this.renderLocalFamilyRoster(rosterContainer, filter, false);
+      return;
+    }
+
     rosterContainer.innerHTML = `
       <div style="text-align:center; padding:2rem 1rem; color:var(--text-muted);">
         <div style="font-size:2rem; animation:spin 1s infinite linear;">🌐</div>
