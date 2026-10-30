@@ -337,7 +337,8 @@ export async function runSelfVerification() {
       if (!data.success) throw new Error('Submission returned success: false');
       if (!data.isNewHighScore) throw new Error('Expected isNewHighScore: true');
       if (data.rank !== 1) throw new Error(`Expected rank 1 with score 55, got rank ${data.rank}`);
-      if (data.totalXP !== 1150) throw new Error(`Expected totalXP 1150, got ${data.totalXP}`);
+      // Mini-game submissions clamp xpGained to 0 (only 'overall' updates XP to prevent duplicate grants)
+      if (data.totalXP !== 1050) throw new Error(`Expected totalXP 1050, got ${data.totalXP}`);
     });
 
     // Test 11: Submit Score POST (Lower score does not overwrite personal best)

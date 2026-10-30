@@ -3876,7 +3876,7 @@ class FusionApp {
               if (!prof.bests) prof.bests = {};
               prof.bests.buildDish = (prof.bests.buildDish || 0) + 1;
               this.saveState();
-              this.submitScoreToGlobal('buildDish', prof.bests.buildDish, 50).catch(() => {});
+              this.submitScoreToGlobal('buildDish', prof.bests.buildDish, 0).catch(() => {});
             }
             this.addXP(50, '🥘 Dish Master');
             showToast(`Perfected ${dish.name}! +50 XP`, 'success');
@@ -4039,7 +4039,7 @@ class FusionApp {
           if (!prof.bests) prof.bests = {};
           prof.bests.pronunciation = (prof.bests.pronunciation || 0) + 1;
           this.addXP(30, '🗣️ Accent Virtuoso');
-          this.submitScoreToGlobal('pronunciation', prof.bests.pronunciation, 30).catch(() => {});
+          this.submitScoreToGlobal('pronunciation', prof.bests.pronunciation, 0).catch(() => {});
         }
 
         this.renderPronunciationGame(arena);
@@ -4480,7 +4480,7 @@ class FusionApp {
       if (currentScore > (profile.bests.hotPotato || 0)) {
         profile.bests.hotPotato = currentScore;
         this.saveState();
-        this.submitScoreToGlobal('hotPotato', currentScore, 15).catch(() => {});
+        this.submitScoreToGlobal('hotPotato', currentScore, 0).catch(() => {});
       }
     };
 
@@ -5074,7 +5074,7 @@ class FusionApp {
           if (!prof.bests) prof.bests = {};
           prof.bests.scienceSpins = (prof.bests.scienceSpins || 0) + 1;
           this.addXP(50, `🔬 ${topic.shortName} Master`);
-          this.submitScoreToGlobal('scienceSpins', prof.bests.scienceSpins, 50).catch(() => {});
+          this.submitScoreToGlobal('scienceSpins', prof.bests.scienceSpins, 0).catch(() => {});
           feedback.innerHTML = `
             <div style="color:var(--accent-green); font-size:0.88rem; font-weight:800;">
               🎉 Absolutely Correct! (+50 XP). ${topic.question.explanation}
