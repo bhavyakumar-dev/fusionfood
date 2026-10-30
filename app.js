@@ -5812,6 +5812,23 @@ Guidelines:
       .sort(([,a],[,b]) => {
         const aRank = this.getCurrentRank(a.xp, a.role);
         const bRank = this.getCurrentRank(b.xp, b.role);
+        const aBests = a.bests || {};
+        const bBests = b.bests || {};
+
+        if (filter === 'hotPotato') {
+          const aScore = aBests.hotPotato || 0;
+          const bScore = bBests.hotPotato || 0;
+          return bScore - aScore || (bRank.level || 1) - (aRank.level || 1) || b.xp - a.xp;
+        } else if (filter === 'buildDish') {
+          const aScore = aBests.buildDish || 0;
+          const bScore = bBests.buildDish || 0;
+          return bScore - aScore || (bRank.level || 1) - (aRank.level || 1) || b.xp - a.xp;
+        } else if (filter === 'trivia') {
+          const aScore = aBests.trivia || 0;
+          const bScore = bBests.trivia || 0;
+          return bScore - aScore || (bRank.level || 1) - (aRank.level || 1) || b.xp - a.xp;
+        }
+        // Overall: rank by level DESC, then XP DESC
         return (bRank.level || 1) - (aRank.level || 1) || b.xp - a.xp;
       })
       .map(([key, p], idx) => {
@@ -5950,8 +5967,99 @@ Guidelines:
           </div>
         `;
       }).join('');
+      // Cache global leaderboard entries in IndexedDB for offline resilience
+      if (this.db && Array.isArray(items)) {
+        try {
+          for (const item of items) {
+            await this.db.set(DB_CONFIG.STORE_LEADERBOARD, {
+              id: `${item.userId}_${item.gameType || 'overall'}`,
+              ...item,
+              cachedAt: new Date().toISOString()
+            });
+          }
+        } catch (dbErr) {
+          console.warn('Could not cache leaderboard in IndexedDB:', dbErr);
+        }
+      }
+
+      return;
     } catch (err) {
-      console.warn('Global leaderboard fetch failed, falling back to local family roster:', err);
+      console.warn('Global leaderboard fetch failed, checking IndexedDB cache:', err);
+      // Try reading cached leaderboard records from IndexedDB
+      if (this.db) {
+        try {
+          const cachedEntries = await this.db.getAll(DB_CONFIG.STORE_LEADERBOARD);
+          const targetGame = (filter === 'ladder' || filter === 'all') ? 'overall' : filter;
+          const matching = (cachedEntries || []).filter(e => !e.gameType || e.gameType === targetGame || (targetGame === 'overall' && e.gameType === 'all'));
+          if (matching.length > 0) {
+            matching.sort((a, b) => {
+              if (targetGame === 'overall') {
+                return (b.level || 1) - (a.level || 1) || (b.xp || 0) - (a.xp || 0);
+              }
+              return (b.score || 0) - (a.score || 0) || (b.level || 1) - (a.level || 1) || (b.xp || 0) - (a.xp || 0);
+            });
+
+            rosterContainer.innerHTML = `
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.85rem; font-size:0.84rem; color:var(--text-muted);">
+                <span>🌐 <strong>Cloudflare Global Hall of Fame</strong> (${matching.length} Cached Culinary Masters)</span>
+                <span class="pill-badge" style="font-size:0.72rem; color:#F59E0B; background:#FEF3C7;">● Cached Offline</span>
+              </div>
+            ` + matching.map((p, idx) => {
+              const rankPos = idx + 1;
+              const rankMedal = rankPos === 1 ? '🥇' : rankPos === 2 ? '🥈' : rankPos === 3 ? '🥉' : `#${rankPos}`;
+
+              let metricDisplay = `
+                <div style="font-weight:900; color:var(--primary); font-size:1.35rem;">${p.xp} XP</div>
+                <div style="font-size:0.8rem; color:var(--secondary); font-weight:700;">🔥 ${p.streak || 0} Day Streak</div>
+              `;
+              if (filter === 'hotPotato') {
+                metricDisplay = `
+                  <div style="font-weight:900; color:#10B981; font-size:1.35rem;">🥔 ${p.score || 0} Served</div>
+                  <div style="font-size:0.78rem; color:var(--text-muted);">Arcade High Score</div>
+                `;
+              } else if (filter === 'buildDish') {
+                metricDisplay = `
+                  <div style="font-weight:900; color:var(--secondary); font-size:1.35rem;">🥘 ${p.score || 0} Dishes</div>
+                  <div style="font-size:0.78rem; color:var(--text-muted);">Dish Assembly</div>
+                `;
+              } else if (filter === 'trivia') {
+                metricDisplay = `
+                  <div style="font-weight:900; color:var(--primary); font-size:1.35rem;">🧠 ${p.score || 0}/10 Correct</div>
+                  <div style="font-size:0.78rem; color:var(--text-muted);">Trivia Accuracy</div>
+                `;
+              }
+
+              return `
+                <div style="background:var(--bg-card-subtle); border:1.5px solid var(--border-color); border-radius:var(--radius-md); padding:1.15rem 1.25rem; margin-bottom:1rem; position:relative; box-shadow:var(--shadow-warm);">
+                  <div style="position:absolute; top:0.75rem; right:0.85rem; font-size:${rankPos <= 3 ? '1.5rem' : '0.9rem'}; font-weight:800; color:${rankPos <= 3 ? 'inherit' : 'var(--text-muted)'};">${rankMedal}</div>
+                  <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div style="display:flex; align-items:center; gap:0.85rem;">
+                      <span style="font-size:2.2rem;">${p.avatar || '👨‍🍳'}</span>
+                      <div>
+                        <strong style="font-size:1.05rem;">${p.userName || p.name}</strong>
+                        <div style="font-size:0.82rem; color:var(--text-muted); display:flex; gap:0.4rem; align-items:center; flex-wrap:wrap;">
+                          <span>📍 ${p.country || 'Global'}</span>
+                          <span>•</span>
+                          <span>👑 Level ${p.level || 1}</span>
+                          <span>•</span>
+                          <span>${p.role === 'parent' ? '👨‍🍳 Parent Guide' : '🎒 Student Chef'}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div style="text-align:right; margin-right:2rem;">
+                      ${metricDisplay}
+                    </div>
+                  </div>
+                </div>
+              `;
+            }).join('');
+            return;
+          }
+        } catch (cacheReadErr) {
+          console.warn('Could not read cached leaderboard from IndexedDB:', cacheReadErr);
+        }
+      }
+
       this.renderLocalFamilyRoster(rosterContainer, filter, true);
     }
   }
@@ -5960,25 +6068,44 @@ Guidelines:
     const profile = this.getActiveProfile();
     if (!profile) return;
     const currentRank = this.getCurrentRank(profile.xp, profile.role);
+    const payload = {
+      userId: this.state.currentProfile,
+      userName: profile.name,
+      avatar: profile.avatar || '🎒',
+      role: profile.role || 'student',
+      level: currentRank.level || 1,
+      gameType,
+      score,
+      xpGained,
+      country: profile.country || 'Global'
+    };
+
+    // Store optimistic/offline score in IndexedDB immediately
+    if (this.db) {
+      try {
+        await this.db.set(DB_CONFIG.STORE_LEADERBOARD, {
+          id: `${payload.userId}_${payload.gameType}`,
+          ...payload,
+          xp: profile.xp,
+          streak: profile.streak || 0,
+          updatedAt: new Date().toISOString()
+        });
+      } catch (idbErr) {
+        console.warn('Could not save score entry to IndexedDB:', idbErr);
+      }
+    }
+
     try {
-      const payload = {
-        userId: this.state.currentProfile,
-        userName: profile.name,
-        avatar: profile.avatar || '🎒',
-        role: profile.role || 'student',
-        level: currentRank.level || 1,
-        gameType,
-        score,
-        xpGained,
-        country: profile.country || 'Global'
-      };
-      await fetch('/api/submit-score', {
+      const res = await fetch('/api/submit-score', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
+      if (!res.ok) {
+        console.warn(`submit-score returned HTTP ${res.status}`);
+      }
     } catch (e) {
-      // Graceful offline fallback
+      console.warn('Network error submitting score, safely saved to local IndexedDB fallback:', e);
     }
   }
 

@@ -1108,6 +1108,24 @@ button {
   border-color: var(--primary) !important;
 }
 
+/* WCAG AAA dark mode contrast enhancements */
+[data-theme="dark"] .btn-primary {
+  background: linear-gradient(135deg, #0284C7, #BE185D) !important;
+  color: #FFFFFF !important;
+  font-weight: 800 !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+[data-theme="dark"] .chat-bubble.user {
+  background: linear-gradient(135deg, #0369A1, #9D174D) !important;
+  color: #FFFFFF !important;
+  font-weight: 600 !important;
+}
+
+[data-theme="dark"] .admin-error-text {
+  color: #FCA5A5 !important;
+}
+
 /* Landscape mode: prevent nav from blocking game canvas */
 @media (orientation: landscape) and (max-height: 600px) {
   .site-header {
@@ -2098,6 +2116,9 @@ body.has-modal-open .mobile-bottom-nav {
   border-radius: var(--radius-lg);
   width: 100%;
   max-width: 500px;
+  max-height: 88vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 2.25rem;
   box-shadow: 0 24px 48px rgba(0,0,0,0.35);
   position: relative;
