@@ -2331,7 +2331,6 @@ const DEFAULT_STATE = {
     hotPotato: true,
     spinScience: true
   },
-  adminPin: 'careers2026',
   appVersion: 'v2', // 'v1' (Classic), 'v2' (Modern Redesign), 'v3' (AI & AR Vision)
   v2Features: {
     leaderboardInHeader: true,
@@ -2400,28 +2399,7 @@ const DEFAULT_STATE = {
       role: 'Culinary Nutritionist'
     }
   ],
-  apiKeys: [
-    {
-      keyId: 'key_master_admin',
-      name: 'Master Admin Access Token',
-      token: 'ff_live_adm_9a82f1b04c7d6e53a2b1049c8e71fa32',
-      prefix: 'ff_live_adm_...fa32',
-      scope: 'admin',
-      status: 'active',
-      createdAt: '2026-10-30T10:00:00.000Z',
-      expiresAt: null
-    },
-    {
-      keyId: 'key_public_ro',
-      name: 'Leaderboard Public Client',
-      token: 'ff_live_ro_4b7e12c98d0f3a6e11c52b7a9e04dc18',
-      prefix: 'ff_live_ro_...dc18',
-      scope: 'read',
-      status: 'active',
-      createdAt: '2026-10-30T10:15:00.000Z',
-      expiresAt: '2027-10-30T10:15:00.000Z'
-    }
-  ],
+  apiKeys: [],,
   activeGameTab: 'buildDish',
   recipeFilter: 'all',
   recipeCompletedSteps: {},
@@ -4171,9 +4149,11 @@ class FusionApp {
         if (parsed.gameToggles && parsed.gameToggles.indiaMap === undefined) {
           parsed.gameToggles.indiaMap = true;
         }
-        if (!parsed.apiKeys || !Array.isArray(parsed.apiKeys) || parsed.apiKeys.length === 0) {
-          parsed.apiKeys = DEFAULT_STATE.apiKeys;
-        }
+        if (!Array.isArray(parsed.apiKeys)) parsed.apiKeys = [];
+        // Discard demo credentials and never keep bearer tokens in browser storage.
+        parsed.apiKeys = parsed.apiKeys
+          .filter(key => !['key_master_admin', 'key_public_ro'].includes(key?.keyId))
+          .map(({ token, ...metadata }) => metadata);
         if (!parsed.v2Features) {
           parsed.v2Features = { ...DEFAULT_STATE.v2Features };
         }
@@ -8670,6 +8650,14 @@ Guidelines:
     sound.playClick();
     modal.classList.remove('open');
     document.body.classList.remove('has-modal-open');
+    this.adminSessionActive = false;
+    this.apiKeysLoaded = false;
+    if (typeof window !== 'undefined' && window.location.protocol !== 'file:') {
+      fetch('/api/admin/session', {
+        method: 'DELETE',
+        credentials: 'same-origin'
+      }).catch(() => {});
+    }
   }
 
   renderAdminModalContent(isAuthenticated = false) {
@@ -8688,15 +8676,43 @@ Guidelines:
         <div id="pin-error-msg" class="admin-error-text" style="font-size:0.85rem; font-weight:700; min-height:22px;"></div>
       `;
 
-      document.getElementById('admin-submit-pin-btn')?.addEventListener('click', () => {
-        const val = document.getElementById('admin-pin-field')?.value;
-        if (val === this.state.adminPin) {
+      document.getElementById('admin-submit-pin-btn')?.addEventListener('click', async () => {
+        const input = document.getElementById('admin-pin-field');
+        const errorEl = document.getElementById('pin-error-msg');
+        const pin = String(input?.value || '');
+
+        // file:// mode is local-only; it never authenticates to a remote API.
+        if (typeof window !== 'undefined' && window.location.protocol === 'file:') {
+          sound.playChime();
+          showToast('Offline admin controls apply only to this browser.', 'info');
+          this.renderAdminModalContent(true);
+          return;
+        }
+
+        const button = document.getElementById('admin-submit-pin-btn');
+        if (button) button.disabled = true;
+        try {
+          const response = await fetch('/api/admin/session', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ pin })
+          });
+          const result = await response.json().catch(() => ({}));
+          if (!response.ok || !result.success) {
+            throw new Error(result.error || `Admin authentication failed (HTTP ${response.status}).`);
+          }
+
           sound.playChime();
           showToast('Admin Mode Unlocked', 'success');
+          this.adminSessionActive = true;
+          this.apiKeysLoaded = false;
           this.renderAdminModalContent(true);
-        } else {
+        } catch (error) {
           sound.playWrong();
-          document.getElementById('pin-error-msg').innerText = '❌ Incorrect PIN. Please try again.';
+          if (errorEl) errorEl.innerText = error.message || 'Admin authentication failed.';
+        } finally {
+          if (button) button.disabled = false;
         }
       });
     } else {
@@ -8887,15 +8903,15 @@ Guidelines:
             ` : ''}
           </div>
 
-          <!-- Secret Admin PIN -->
+          <!-- Admin PIN lives in Cloudflare Secrets, never browser storage. -->
           <div style="background:var(--bg-parchment); border:1.5px solid var(--border-color); border-radius:var(--radius-sm); padding:0.95rem; margin-bottom:1.25rem;">
             <label style="font-size:0.82rem; font-weight:800; color:var(--text-muted); display:block; margin-bottom:0.35rem;">
-              🔑 Update Secret Admin PIN:
+              🔐 Cloudflare-managed Admin PIN
             </label>
-            <div style="display:flex; gap:0.5rem;">
-              <input type="password" id="new-admin-pin" class="pin-input" style="padding:0.45rem 0.75rem; font-size:0.9rem;" placeholder="New PIN" />
-              <button class="btn btn-secondary" id="save-new-pin-btn" style="padding:0.45rem 0.85rem; font-size:0.82rem;">Update PIN</button>
-            </div>
+            <p style="font-size:0.78rem; color:var(--text-muted); margin:0; line-height:1.5;">
+              The Admin PIN is stored as a Cloudflare secret and is not saved in this browser. Rotate it with
+              <code>wrangler pages secret put ADMIN_PIN --project-name=fusionfood</code>.
+            </p>
           </div>
 
           <!-- Data Safety, Backup & Recovery Hub (FF-01) -->
@@ -9160,21 +9176,6 @@ Guidelines:
           }
         });
 
-        // Update PIN
-        document.getElementById('save-new-pin-btn')?.addEventListener('click', () => {
-          const newPin = document.getElementById('new-admin-pin')?.value.trim();
-          if (newPin && newPin.length >= 4) {
-            this.state.adminPin = newPin;
-            this.saveState();
-            sound.playCorrect();
-            showToast('Admin PIN updated securely!', 'success');
-            document.getElementById('new-admin-pin').value = '';
-          } else {
-            sound.playWrong();
-            showToast('Please enter a PIN with at least 4 characters.', 'error');
-          }
-        });
-
         // Save toggles
         document.getElementById('save-admin-settings-btn')?.addEventListener('click', () => {
           sound.playCorrect();
@@ -9280,27 +9281,46 @@ Guidelines:
 
         // Reset Admin Defaults
         document.getElementById('reset-admin-btn')?.addEventListener('click', () => {
-          if (confirm('Reset Admin PIN back to default and enable all features?')) {
+          if (confirm('Reset local game toggles and feature settings to defaults? The Cloudflare Admin PIN will not change.')) {
             sound.playCorrect();
-            this.state.adminPin = 'careers2026';
-            this.state.gameToggles = {
-              buildDish: true,
-              pronunciation: true,
-              trivia: true,
-              hotPotato: true,
-              spinScience: true
-            };
+            this.state.gameToggles = { ...DEFAULT_STATE.gameToggles };
             this.state.v2Features = { ...DEFAULT_STATE.v2Features };
+            this.state.appVersion = DEFAULT_STATE.appVersion;
             this.saveState();
             this.applyV2FeatureVisibility();
             this.renderGameTabs();
             this.renderActiveGame();
             this.renderAdminModalContent(true);
-            showToast('Admin PIN and Game Toggles reset to default!', 'success');
+            showToast('Local admin defaults restored. Cloudflare Admin PIN unchanged.', 'success');
           }
         });
       } else if (this.adminSubTab === 'api') {
         // API KEY GENERATOR TAB
+        if (
+          typeof window !== 'undefined' &&
+          window.location.protocol !== 'file:' &&
+          !this.apiKeysLoaded
+        ) {
+          this.apiKeysLoaded = true;
+          fetch('/api/admin/keys', { credentials: 'same-origin' })
+            .then(async response => {
+              const payload = await response.json().catch(() => ({}));
+              if (!response.ok || !payload.success) {
+                throw new Error(payload.error || 'Could not load API keys.');
+              }
+              this.state.apiKeys = (payload.keys || []).map(key => ({
+                keyId: key.keyId, name: key.name, prefix: key.prefix,
+                scope: key.scope, status: key.status,
+                expiresAt: key.expiresAt, createdAt: key.createdAt
+              }));
+              this.saveState();
+              this.renderAdminModalContent(true);
+            })
+            .catch(error => {
+              this.apiKeysLoaded = false;
+              showToast(error.message || 'Could not load API keys.', 'error');
+            });
+        }
         const keysListHtml = (this.state.apiKeys && this.state.apiKeys.length > 0)
           ? this.state.apiKeys.map(k => {
               const isActive = k.status === 'active';
@@ -9513,30 +9533,43 @@ Guidelines:
           }
         });
 
-        document.getElementById('generate-api-key-submit-btn')?.addEventListener('click', () => {
+        document.getElementById('generate-api-key-submit-btn')?.addEventListener('click', async () => {
           const nameInput = document.getElementById('api-key-name-input');
           const scopeSelect = document.getElementById('api-key-scope-select');
           const expirySelect = document.getElementById('api-key-expiry-select');
           const name = (nameInput?.value || '').trim() || 'API Client';
           const scope = scopeSelect?.value || 'read_write';
           const expiryDays = parseInt(expirySelect?.value || '365', 10);
-
-          const key = this.generateApiKey(name, scope, expiryDays);
-          this.lastGeneratedKey = key;
-          sound.playCorrect();
-          showToast(`API Key "${name}" generated!`, 'success');
-          this.renderAdminModalContent(true);
+          const button = document.getElementById('generate-api-key-submit-btn');
+          if (button) button.disabled = true;
+          try {
+            const key = await this.generateApiKey(name, scope, expiryDays);
+            this.lastGeneratedKey = key;
+            sound.playCorrect();
+            showToast(`API Key "${name}" generated!`, 'success');
+            this.renderAdminModalContent(true);
+          } catch (error) {
+            sound.playWrong();
+            showToast(error.message || 'Could not generate API key.', 'error');
+          } finally {
+            if (button) button.disabled = false;
+          }
         });
 
         body.querySelectorAll('.revoke-api-key-btn').forEach(btn => {
-          btn.addEventListener('click', () => {
+          btn.addEventListener('click', async () => {
             const keyId = btn.getAttribute('data-key-id');
             if (!keyId) return;
             if (confirm('Revoke this API key? Any applications using this token will lose access immediately.')) {
-              sound.playWrong();
-              this.revokeApiKey(keyId);
-              showToast('API key revoked.', 'info');
-              this.renderAdminModalContent(true);
+              try {
+                await this.revokeApiKey(keyId);
+                sound.playWrong();
+                showToast('API key revoked.', 'info');
+                this.renderAdminModalContent(true);
+              } catch (error) {
+                sound.playWrong();
+                showToast(error.message || 'Could not revoke API key.', 'error');
+              }
             }
           });
         });
@@ -9564,78 +9597,71 @@ Guidelines:
       .replace(/'/g, '&#39;');
   }
 
-  generateApiKey(name, scope = 'read_write', expiryDays = 365) {
-    const chars = '0123456789abcdef';
-    let hex = '';
-    for (let i = 0; i < 32; i++) {
-      hex += chars[Math.floor(Math.random() * chars.length)];
-    }
-    let idHex = '';
-    for (let i = 0; i < 8; i++) {
-      idHex += chars[Math.floor(Math.random() * chars.length)];
-    }
+  async generateApiKey(name, scope = 'read_write', expiryDays = 365) {
+    const normalizedName = (name || 'API Client').trim().slice(0, 100);
+    const days = Number.parseInt(expiryDays, 10);
+    let newKey;
 
-    const scopePrefix = scope === 'read' ? 'ro' : (scope === 'admin' ? 'adm' : 'rw');
-    const token = `ff_live_${scopePrefix}_${hex}`;
-    const keyId = `key_${idHex}`;
-    const prefix = `${token.slice(0, 14)}...${token.slice(-4)}`;
-
-    let expiresAt = null;
-    const days = parseInt(expiryDays, 10);
-    if (!isNaN(days) && days > 0) {
-      const exp = new Date();
-      exp.setDate(exp.getDate() + days);
-      expiresAt = exp.toISOString();
-    }
-
-    const newKey = {
-      keyId,
-      name: (name || 'API Client').trim(),
-      token,
-      prefix,
-      scope,
-      status: 'active',
-      createdAt: new Date().toISOString(),
-      expiresAt
-    };
-
-    if (!Array.isArray(this.state.apiKeys)) {
-      this.state.apiKeys = [];
-    }
-    this.state.apiKeys.unshift(newKey);
-    this.saveState();
-
-    if (typeof window !== 'undefined' && window.location.protocol !== 'file:') {
-      fetch('/api/admin/keys', {
+    if (typeof window !== 'undefined' && window.location.protocol === 'file:') {
+      // Offline keys are browser-only demonstrations and never reach the API.
+      const tokenBytes = crypto.getRandomValues(new Uint8Array(32));
+      const idBytes = crypto.getRandomValues(new Uint8Array(8));
+      const tokenHex = Array.from(tokenBytes, b => b.toString(16).padStart(2, '0')).join('');
+      const idHex = Array.from(idBytes, b => b.toString(16).padStart(2, '0')).join('');
+      const token = `ff_live_${tokenHex}`;
+      let expiresAt = null;
+      if (Number.isFinite(days) && days > 0) {
+        const expiry = new Date();
+        expiry.setDate(expiry.getDate() + days);
+        expiresAt = expiry.toISOString();
+      }
+      newKey = {
+        keyId: `key_${idHex}`, name: normalizedName, token,
+        prefix: `${token.slice(0, 12)}...${token.slice(-4)}`,
+        scope, status: 'active', createdAt: new Date().toISOString(), expiresAt
+      };
+    } else {
+      const response = await fetch('/api/admin/keys', {
         method: 'POST',
+        credentials: 'same-origin',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: newKey.name,
-          scope: newKey.scope,
-          expiryDays: days
+          name: normalizedName,
+          scope,
+          expiryDays: Number.isFinite(days) ? days : 0
         })
-      }).catch(err => {
-        console.warn('Backend API key sync notice (using local state):', err);
       });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || !result.success || !result.key) {
+        throw new Error(result.error || `API key creation failed (HTTP ${response.status}).`);
+      }
+      newKey = result.key;
     }
 
+    if (!Array.isArray(this.state.apiKeys)) this.state.apiKeys = [];
+    const { token, ...metadata } = newKey;
+    this.state.apiKeys.unshift(metadata);
+    this.saveState();
     return newKey;
   }
 
-  revokeApiKey(keyId) {
+  async revokeApiKey(keyId) {
+    if (typeof window !== 'undefined' && window.location.protocol !== 'file:') {
+      const response = await fetch(`/api/admin/keys?keyId=${encodeURIComponent(keyId)}`, {
+        method: 'DELETE',
+        credentials: 'same-origin'
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || `API key revocation failed (HTTP ${response.status}).`);
+      }
+    }
+
     if (!Array.isArray(this.state.apiKeys)) return;
-    const key = this.state.apiKeys.find(k => k.keyId === keyId);
+    const key = this.state.apiKeys.find(item => item.keyId === keyId);
     if (key) {
       key.status = 'revoked';
       this.saveState();
-
-      if (typeof window !== 'undefined' && window.location.protocol !== 'file:') {
-        fetch(`/api/admin/keys?keyId=${encodeURIComponent(keyId)}`, {
-          method: 'DELETE'
-        }).catch(err => {
-          console.warn('Backend API key revocation notice (using local state):', err);
-        });
-      }
     }
   }
 
