@@ -10,6 +10,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;0,9..144,800;0,9..144,900;1,9..144,600&family=Kalam:wght@400;700&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Rozha+One&display=swap" rel="stylesheet">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🥘</text></svg>">
+  <!-- Three.js r128 Library for Interactive 3D Culinary Elements -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
 
@@ -63,6 +65,85 @@
   </header>
 
   <main>
+    <!-- ========================================================
+         SCROLLTIDE LANDING SHOWCASE (2.5D Depth, Badges & Stats)
+         ======================================================== -->
+    <section class="scrolltide-hero-showcase" id="scrolltide-hero-showcase" aria-label="Culinary Showcase">
+      <div class="scrolltide-aura-glow" aria-hidden="true"></div>
+      <div class="container scrolltide-hero-inner">
+        <!-- Floating Culinary Badges Row -->
+        <div class="scrolltide-badge-row">
+          <span class="scrolltide-badge badge-float-1">✨ Next-Gen Food Science</span>
+          <span class="scrolltide-badge badge-float-2">🌿 100% Vegetarian</span>
+          <span class="scrolltide-badge badge-float-3">🇮🇳 Indian Fusion Wonders</span>
+          <span class="scrolltide-badge badge-float-4">🎮 3D WebGL Labs</span>
+        </div>
+
+        <h2 class="scrolltide-hero-title">
+          Where Global Flavors Meet<br>
+          <span class="scrolltide-gradient-text">Indian Culinary Chemistry</span>
+        </h2>
+        <p class="scrolltide-hero-desc">
+          An interactive edible universe engineered for families and food enthusiasts. Discover molecular gastronomy secrets, master authentic Indian bazaar ingredient swaps, and conquer high-velocity 3D culinary challenges.
+        </p>
+
+        <!-- 2.5D Animated Stat Counters Grid -->
+        <div class="scrolltide-stats-grid">
+          <div class="scrolltide-stat-card" data-stat-target="5">
+            <span class="scrolltide-stat-icon">🎮</span>
+            <span class="scrolltide-stat-num" id="stat-counter-labs">5</span>
+            <span class="scrolltide-stat-label">5 Arcade Labs</span>
+            <span class="scrolltide-stat-sub">3D & Interactive</span>
+          </div>
+
+          <div class="scrolltide-stat-card" data-stat-target="8">
+            <span class="scrolltide-stat-icon">🍲</span>
+            <span class="scrolltide-stat-num" id="stat-counter-recipes">8</span>
+            <span class="scrolltide-stat-label">8 Indian Fusion Replications</span>
+            <span class="scrolltide-stat-sub">Desi Bazaar Replications</span>
+          </div>
+
+          <div class="scrolltide-stat-card" data-stat-target="100">
+            <span class="scrolltide-stat-icon">🌱</span>
+            <span class="scrolltide-stat-num" id="stat-counter-veg">100%</span>
+            <span class="scrolltide-stat-label">100% Pure Veg</span>
+            <span class="scrolltide-stat-sub">Zero Meat • Plant Powered</span>
+          </div>
+
+          <div class="scrolltide-stat-card" data-stat-target="0">
+            <span class="scrolltide-stat-icon">🛡️</span>
+            <span class="scrolltide-stat-num" id="stat-counter-allergens">0</span>
+            <span class="scrolltide-stat-label">Zero Allergens</span>
+            <span class="scrolltide-stat-sub">Clear Warning Flags</span>
+          </div>
+        </div>
+
+        <!-- 2.5D Feature Preview Cards (Spotlights for Arcade Labs) -->
+        <div class="scrolltide-preview-cards">
+          <div class="scrolltide-preview-card" id="showcase-card-potato">
+            <span class="scrolltide-preview-tag">🔥 3D Physics Arena</span>
+            <h3 class="scrolltide-preview-title">Hot Potato Rush</h3>
+            <p class="scrolltide-preview-desc">Tumble a 3D golden deformed potato over scorching tandoor coals with dynamic roast shading and kinetic momentum.</p>
+            <span class="scrolltide-preview-action">Launch Arcade →</span>
+          </div>
+
+          <div class="scrolltide-preview-card" id="showcase-card-science">
+            <span class="scrolltide-preview-tag">🧪 Molecular 3D Viewer</span>
+            <h3 class="scrolltide-preview-title">Science Wheel</h3>
+            <p class="scrolltide-preview-desc">Inspect 3D ball-and-stick chemical molecules of capsaicin, curcumin, and citric acid with interactive orbit controls.</p>
+            <span class="scrolltide-preview-action">Spin & Learn →</span>
+          </div>
+
+          <div class="scrolltide-preview-card" id="showcase-card-kitchen">
+            <span class="scrolltide-preview-tag">📖 Glowing Hearth</span>
+            <h3 class="scrolltide-preview-title">Kitchen Lab</h3>
+            <p class="scrolltide-preview-desc">Step-by-step global fusion guides with 3D glowing tandoor coals, floating sparks, and Indian bazaar substitute tables.</p>
+            <span class="scrolltide-preview-action">Explore Recipes →</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Master Chef Progress & XP HUD (Always available across all tabs) -->
     <div class="container" style="padding-top: 1.25rem;">
       <div id="progress-strip-container" class="progress-strip-card">
@@ -121,6 +202,9 @@
             Ever wondered how to make Nikkei ceviche, naan pizzas, or gulab jamun cheesecake using everyday Indian bazaar ingredients? Discover exact replacements and kid-safe cooking steps!
           </p>
         </div>
+
+        <!-- 3D Glowing Tandoor Coals Stage -->
+        <div id="tandoor-3d-stage" class="tandoor-3d-stage-container" aria-label="3D Interactive Glowing Tandoor Hearth"></div>
 
         <!-- Recipe Carousel Navigation Controls -->
         <div class="view-mode-bar">
@@ -182,11 +266,19 @@
                 🗑️ Clear All Website Data
               </button>
             </div>
+
+            <!-- Leaderboard Scope Toggle (Local vs Global) -->
+            <div class="leaderboard-scope-toggle" id="leaderboard-scope-toggle">
+              <button class="scope-btn active" data-scope="local">🏠 Family Roster</button>
+              <button class="scope-btn" data-scope="global">🌐 Global Hall of Fame</button>
+            </div>
+
             <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:1rem;">
               Filter personal bests and arcade high scores across challenges:
             </p>
             <div class="leaderboard-filter-tabs" id="leaderboard-filter-tabs" style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:1.25rem;">
-              <button class="recipe-chip active" data-lb-filter="all">🏆 Overall Leaderboard</button>
+              <button class="recipe-chip active" data-lb-filter="all">👑 Level Leaderboard</button>
+              <button class="recipe-chip" data-lb-filter="ladder">🪜 Level Ranking Ladder</button>
               <button class="recipe-chip" data-lb-filter="hotPotato">🥔 Hot Potato Rush</button>
               <button class="recipe-chip" data-lb-filter="buildDish">🥘 Build-a-Dish</button>
               <button class="recipe-chip" data-lb-filter="trivia">🧠 Family Trivia</button>
@@ -286,15 +378,15 @@
 
   <!-- Floating Bottom Navigation Bar for Mobile & Compact Screens -->
   <nav class="mobile-bottom-nav" id="mobile-nav-bar" aria-label="Mobile Navigation">
-    <button class="nav-link active" data-tab-target="games" id="mob-tab-btn-games">
+    <a role="button" tabindex="0" class="nav-link active" data-tab-target="games" id="mob-tab-btn-games">
       <span>🎮</span> <span>Games</span>
-    </button>
-    <button class="nav-link" data-tab-target="kitchen" id="mob-tab-btn-kitchen">
+    </a>
+    <a role="button" tabindex="0" class="nav-link" data-tab-target="kitchen" id="mob-tab-btn-kitchen">
       <span>📖</span> <span>Kitchen</span>
-    </button>
-    <button class="nav-link" data-tab-target="leaderboard" id="mob-tab-btn-leaderboard">
+    </a>
+    <a role="button" tabindex="0" class="nav-link" data-tab-target="leaderboard" id="mob-tab-btn-leaderboard">
       <span>🏆</span> <span>Leaderboard</span>
-    </button>
+    </a>
   </nav>
 
   <!-- Application Script (Zero-CORS, works locally & over web) -->

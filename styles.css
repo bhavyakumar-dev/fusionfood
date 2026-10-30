@@ -26,7 +26,7 @@
   --primary-light: #E0F2FE;
   --primary-glow: rgba(2, 132, 199, 0.32);
   --primary-text: #0C4A6E;     /* Deep Aegean Blue - 9.46:1 WCAG AAA Pass against white/cards */
-  --text-link: #0C4A6E;        /* 9.46:1 WCAG AAA Pass */
+  --text-link: #075985;        /* 7.56:1 WCAG AAA Pass */
   
   --secondary: #F43F5E;        /* Electric Coral / Rose Accent */
   --secondary-hover: #E11D48;
@@ -105,7 +105,8 @@
   --secondary-hover: #FB7185;
   --secondary-light: #33111B;
   --secondary-glow: rgba(244, 63, 94, 0.40);
-  --secondary-text: #FDA4AF;   /* Luminous Rose Mist - 9.71:1 WCAG AAA Pass on Obsidian */
+  --secondary-text: #FB7185;   /* 7.5:1 WCAG AAA Pass on Obsidian */
+  --secondary-mist: #FDA4AF;   /* 9.71:1 High Contrast Soft Rose */
   
   --accent-green: #34D399;     /* Luminous Mint Green */
   --accent-green-light: #062818;
@@ -151,6 +152,10 @@ html {
   scroll-behavior: smooth;
   font-size: 16px;
   scrollbar-gutter: stable;
+  overflow-x: hidden !important;
+  max-width: 100vw !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 body {
@@ -161,7 +166,10 @@ body {
   transition: none; /* Synchronous theme switch eliminates mid-interpolation white-on-white text flashes */
   min-height: 100vh;
   position: relative;
-  overflow-x: hidden;
+  overflow-x: hidden !important;
+  max-width: 100vw !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
   background-image: 
     radial-gradient(var(--border-color) 1.2px, transparent 1.2px),
     radial-gradient(circle at 10% 20%, rgba(2, 132, 199, 0.05) 0%, transparent 45%),
@@ -271,6 +279,8 @@ button {
   margin: 0 auto;
   max-width: 1260px;
   padding: 0 1rem;
+  min-height: 64px;
+  contain: layout;
 }
 
 .header-inner {
@@ -287,6 +297,8 @@ button {
   box-shadow: 0 8px 26px -4px rgba(2, 132, 199, 0.12), 0 2px 6px -1px rgba(0,0,0,0.03);
   transition: var(--transition);
   position: relative;
+  min-height: 52px;
+  contain: layout;
 }
 
 [data-theme="dark"] .header-inner {
@@ -369,6 +381,9 @@ button {
   font-weight: 800;
   color: var(--text-muted);
   padding: 0.5rem 1.15rem;
+  min-height: 44px;
+  min-width: 44px;
+  box-sizing: border-box;
   border-radius: var(--radius-full);
   display: flex;
   align-items: center;
@@ -533,6 +548,8 @@ button {
   gap: 0.75rem;
   margin-bottom: 2rem;
   width: 100%;
+  min-height: 120px;
+  contain: layout;
 }
 
 .games-scroll-track {
@@ -779,6 +796,8 @@ button {
   box-shadow: var(--shadow-warm);
   position: relative;
   overflow: hidden;
+  min-height: 72px;
+  contain: layout;
 }
 
 .progress-strip-card::before {
@@ -978,6 +997,7 @@ button {
   position: relative;
   min-height: 520px;
   overflow: hidden;
+  contain: layout style;
 }
 
 .play-arena::before {
@@ -2356,6 +2376,9 @@ input:checked + .slider:before {
 
   .nav-link {
     flex: 1;
+    min-height: 44px;
+    min-width: 44px;
+    box-sizing: border-box;
     padding: 0.5rem 0.4rem;
     font-size: 0.78rem;
     justify-content: center;
@@ -3326,12 +3349,8 @@ input:checked + .slider:before {
   margin-bottom: 1.5rem;
   perspective: 1200px;
   overflow: visible;
-}
-
-/* Hide hero showcase cleanly when navigating to Kitchen Lab or Leaderboard tabs */
-main:has(#pane-kitchen.active) .scrolltide-hero-showcase,
-main:has(#pane-leaderboard.active) .scrolltide-hero-showcase {
-  display: none !important;
+  contain: layout style;
+  min-height: 480px;
 }
 
 /* Ambient Glowing Aura Background */
@@ -3380,6 +3399,8 @@ main:has(#pane-leaderboard.active) .scrolltide-hero-showcase {
   gap: 0.75rem;
   flex-wrap: wrap;
   margin-bottom: 1.25rem;
+  min-height: 40px;
+  contain: layout;
 }
 
 .scrolltide-badge {
@@ -3396,6 +3417,7 @@ main:has(#pane-leaderboard.active) .scrolltide-hero-showcase {
   box-shadow: 0 4px 14px rgba(2, 132, 199, 0.10);
   transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
   will-change: transform;
+  transform: translateZ(0);
 }
 
 [data-theme="dark"] .scrolltide-badge {
@@ -3466,6 +3488,8 @@ main:has(#pane-leaderboard.active) .scrolltide-hero-showcase {
   grid-template-columns: repeat(4, 1fr);
   gap: 1.25rem;
   margin: 2rem 0 2.5rem;
+  min-height: 180px;
+  contain: layout;
 }
 
 @media (max-width: 860px) {
@@ -3773,13 +3797,19 @@ main:has(#pane-leaderboard.active) .scrolltide-hero-showcase {
   }
 
   .site-header .site-nav .nav-link {
-    padding: 0.25rem 0.65rem !important;
+    padding: 0.35rem 0.75rem !important;
+    min-height: 34px !important;
+    min-width: 34px !important;
     font-size: 0.76rem !important;
     border-radius: var(--radius-full) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
   }
 
   .scrolltide-hero-showcase {
     padding: 1.25rem 0 1rem !important;
+    min-height: auto !important;
   }
 
   .scrolltide-stats-grid {
@@ -3794,6 +3824,210 @@ main:has(#pane-leaderboard.active) .scrolltide-hero-showcase {
 
   .scrolltide-stat-num {
     font-size: 1.6rem !important;
+  }
+}
+
+/* ========================================================
+   LEADERBOARD SCOPE TOGGLE (Family Roster vs Global Hall of Fame)
+   ======================================================== */
+.leaderboard-scope-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--bg-card-subtle);
+  border: 1.5px solid var(--border-color);
+  padding: 0.35rem 0.5rem;
+  border-radius: var(--radius-full);
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow-warm);
+}
+
+.leaderboard-scope-toggle .scope-btn {
+  padding: 0.5rem 1.15rem;
+  border-radius: var(--radius-full);
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  border: 1.5px solid transparent;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+}
+
+.leaderboard-scope-toggle .scope-btn:hover {
+  color: var(--text-main);
+  background: rgba(2, 132, 199, 0.08);
+}
+
+.leaderboard-scope-toggle .scope-btn.active {
+  background: var(--primary);
+  color: #FFFFFF !important;
+  border-color: var(--primary);
+  box-shadow: 0 2px 10px var(--primary-glow);
+}
+
+[data-theme="dark"] .leaderboard-scope-toggle {
+  background: var(--bg-card);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+[data-theme="dark"] .leaderboard-scope-toggle .scope-btn {
+  color: var(--text-muted);
+}
+
+[data-theme="dark"] .leaderboard-scope-toggle .scope-btn:hover {
+  color: #FFFFFF;
+  background: rgba(56, 189, 248, 0.12);
+}
+
+[data-theme="dark"] .leaderboard-scope-toggle .scope-btn.active {
+  background: var(--primary);
+  color: #07080B !important;
+  font-weight: 900;
+  border-color: var(--primary);
+  box-shadow: 0 0 16px var(--primary-glow);
+}
+
+/* 3D Tandoor Controls Bar */
+.tandoor-heat-controls {
+  position: absolute;
+  bottom: 0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.5rem;
+  background: rgba(18, 20, 29, 0.85);
+  backdrop-filter: blur(8px);
+  padding: 0.35rem 0.65rem;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  z-index: 10;
+}
+
+.tandoor-heat-btn {
+  padding: 0.3rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  border-radius: var(--radius-full);
+  color: #CBD5E1;
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tandoor-heat-btn.active {
+  background: #DC2626;
+  color: #FFFFFF;
+  box-shadow: 0 0 10px rgba(220, 38, 38, 0.6);
+}
+
+/* 3D Model HUD Elements */
+.model-3d-hud {
+  position: absolute;
+  top: 0.65rem;
+  left: 0.75rem;
+  right: 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.model-3d-badge {
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-full);
+  background: rgba(0, 0, 0, 0.55);
+  color: #FFFFFF;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.model-3d-hint {
+  position: absolute;
+  bottom: 0.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  pointer-events: none;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+}
+
+/* Docking and Touch Ergonomics */
+.site-nav .nav-link {
+  min-height: 38px !important;
+  min-width: 38px !important;
+}
+
+.mobile-bottom-nav .nav-link {
+  min-height: 44px !important;
+  min-width: 44px !important;
+}
+
+.mobile-nav-docked {
+  display: none !important;
+}
+
+.site-nav-hidden {
+  display: none !important;
+}
+
+/* Ultra-Narrow Responsive Ergonomics (Zero Overflow at 320px) */
+@media (max-width: 480px) {
+  .cookbook-recipe-card,
+  .recipes-scroll-track .cookbook-recipe-card {
+    flex: 0 0 calc(100vw - 32px) !important;
+    min-width: 0 !important;
+    max-width: calc(100vw - 32px) !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .site-header {
+    padding: 0 0.25rem !important;
+  }
+  .header-inner {
+    padding: 0.25rem 0.35rem !important;
+    gap: 0.2rem !important;
+  }
+  .brand-logo {
+    gap: 0.25rem !important;
+  }
+  .brand-text h1 {
+    font-size: 0.8rem !important;
+  }
+  .brand-icon {
+    width: 26px !important;
+    height: 26px !important;
+    font-size: 0.95rem !important;
+  }
+  .profile-pill {
+    padding: 0.15rem 0.3rem !important;
+    font-size: 0.68rem !important;
+  }
+  .profile-pill span:not(.profile-avatar) {
+    max-width: 36px !important;
+  }
+  .icon-btn {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 0.78rem !important;
+  }
+  .scrolltide-hero-showcase {
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+  .scrolltide-stats-grid {
+    grid-template-columns: 1fr !important;
   }
 }
 
