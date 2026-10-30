@@ -1,10 +1,6 @@
-name: Deploy to Cloudflare Pages & Workers
+name: Manual deploy to Cloudflare Pages & Workers
 
 on:
-  push:
-    branches:
-      - main
-      - deploy-fix
   workflow_dispatch:
 
 jobs:
