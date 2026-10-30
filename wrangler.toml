@@ -14,5 +14,5 @@ database_id = "653756d0-4a06-4e6a-b022-13d4635125c3"
 [vars]
 ENVIRONMENT = "production"
 APP_NAME = "Fusion Food Family Lab"
-CORS_ORIGIN = "https://fusionfood.pages.dev"
+CORS_ORIGIN = "https://fusionfood-383.pages.dev"
 CORS_ALLOWED_ORIGINS = ""
