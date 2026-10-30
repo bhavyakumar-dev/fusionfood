@@ -4089,7 +4089,8 @@ class FusionApp {
     if (typeof window !== 'undefined') {
       const routeParams = new URLSearchParams(window.location.search);
       const routeVersion = (routeParams.get('v') || routeParams.get('version') || '').toLowerCase();
-      const routePath = (window.location.pathname || '').toLowerCase().replace(/\\/+$/, '');
+      let routePath = (window.location.pathname || '').toLowerCase();
+      while (routePath.endsWith('/')) routePath = routePath.slice(0, -1);
       if (['1', 'v1'].includes(routeVersion) || routePath.endsWith('/v1')) this.state.appVersion = 'v1';
       else if (['2', 'v2'].includes(routeVersion) || routePath.endsWith('/v2')) this.state.appVersion = 'v2';
       else if (['3', 'v3'].includes(routeVersion) || routePath.endsWith('/v3')) this.state.appVersion = 'v3';
@@ -4127,7 +4128,11 @@ class FusionApp {
           parsed.gameToggles.indiaMap = true;
         }
         delete parsed.adminPin;
-        parsed.apiKeys = [];
+        if (Array.isArray(parsed.apiKeys)) {
+          parsed.apiKeys = parsed.apiKeys.filter(key => !['key_master_admin', 'key_public_ro'].includes(key.keyId) && !/^ff_live_(adm|ro)_/.test(key.token || ''));
+        } else {
+          parsed.apiKeys = [];
+        }
         if (Array.isArray(parsed.guestReviews)) parsed.guestReviews = parsed.guestReviews.filter(r => !['rev_01', 'rev_02', 'rev_03'].includes(r.id));
         else parsed.guestReviews = [];
         if (Array.isArray(parsed.kidScoreVerifications)) parsed.kidScoreVerifications = parsed.kidScoreVerifications.filter(r => !['sc_kid_01', 'sc_kid_02'].includes(r.scoreId));
@@ -6159,7 +6164,6 @@ class FusionApp {
         </div>
       `;
 
-      this.pauseHotPotatoSession = pauseGame;
       arena.querySelector('#hp-resume-btn')?.addEventListener('click', () => {
         sound.playClick();
         startOverlay.style.display = 'none';
@@ -6211,6 +6215,7 @@ class FusionApp {
       });
     };
 
+    this.pauseHotPotatoSession = pauseGame;
     stopBtn?.addEventListener('click', () => pauseGame());
 
     const gameOver = (reason) => {
