@@ -23,8 +23,8 @@ function isAllowedOrigin(origin, env = {}) {
   // Only allow this Pages project's preview/production hostnames.
   if (
     parsed.protocol === "https:" &&
-    (parsed.hostname === "fusionfood.pages.dev" ||
-      parsed.hostname.endsWith(".fusionfood.pages.dev"))
+    (parsed.hostname === "fusionfood-383.pages.dev" ||
+      parsed.hostname.endsWith(".fusionfood-383.pages.dev"))
   ) {
     return true;
   }
