@@ -2294,6 +2294,19 @@ class FusionDatabase {
   }
 }
 
+function fusionFoodIcon(name, size = 25) {
+  const drawings = {
+    plate: '<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="5.5"/><path d="M3 4v16M1 7h4M21 4v16"/>',
+    audio: '<path d="M4 10v4h4l5 4V6l-5 4H4z"/><path d="M17 9a5 5 0 0 1 0 6M19.5 6.5a8.5 8.5 0 0 1 0 11"/>',
+    brain: '<path d="M9 5a3 3 0 0 0-5 2 3 3 0 0 0 0 5 3 3 0 0 0 2 5 3 3 0 0 0 5 2V5z"/><path d="M15 5a3 3 0 0 1 5 2 3 3 0 0 1 0 5 3 3 0 0 1-2 5 3 3 0 0 1-5 2V5z"/><path d="M9 9h2m2 6h2M9 15h2m2-6h2"/>',
+    map: '<path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3V6z"/><path d="M9 3v15m6-12v15"/>',
+    potato: '<path d="M5 8c2-4 10-5 14-1 4 4 2 10-2 12-5 3-12 1-14-4-1-2 0-5 2-7z"/><path d="M8 10h.01M15 9h.01M10 15c1.5 1 3 1 4 0"/>',
+    science: '<path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3"/><path d="M8 15h8m-6-3h4"/>'
+  };
+  const path = drawings[name] || drawings.plate;
+  return '<svg class="ui-icon" width="' + size + '" height="' + size + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' + path + '</svg>';
+}
+
 const DEFAULT_STATE = {
   currentProfile: 'kid',
   currentTab: 'games', // 'games', 'kitchen', 'leaderboard'
@@ -4073,12 +4086,14 @@ class FusionApp {
   constructor() {
     this.db = new FusionDatabase();
     this.state = this.loadState();
-    const routeParams = new URLSearchParams(window.location.search);
-    const routeVersion = (routeParams.get('v') || routeParams.get('version') || '').toLowerCase();
-    const routePath = (window.location.pathname || '').toLowerCase();
-    if (['1', 'v1'].includes(routeVersion) || routePath.endsWith('/v1')) this.state.appVersion = 'v1';
-    else if (['2', 'v2'].includes(routeVersion) || routePath.endsWith('/v2')) this.state.appVersion = 'v2';
-    else if (['3', 'v3'].includes(routeVersion) || routePath.endsWith('/v3')) this.state.appVersion = 'v3';
+    if (typeof window !== 'undefined') {
+      const routeParams = new URLSearchParams(window.location.search);
+      const routeVersion = (routeParams.get('v') || routeParams.get('version') || '').toLowerCase();
+      const routePath = (window.location.pathname || '').toLowerCase().replace(/\\/+$/, '');
+      if (['1', 'v1'].includes(routeVersion) || routePath.endsWith('/v1')) this.state.appVersion = 'v1';
+      else if (['2', 'v2'].includes(routeVersion) || routePath.endsWith('/v2')) this.state.appVersion = 'v2';
+      else if (['3', 'v3'].includes(routeVersion) || routePath.endsWith('/v3')) this.state.appVersion = 'v3';
+    }
     if (!this.state.completedCityQuests) {
       this.state.completedCityQuests = [];
     }
@@ -4782,12 +4797,12 @@ class FusionApp {
     if (!track) return;
 
     const games = [
-      { id: 'buildDish', name: 'Build-a-Dish', icon: '🥘', desc: 'Pantry Rush & Recipe Simulation', activeDesc: 'Timed hunt + step sequence' },
-      { id: 'pronunciation', name: 'Pronounce Lab', icon: '🗣️', desc: 'Phonetic Matching & Voice Check', activeDesc: 'Listen, reorder & speak' },
-      { id: 'trivia', name: 'Family Trivia', icon: '🧠', desc: '10 Qs with Soft Timer & Hints', activeDesc: 'Food science & origins' },
-      { id: 'indiaMap', name: 'India Fusion Map', icon: '🗺️', desc: 'Metro Quests & Bazaar Markets', activeDesc: 'City quests & ingredients' },
-      { id: 'hotPotato', name: 'Hot Potato Rush', icon: '🥔', desc: 'Whack, Cook in Coals & Serve Golden', activeDesc: 'Cook on coals, serve golden' },
-      { id: 'spinScience', name: 'Science Wheel', icon: '🎡', desc: 'Food Chemistry Explanations', activeDesc: 'Spin & discover reactions' }
+      { id: 'buildDish', name: 'Build-a-Dish', icon: 'plate', desc: 'Pantry Rush & Recipe Simulation', activeDesc: 'Timed hunt + step sequence' },
+      { id: 'pronunciation', name: 'Pronounce Lab', icon: 'audio', desc: 'Phonetic Matching & Voice Check', activeDesc: 'Listen, reorder & speak' },
+      { id: 'trivia', name: 'Family Trivia', icon: 'brain', desc: '10 Qs with Soft Timer & Hints', activeDesc: 'Food science & origins' },
+      { id: 'indiaMap', name: 'India Fusion Map', icon: 'map', desc: 'Metro Quests & Bazaar Markets', activeDesc: 'City quests & ingredients' },
+      { id: 'hotPotato', name: 'Hot Potato Rush', icon: 'potato', desc: 'Whack, Cook in Coals & Serve Golden', activeDesc: '60-second round' },
+      { id: 'spinScience', name: 'Science Wheel', icon: 'science', desc: 'Food Chemistry Explanations', activeDesc: 'Spin & discover reactions' }
     ];
 
     track.innerHTML = games.map(g => {
@@ -4803,7 +4818,7 @@ class FusionApp {
             </div>
           ` : ''}
           <div>
-            <div class="game-tab-icon">${g.icon}</div>
+            <div class="game-tab-icon">${fusionFoodIcon(g.icon, 25)}</div>
             <h3>${g.name}</h3>
             <p>${g.desc}</p>
           </div>
@@ -4859,6 +4874,8 @@ class FusionApp {
   }
 
   renderActiveGame() {
+    if (this.hotPotatoLoop) { cancelAnimationFrame(this.hotPotatoLoop); this.hotPotatoLoop = null; }
+    if (this.hotPotatoKeyHandler) { window.removeEventListener('keydown', this.hotPotatoKeyHandler); this.hotPotatoKeyHandler = null; }
     const arena = document.getElementById('play-arena-container');
     if (!arena) return;
 
@@ -5962,6 +5979,8 @@ class FusionApp {
   }
 
   initHotPotatoEngine(arena) {
+    if (this.hotPotatoLoop) { cancelAnimationFrame(this.hotPotatoLoop); this.hotPotatoLoop = null; }
+    if (this.hotPotatoKeyHandler) { window.removeEventListener('keydown', this.hotPotatoKeyHandler); this.hotPotatoKeyHandler = null; }
     const canvas = arena.querySelector('#hot-potato-canvas');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -6301,6 +6320,7 @@ class FusionApp {
         }
       }
     };
+    this.hotPotatoKeyHandler = keyHandler;
     window.addEventListener('keydown', keyHandler);
 
     // Physics Engine Loop with Adaptive Gravity
@@ -6313,9 +6333,11 @@ class FusionApp {
         paintTimer();
         if (timeRemainingMs <= 0) {
           gameOver('time');
-        } else if (threePotato) {
+        }
+        if (isPlaying && threePotato) {
           threePotato.update(potato.x, potato.y, potato.vx, potato.vy, potato.cookLevel);
         }
+        if (isPlaying) {
         // Apply Gravity
         potato.vy += gravity;
         potato.x += potato.vx;
@@ -6408,6 +6430,7 @@ class FusionApp {
         }
         const heatBadge = arena.querySelector('#hp-heat-badge');
         if (heatBadge) heatBadge.innerText = `Heat: ${cookPct}%`;
+        }
       }
 
       // DRAW CANVAS
@@ -6543,7 +6566,12 @@ class FusionApp {
 
       ctx.restore();
 
-      // Next frame
+      // Next frame; stop scheduling work once this arena has been replaced.
+      if (!canvas.isConnected) {
+        if (this.hotPotatoKeyHandler) { window.removeEventListener('keydown', this.hotPotatoKeyHandler); this.hotPotatoKeyHandler = null; }
+        this.hotPotatoLoop = null;
+        return;
+      }
       this.hotPotatoLoop = requestAnimationFrame(updateLoop);
     };
 
@@ -6555,6 +6583,7 @@ class FusionApp {
   // Single-canvas simulation ported from Prompt Potato Games
   // ========================================================
   openHotPotatoFullscreenModal() {
+    if (this.pauseHotPotatoSession) this.pauseHotPotatoSession();
     const modal = document.getElementById('hot-potato-modal');
     if (!modal) return;
     document.body.classList.add('has-modal-open');
