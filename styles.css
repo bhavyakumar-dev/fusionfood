@@ -1108,16 +1108,17 @@ button {
   border-color: var(--primary) !important;
 }
 
-/* WCAG AAA dark mode contrast enhancements */
+/* WCAG AAA dark mode contrast enhancements (verified >= 7.5:1 across gradient) */
 [data-theme="dark"] .btn-primary {
-  background: linear-gradient(135deg, #0284C7, #BE185D) !important;
+  background: linear-gradient(135deg, #075985, #831843) !important;
   color: #FFFFFF !important;
   font-weight: 800 !important;
-  border-color: rgba(255, 255, 255, 0.2) !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  box-shadow: 0 4px 14px rgba(7, 89, 133, 0.45) !important;
 }
 
 [data-theme="dark"] .chat-bubble.user {
-  background: linear-gradient(135deg, #0369A1, #9D174D) !important;
+  background: linear-gradient(135deg, #075985, #831843) !important;
   color: #FFFFFF !important;
   font-weight: 600 !important;
 }
