@@ -18,13 +18,6 @@ database_name = "foodfusionweb"
 database_id = "653756d0-4a06-4e6a-b022-13d4635125c3"
 
 # --------------------------------------------------------------------
-# Cloudflare Workers KV Namespace Binding (Cache & Offline Fallback)
-# --------------------------------------------------------------------
-[[kv_namespaces]]
-binding = "KV"
-id = "kv-fusion-food-family-lab-001"
-
-# --------------------------------------------------------------------
 # Environment Variables & Custom Settings
 # --------------------------------------------------------------------
 [vars]
