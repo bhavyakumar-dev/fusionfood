@@ -2610,245 +2610,23 @@ class Fusion3DManager {
   }
 
   // --------------------------------------------------------
-  // 2. KITCHEN LAB GLOWING TANDOOR COALS 3D ELEMENT
+  // 2. KITCHEN LAB GLOWING TANDOOR COALS & SKEWER ROASTER 3D ELEMENT
+  // Delegates cleanly to master FusionApp.initTandoor3D
   // --------------------------------------------------------
   initTandoor3D(container) {
-    if (!this.isSupported() || !container) return;
-    this.disposeScene('tandoor');
-
-    container.innerHTML = '';
-    const width = container.clientWidth || 900;
-    const height = container.clientHeight || 260;
-
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
-    camera.position.set(0, 3.8, 6.2);
-    camera.lookAt(0, -0.6, 0);
-
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: 'high-performance' });
-    renderer.setPixelRatio(this.clampDPR());
-    renderer.setSize(width, height);
-
-    // Ambient night kitchen lighting
-    const ambientLight = new THREE.AmbientLight(0x181A24, 1.2);
-    scene.add(ambientLight);
-
-    // Warm flickering coal point light
-    const pointLight = new THREE.PointLight(0xFF5500, 3.4, 14);
-    pointLight.position.set(0, -0.2, 0);
-    scene.add(pointLight);
-
-    // Outer Terracotta Clay Pot Opening
-    const clayGeom = new THREE.CylinderGeometry(3.6, 4.6, 2.4, 36, 1, true);
-    const clayMat = new THREE.MeshStandardMaterial({
-      color: 0x9A3412,
-      roughness: 0.84,
-      metalness: 0.05,
-      side: THREE.DoubleSide
-    });
-    const clayPot = new THREE.Mesh(clayGeom, clayMat);
-    clayPot.position.y = -0.4;
-    scene.add(clayPot);
-
-    // Inner Coal Bed
-    const baseGeom = new THREE.CylinderGeometry(4.4, 4.4, 0.4, 32);
-    const baseMat = new THREE.MeshStandardMaterial({ color: 0x0C0606, roughness: 0.96 });
-    const baseMesh = new THREE.Mesh(baseGeom, baseMat);
-    baseMesh.position.y = -1.5;
-    scene.add(baseMesh);
-
-    // 36 Randomized Ember Rock Meshes
-    const coals = [];
-    for (let i = 0; i < 36; i++) {
-      const radius = 0.32 + Math.random() * 0.38;
-      const rockGeom = new THREE.DodecahedronGeometry(radius, 0);
-      const pos = rockGeom.attributes.position;
-      for (let p = 0; p < pos.count; p++) {
-        pos.setXYZ(p,
-          pos.getX(p) * (0.8 + Math.random() * 0.4),
-          pos.getY(p) * (0.7 + Math.random() * 0.5),
-          pos.getZ(p) * (0.8 + Math.random() * 0.4)
-        );
-      }
-      rockGeom.computeVertexNormals();
-
-      const rockMat = new THREE.MeshStandardMaterial({
-        color: 0x140707,
-        roughness: 0.88,
-        metalness: 0.1,
-        emissive: new THREE.Color(0xFF2A00),
-        emissiveIntensity: 0.8 + Math.random() * 0.6
-      });
-      const rock = new THREE.Mesh(rockGeom, rockMat);
-      const angle = Math.random() * Math.PI * 2;
-      const dist = Math.sqrt(Math.random()) * 3.1;
-      rock.position.set(Math.cos(angle) * dist, -1.25 + Math.random() * 0.3, Math.sin(angle) * dist);
-      rock.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
-      rock.userData = {
-        baseIntensity: rockMat.emissiveIntensity,
-        phase: Math.random() * Math.PI * 2,
-        speed: 1.8 + Math.random() * 2.2
-      };
-      coals.push(rock);
-      scene.add(rock);
+    if (this.app && this.app.initTandoor3D) {
+      return this.app.initTandoor3D(container);
     }
-
-    // Rising Ember Spark Particles
-    const particleCount = 70;
-    const particleGeom = new THREE.BufferGeometry();
-    const particlePositions = new Float32Array(particleCount * 3);
-    const particleVelocities = [];
-
-    for (let i = 0; i < particleCount; i++) {
-      const angle = Math.random() * Math.PI * 2;
-      const dist = Math.random() * 2.6;
-      particlePositions[i * 3] = Math.cos(angle) * dist;
-      particlePositions[i * 3 + 1] = -1.2 + Math.random() * 3.5;
-      particlePositions[i * 3 + 2] = Math.sin(angle) * dist;
-
-      particleVelocities.push({
-        vy: 0.02 + Math.random() * 0.035,
-        vx: (Math.random() - 0.5) * 0.01,
-        vz: (Math.random() - 0.5) * 0.01,
-        maxHeight: 2.2 + Math.random() * 1.5
-      });
-    }
-    particleGeom.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
-    const particleMat = new THREE.PointsMaterial({
-      color: 0xFFAA22,
-      size: 0.12,
-      transparent: true,
-      opacity: 0.85,
-      blending: THREE.AdditiveBlending
-    });
-    const sparkPoints = new THREE.Points(particleGeom, particleMat);
-    scene.add(sparkPoints);
-
-    // Interactive Heat Controls Bar Overlay
-    const controlsBar = document.createElement('div');
-    controlsBar.className = 'tandoor-heat-controls';
-    controlsBar.innerHTML = `
-      <button class="tandoor-heat-btn" data-heat="simmer">♨️ Gentle Simmer</button>
-      <button class="tandoor-heat-btn active" data-heat="roast">🔥 Tandoori Roast</button>
-      <button class="tandoor-heat-btn" data-heat="sear">⚡ Inferno Sear</button>
-    `;
-    container.appendChild(controlsBar);
-
-    controlsBar.querySelectorAll('.tandoor-heat-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        controlsBar.querySelectorAll('.tandoor-heat-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        this.setTandoorHeatLevel(btn.getAttribute('data-heat'));
-      });
-    });
-
-    // Pointer Drag to orbit
-    let isDragging = false;
-    let prevMouseX = 0;
-    container.addEventListener('pointerdown', (e) => {
-      isDragging = true;
-      prevMouseX = e.clientX;
-    });
-    window.addEventListener('pointermove', (e) => {
-      if (!isDragging) return;
-      const deltaX = e.clientX - prevMouseX;
-      prevMouseX = e.clientX;
-      clayPot.rotation.y += deltaX * 0.01;
-      baseMesh.rotation.y += deltaX * 0.01;
-      coals.forEach(c => c.rotation.y += deltaX * 0.01);
-    });
-    window.addEventListener('pointerup', () => { isDragging = false; });
-
-    const ro = this.createResizeObserver(container, camera, renderer);
-
-    this.activeScenes.tandoor = {
-      scene,
-      camera,
-      renderer,
-      pointLight,
-      coals,
-      sparkPoints,
-      particleVelocities,
-      particlePositions,
-      container,
-      clayPot,
-      baseMesh
-    };
-    this.resizeObservers.tandoor = ro;
-
-    container.appendChild(renderer.domElement);
-    this.startTandoorLoop();
   }
 
   setTandoorHeatLevel(level) {
-    this.currentTandoorHeat = level;
-    const sc = this.activeScenes.tandoor;
-    if (!sc) return;
-
-    let emissiveHex = 0xFF4500;
-    let lightIntensity = 3.4;
-    if (level === 'simmer') {
-      emissiveHex = 0xEA580C;
-      lightIntensity = 1.9;
-    } else if (level === 'sear') {
-      emissiveHex = 0xF59E0B;
-      lightIntensity = 5.2;
+    if (this.app && this.app.setTandoorHeatLevel) {
+      this.app.setTandoorHeatLevel(level);
     }
-    sc.pointLight.color.setHex(emissiveHex);
-    sc.pointLight.intensity = lightIntensity;
-    sc.coals.forEach(c => {
-      c.material.emissive.setHex(emissiveHex);
-    });
   }
 
   startTandoorLoop() {
-    if (this.activeLoops.tandoor) cancelAnimationFrame(this.activeLoops.tandoor);
-
-    let t = 0;
-    const loop = () => {
-      const sc = this.activeScenes.tandoor;
-      if (!sc) return;
-
-      t += 0.025;
-      const speedMult = this.currentTandoorHeat === 'simmer' ? 0.6 : this.currentTandoorHeat === 'sear' ? 1.8 : 1.0;
-
-      // 1. Flickering point light jitter
-      const flicker = Math.sin(t * 14 * speedMult) * 0.35 + (Math.random() - 0.5) * 0.4;
-      const baseIntensity = this.currentTandoorHeat === 'simmer' ? 1.9 : this.currentTandoorHeat === 'sear' ? 5.2 : 3.4;
-      sc.pointLight.intensity = Math.max(0.5, baseIntensity + flicker);
-
-      // 2. Pulse coals emissive glow
-      sc.coals.forEach(c => {
-        const p = c.userData;
-        const pulse = Math.sin(t * p.speed * speedMult + p.phase) * 0.3 + 0.8;
-        c.material.emissiveIntensity = p.baseIntensity * pulse;
-      });
-
-      // 3. Drift spark particles upward
-      const positions = sc.sparkPoints.geometry.attributes.position.array;
-      for (let i = 0; i < sc.particleVelocities.length; i++) {
-        const vel = sc.particleVelocities[i];
-        positions[i * 3 + 1] += vel.vy * speedMult;
-        positions[i * 3] += vel.vx * speedMult;
-        positions[i * 3 + 2] += vel.vz * speedMult;
-
-        if (positions[i * 3 + 1] > vel.maxHeight) {
-          const angle = Math.random() * Math.PI * 2;
-          const dist = Math.random() * 2.4;
-          positions[i * 3] = Math.cos(angle) * dist;
-          positions[i * 3 + 1] = -1.2;
-          positions[i * 3 + 2] = Math.sin(angle) * dist;
-        }
-      }
-      sc.sparkPoints.geometry.attributes.position.needsUpdate = true;
-
-      sc.renderer.render(sc.scene, sc.camera);
-      if (this.isPageVisible) {
-        this.activeLoops.tandoor = requestAnimationFrame(loop);
-      }
-    };
-    this.activeLoops.tandoor = requestAnimationFrame(loop);
+    // Managed natively within active3DScenes in FusionApp
   }
 
   // --------------------------------------------------------
@@ -8376,9 +8154,9 @@ Guidelines:
     }
   }
 
-  // ELEMENT 2: Glowing Tandoor Coals in Kitchen Lab
-  initTandoor3D() {
-    const container = document.getElementById('tandoor-3d-stage');
+  // ELEMENT 2: Ultra-Realistic 3D Tandoor Hearth & Interactive Charcoal Skewer Roaster
+  initTandoor3D(targetContainer) {
+    const container = targetContainer || document.getElementById('tandoor-3d-stage');
     if (!container || !this.threeAvailable) return;
 
     if (this.active3DScenes.has('tandoor')) {
@@ -8389,26 +8167,56 @@ Guidelines:
 
     container.innerHTML = `
       <div class="model-3d-hud">
-        <span class="model-3d-badge">🔥 Tandoor Hearth</span>
-        <span class="model-3d-badge" id="tandoor-temp-display">Tandoori Roast: 350°C</span>
+        <div style="display:flex; align-items:center; gap:0.5rem; pointer-events:auto;">
+          <span class="model-3d-badge" style="background:linear-gradient(135deg, #B91C1C, #D97706); border:none; box-shadow:0 2px 10px rgba(185,28,28,0.5);">🔥 3D Tandoor Hearth</span>
+          <span class="model-3d-badge" id="tandoor-temp-display">Tandoori Roast: 350°C</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:0.5rem; pointer-events:auto;">
+          <span class="model-3d-badge" id="tandoor-skewer-badge" style="background:rgba(30,41,59,0.9); border:1px solid rgba(255,255,255,0.18); color:#F8FAFC; transition:all 0.3s;">🍢 Skewer: Resting (Click Roast)</span>
+        </div>
       </div>
-      <div class="tandoor-heat-controls" role="group" aria-label="Tandoor Heat Level">
-        <button class="tandoor-heat-btn" data-heat="simmer">Gentle Simmer</button>
-        <button class="tandoor-heat-btn active" data-heat="roast">Tandoori Roast</button>
-        <button class="tandoor-heat-btn" data-heat="inferno">Inferno Sear</button>
+
+      <div class="tandoor-controls-dock" style="position:absolute; bottom:0.65rem; left:50%; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; gap:0.45rem; z-index:10; width:92%; max-width:680px; pointer-events:none;">
+        <!-- Live Doneness Progress Bar -->
+        <div id="tandoor-doneness-wrap" style="width:100%; max-width:440px; background:rgba(15,23,42,0.88); backdrop-filter:blur(8px); border:1px solid rgba(255,255,255,0.15); border-radius:10px; padding:0.25rem 0.65rem; display:flex; align-items:center; gap:0.6rem; box-shadow:0 4px 20px rgba(0,0,0,0.5); pointer-events:auto;">
+          <span style="font-size:0.72rem; font-weight:800; color:#F8FAFC; white-space:nowrap;" id="tandoor-roast-timer-text">Exposure: 0.0s</span>
+          <div style="flex:1; height:8px; background:rgba(255,255,255,0.12); border-radius:4px; overflow:hidden; position:relative;">
+            <div id="tandoor-doneness-fill" style="width:0%; height:100%; background:linear-gradient(90deg, #38BDF8, #F59E0B, #10B981); border-radius:4px; transition:width 0.15s ease, background 0.3s ease;"></div>
+          </div>
+          <span style="font-size:0.72rem; font-weight:800; color:#38BDF8; white-space:nowrap;" id="tandoor-doneness-pct">0% Raw</span>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; justify-content:center; pointer-events:auto;">
+          <!-- Heat Selector -->
+          <div class="tandoor-heat-controls" role="group" aria-label="Tandoor Heat Level" style="position:static; transform:none; margin:0;">
+            <button class="tandoor-heat-btn" data-heat="simmer">♨️ Gentle Simmer</button>
+            <button class="tandoor-heat-btn active" data-heat="roast">🔥 Tandoori Roast</button>
+            <button class="tandoor-heat-btn" data-heat="inferno">⚡ Inferno Sear</button>
+          </div>
+
+          <!-- Prominent Roast Animation Trigger Button -->
+          <button id="btn-tandoor-roast-action" class="tandoor-roast-main-btn" title="Click to gracefully lower skewer onto coals">
+            <span>🔥</span> <span id="tandoor-roast-btn-label">Roast on Charcoal</span>
+          </button>
+
+          <!-- Reset Skewer Button -->
+          <button id="btn-tandoor-reset-action" class="btn" title="Reset Skewer" style="background:rgba(30,41,59,0.85); color:#94A3B8; border:1px solid rgba(255,255,255,0.15); border-radius:999px; padding:0.35rem 0.65rem; font-size:0.8rem; cursor:pointer;">
+            🔄
+          </button>
+        </div>
       </div>
-      <div class="model-3d-hint">🔥 3D Ember Rocks & Sizzling Sparks • Choose Heat Level</div>
+      <div class="model-3d-hint" style="bottom:3.6rem;">💡 Click "Roast on Charcoal" or tap the skewer to gracefully lower it onto glowing coals!</div>
     `;
 
     const width = container.clientWidth || 800;
     const height = container.clientHeight || 260;
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x0a0c14);
+    scene.background = new THREE.Color(0x07080D);
 
-    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-    camera.position.set(0, 75, 160);
-    camera.lookAt(0, -10, 0);
+    const camera = new THREE.PerspectiveCamera(44, width / height, 0.1, 1000);
+    camera.position.set(0, 72, 148);
+    camera.lookAt(0, -6, 0);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
@@ -8416,133 +8224,545 @@ Guidelines:
     renderer.domElement.style.width = '100%';
     renderer.domElement.style.height = '100%';
     renderer.domElement.style.display = 'block';
+    renderer.domElement.style.cursor = 'grab';
     container.insertBefore(renderer.domElement, container.firstChild);
 
-    // Terracotta clay rim/inner wall
-    const clayGeo = new THREE.CylinderGeometry(85, 100, 90, 32, 1, true);
+    // 1. Traditional Punjabi Clay Tandoor Hearth
+    const tandoorGroup = new THREE.Group();
+
+    // Outer Tapered Clay Wall
+    const clayGeo = new THREE.CylinderGeometry(82, 106, 92, 48, 8, true);
     const clayMat = new THREE.MeshStandardMaterial({
-      color: 0x8b3a1a,
-      roughness: 0.85,
-      metalness: 0.05,
+      color: 0x94391C,
+      roughness: 0.86,
+      metalness: 0.04,
       side: THREE.DoubleSide
     });
-    const clayCylinder = new THREE.Mesh(clayGeo, clayMat);
-    clayCylinder.position.y = 0;
-    scene.add(clayCylinder);
+    const clayMesh = new THREE.Mesh(clayGeo, clayMat);
+    tandoorGroup.add(clayMesh);
 
-    // 36 Randomized rocky embers
-    const emberGroup = new THREE.Group();
-    const emberMeshes = [];
-    for (let i = 0; i < 36; i++) {
-      const radius = 6 + Math.random() * 5;
-      const emberGeo = new THREE.DodecahedronGeometry(radius, 0);
-      const emberMat = new THREE.MeshStandardMaterial({
-        color: 0x1a0a0a,
-        emissive: 0xff3300,
-        emissiveIntensity: 1.8 + Math.random() * 1.5,
-        roughness: 0.9,
-        metalness: 0.1
-      });
-      const ember = new THREE.Mesh(emberGeo, emberMat);
+    // Inner Soot & Fire-Blackened Liner
+    const innerLinerGeo = new THREE.CylinderGeometry(80, 104, 90, 48, 4, true);
+    const innerLinerMat = new THREE.MeshStandardMaterial({
+      color: 0x180C09,
+      roughness: 0.94,
+      metalness: 0.05,
+      side: THREE.BackSide
+    });
+    const innerMesh = new THREE.Mesh(innerLinerGeo, innerLinerMat);
+    tandoorGroup.add(innerMesh);
+
+    // Handcrafted Rolled Terracotta Lip Rim
+    const rimGeo = new THREE.TorusGeometry(82, 5.2, 16, 48);
+    const rimMat = new THREE.MeshStandardMaterial({
+      color: 0x863217,
+      roughness: 0.82,
+      metalness: 0.04
+    });
+    const rimMesh = new THREE.Mesh(rimGeo, rimMat);
+    rimMesh.rotation.x = Math.PI / 2;
+    rimMesh.position.y = 46;
+    tandoorGroup.add(rimMesh);
+
+    // Forged Iron Tension Hoops & Rivets
+    const hoopMat = new THREE.MeshStandardMaterial({
+      color: 0x242428,
+      metalness: 0.85,
+      roughness: 0.35
+    });
+    const hoop1 = new THREE.Mesh(new THREE.TorusGeometry(94, 1.8, 8, 48), hoopMat);
+    hoop1.rotation.x = Math.PI / 2;
+    hoop1.position.y = 15;
+    tandoorGroup.add(hoop1);
+
+    const hoop2 = new THREE.Mesh(new THREE.TorusGeometry(103, 1.8, 8, 48), hoopMat);
+    hoop2.rotation.x = Math.PI / 2;
+    hoop2.position.y = -22;
+    tandoorGroup.add(hoop2);
+
+    // Hearth Refractory Floor Plate
+    const floorGeo = new THREE.CircleGeometry(76, 32);
+    const floorMat = new THREE.MeshStandardMaterial({ color: 0x0C0605, roughness: 0.96 });
+    const floorMesh = new THREE.Mesh(floorGeo, floorMat);
+    floorMesh.rotation.x = -Math.PI / 2;
+    floorMesh.position.y = -46;
+    tandoorGroup.add(floorMesh);
+
+    scene.add(tandoorGroup);
+
+    // 2. Realistic Hardwood Lump Charcoal Bed (52 Faceted Embers)
+    const coalsGroup = new THREE.Group();
+    const coalsList = [];
+    for (let i = 0; i < 52; i++) {
+      const r = 5.5 + Math.random() * 6.5;
+      const rockGeo = new THREE.DodecahedronGeometry(r, 0);
+      const pos = rockGeo.attributes.position;
+      for (let p = 0; p < pos.count; p++) {
+        pos.setXYZ(p,
+          pos.getX(p) * (0.8 + Math.random() * 0.4),
+          pos.getY(p) * (0.7 + Math.random() * 0.5),
+          pos.getZ(p) * (0.8 + Math.random() * 0.4)
+        );
+      }
+      rockGeo.computeVertexNormals();
+
       const angle = Math.random() * Math.PI * 2;
-      const dist = Math.random() * 65;
-      ember.position.set(Math.cos(angle) * dist, -35 + Math.random() * 8, Math.sin(angle) * dist);
-      ember.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
-      ember.scale.set(1 + Math.random() * 0.4, 0.7 + Math.random() * 0.5, 1 + Math.random() * 0.4);
-      emberGroup.add(ember);
-      emberMeshes.push({ mesh: ember, baseIntensity: emberMat.emissiveIntensity, pulseOffset: Math.random() * Math.PI * 2 });
-    }
-    scene.add(emberGroup);
+      const dist = Math.sqrt(Math.random()) * 62;
+      const isCenter = dist < 32;
 
-    // Flickering PointLight
-    const fireLight = new THREE.PointLight(0xff5500, 3.2, 220);
-    fireLight.position.set(0, -15, 0);
+      const rockMat = new THREE.MeshStandardMaterial({
+        color: 0x140B0B,
+        roughness: 0.94,
+        metalness: 0.08,
+        emissive: new THREE.Color(isCenter ? 0xFF4500 : 0xCC2200),
+        emissiveIntensity: isCenter ? (2.2 + Math.random() * 1.6) : (1.0 + Math.random() * 0.8)
+      });
+
+      const rock = new THREE.Mesh(rockGeo, rockMat);
+      const y = -36 + Math.random() * 7 + (isCenter ? -3 : 2);
+      rock.position.set(Math.cos(angle) * dist, y, Math.sin(angle) * dist);
+      rock.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+      rock.userData = {
+        baseIntensity: rockMat.emissiveIntensity,
+        phase: Math.random() * Math.PI * 2,
+        speed: 1.5 + Math.random() * 2.5,
+        isCenter,
+        heatColor: isCenter ? 0xFF5500 : 0xCC2200
+      };
+      coalsGroup.add(rock);
+      coalsList.push(rock);
+    }
+    scene.add(coalsGroup);
+
+    // 3. Dynamic Multi-Point Firelight
+    const fireLight = new THREE.PointLight(0xFF5500, 3.8, 250);
+    fireLight.position.set(0, -26, 0);
     scene.add(fireLight);
 
-    const ambientLight = new THREE.AmbientLight(0x221111, 0.8);
+    const coreGlowLight = new THREE.PointLight(0xFFAA00, 2.2, 130);
+    coreGlowLight.position.set(0, -32, 0);
+    scene.add(coreGlowLight);
+
+    const ambientLight = new THREE.AmbientLight(0x28120E, 1.1);
     scene.add(ambientLight);
 
-    // 60 Rising ember spark particles
-    const sparkCount = 60;
+    const rimLight = new THREE.DirectionalLight(0xFFEEDD, 0.48);
+    rimLight.position.set(20, 80, 50);
+    scene.add(rimLight);
+
+    // 4. Rising Convection Sparks & Culinary Smoke
+    const sparkCount = 85;
     const sparkGeo = new THREE.BufferGeometry();
     const sparkPositions = new Float32Array(sparkCount * 3);
     const sparkVelocities = [];
     for (let i = 0; i < sparkCount; i++) {
       const a = Math.random() * Math.PI * 2;
-      const d = Math.random() * 55;
+      const d = Math.random() * 56;
       sparkPositions[i * 3] = Math.cos(a) * d;
-      sparkPositions[i * 3 + 1] = -35 + Math.random() * 80;
+      sparkPositions[i * 3 + 1] = -34 + Math.random() * 85;
       sparkPositions[i * 3 + 2] = Math.sin(a) * d;
       sparkVelocities.push({
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: 0.8 + Math.random() * 1.2,
-        vz: (Math.random() - 0.5) * 0.4
+        vx: (Math.random() - 0.5) * 0.35,
+        vy: 0.8 + Math.random() * 1.4,
+        vz: (Math.random() - 0.5) * 0.35
       });
     }
     sparkGeo.setAttribute('position', new THREE.BufferAttribute(sparkPositions, 3));
     const sparkMat = new THREE.PointsMaterial({
-      color: 0xffaa00,
-      size: 2.8,
+      color: 0xFFAA22,
+      size: 3.2,
       transparent: true,
-      opacity: 0.9,
+      opacity: 0.92,
       blending: THREE.AdditiveBlending
     });
     const sparks = new THREE.Points(sparkGeo, sparkMat);
     scene.add(sparks);
 
+    // Culinary Smoke Wisps
+    const smokeCount = 35;
+    const smokeGeo = new THREE.BufferGeometry();
+    const smokePositions = new Float32Array(smokeCount * 3);
+    const smokeVelocities = [];
+    for (let i = 0; i < smokeCount; i++) {
+      const a = Math.random() * Math.PI * 2;
+      const d = Math.random() * 45;
+      smokePositions[i * 3] = Math.cos(a) * d;
+      smokePositions[i * 3 + 1] = -30 + Math.random() * 80;
+      smokePositions[i * 3 + 2] = Math.sin(a) * d;
+      smokeVelocities.push({
+        vx: (Math.random() - 0.5) * 0.2,
+        vy: 0.4 + Math.random() * 0.6,
+        vz: (Math.random() - 0.5) * 0.2
+      });
+    }
+    smokeGeo.setAttribute('position', new THREE.BufferAttribute(smokePositions, 3));
+    const smokeMat = new THREE.PointsMaterial({
+      color: 0x554433,
+      size: 9.5,
+      transparent: true,
+      opacity: 0.26,
+      blending: THREE.NormalBlending
+    });
+    const smokePoints = new THREE.Points(smokeGeo, smokeMat);
+    scene.add(smokePoints);
+
+    // 5. High-Fidelity 3D Tandoori Skewer (Marinated & Charred)
+    const skewerGroup = new THREE.Group();
+
+    // Forged Stainless Steel Square Skewer Rod
+    const rodGeo = new THREE.BoxGeometry(3.6, 3.6, 175);
+    const rodMat = new THREE.MeshStandardMaterial({
+      color: 0xDCDDE1,
+      metalness: 0.92,
+      roughness: 0.18
+    });
+    const rodMesh = new THREE.Mesh(rodGeo, rodMat);
+    rodMesh.rotation.y = Math.PI / 2;
+    skewerGroup.add(rodMesh);
+
+    // Forged Iron Ring Loop Handle
+    const handleGeo = new THREE.TorusGeometry(6.5, 1.6, 12, 24);
+    const handleMat = new THREE.MeshStandardMaterial({
+      color: 0x2A2A30,
+      metalness: 0.85,
+      roughness: 0.3
+    });
+    const handleMesh = new THREE.Mesh(handleGeo, handleMat);
+    handleMesh.position.set(-87.5, 0, 0);
+    handleMesh.rotation.y = Math.PI / 2;
+    skewerGroup.add(handleMesh);
+
+    // Authentic Threaded Food Items
+    const foodItems = [];
+    const createFoodItem = (geo, baseHex, xPos, name) => {
+      const mat = new THREE.MeshStandardMaterial({
+        color: baseHex,
+        roughness: 0.48,
+        metalness: 0.08,
+        emissive: 0x000000,
+        emissiveIntensity: 0
+      });
+      const mesh = new THREE.Mesh(geo, mat);
+      mesh.position.set(xPos, 0, 0);
+      mesh.userData = { name, baseHex, mat };
+      skewerGroup.add(mesh);
+      foodItems.push(mesh);
+      return mesh;
+    };
+
+    // 1. Paneer Tikka Cube 1
+    createFoodItem(new THREE.BoxGeometry(16, 16, 16), 0xE67E22, -44, 'Paneer Tikka');
+    // 2. Red Bell Pepper Chunk
+    createFoodItem(new THREE.BoxGeometry(14, 15, 14), 0xC0392B, -26, 'Red Bell Pepper');
+    // 3. Golden Tandoori Pineapple
+    createFoodItem(new THREE.BoxGeometry(15, 16, 15), 0xF1C40F, -8, 'Golden Pineapple');
+    // 4. Button Mushroom Cap (Dome)
+    createFoodItem(new THREE.CylinderGeometry(9.5, 7.5, 12, 20), 0x6D4C41, 10, 'Button Mushroom');
+    // 5. Paneer Tikka Cube 2
+    createFoodItem(new THREE.BoxGeometry(16, 16, 16), 0xE67E22, 28, 'Paneer Tikka');
+    // 6. Crunchy Green Capsicum
+    createFoodItem(new THREE.BoxGeometry(14, 15, 14), 0x27AE60, 46, 'Green Pepper');
+    // 7. Sirka Red Onion Petal
+    createFoodItem(new THREE.CylinderGeometry(8, 10, 10, 16), 0x8E44AD, 62, 'Sirka Onion');
+
+    // Positions for Animation: Resting vs Gracefully Sitting on Coals
+    const REST_POS = { y: 47, rotX: 0.14, rotZ: -0.09 };
+    const COAL_POS = { y: -26, rotX: 0.0, rotZ: 0.0 };
+
+    skewerGroup.position.set(0, REST_POS.y, 0);
+    skewerGroup.rotation.set(REST_POS.rotX, 0, REST_POS.rotZ);
+    scene.add(skewerGroup);
+
+    // 6. Animation & Roast Controller Engine
     let heatMultiplier = 1.0;
     let animId = null;
     let isPaused = false;
+    let isRoasting = false;
+    let animProgress = 0.0;
+    let targetAnim = 0.0;
+    let doneness = 0.0;
+    let lastSizzleTime = 0;
+    let hasTouchedDown = false;
 
+    // Smooth Cubic Spline Easing
+    const easeInOutCubic = (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+    const roastBtn = container.querySelector('#btn-tandoor-roast-action');
+    const roastBtnLabel = container.querySelector('#tandoor-roast-btn-label');
+    const resetBtn = container.querySelector('#btn-tandoor-reset-action');
+    const timerText = container.querySelector('#tandoor-roast-timer-text');
+    const donenessFill = container.querySelector('#tandoor-doneness-fill');
+    const donenessPct = container.querySelector('#tandoor-doneness-pct');
+    const skewerBadge = container.querySelector('#tandoor-skewer-badge');
+    const tempDisplay = container.querySelector('#tandoor-temp-display');
+
+    // Procedural Maillard Charring
+    const updateFoodCharring = () => {
+      const pct = Math.min(150, Math.floor(doneness));
+      const charRatio = Math.min(1.0, doneness / 100);
+
+      foodItems.forEach(item => {
+        const mat = item.userData.mat;
+        if (pct < 40) {
+          mat.color.setHex(item.userData.baseHex);
+          mat.roughness = 0.48;
+          mat.emissive.setHex(0x000000);
+          mat.emissiveIntensity = 0;
+        } else if (pct <= 100) {
+          const baseCol = new THREE.Color(item.userData.baseHex);
+          const charredCol = new THREE.Color(0x8A3B0D);
+          baseCol.lerp(charredCol, (pct - 40) / 60);
+          mat.color.copy(baseCol);
+          mat.roughness = 0.58;
+          mat.emissive.setHex(0xFF4500);
+          mat.emissiveIntensity = 0.25 * charRatio;
+        } else {
+          const burntCol = new THREE.Color(0x180E09);
+          mat.color.lerp(burntCol, 0.45);
+          mat.roughness = 0.85;
+          mat.emissive.setHex(0xFF2200);
+          mat.emissiveIntensity = 0.45;
+        }
+      });
+
+      if (timerText) timerText.innerText = `Exposure: ${(doneness / 10).toFixed(1)}s`;
+      if (donenessFill) {
+        donenessFill.style.width = `${Math.min(100, pct)}%`;
+        if (pct < 40) {
+          donenessFill.style.background = 'linear-gradient(90deg, #38BDF8, #0284C7)';
+        } else if (pct <= 100) {
+          donenessFill.style.background = 'linear-gradient(90deg, #F59E0B, #10B981)';
+        } else {
+          donenessFill.style.background = 'linear-gradient(90deg, #EF4444, #991B1B)';
+        }
+      }
+      if (donenessPct) {
+        if (pct < 40) {
+          donenessPct.innerText = `${pct}% Raw`;
+          donenessPct.style.color = '#38BDF8';
+        } else if (pct <= 100) {
+          donenessPct.innerText = `✨ ${pct}% Golden Char`;
+          donenessPct.style.color = '#10B981';
+        } else {
+          donenessPct.innerText = `⚠️ ${pct}% Burnt!`;
+          donenessPct.style.color = '#EF4444';
+        }
+      }
+    };
+
+    // Toggle Roasting Action
+    const toggleRoast = () => {
+      isRoasting = !isRoasting;
+      targetAnim = isRoasting ? 1.0 : 0.0;
+
+      if (isRoasting) {
+        hasTouchedDown = false;
+        sound.playClick();
+        if (roastBtnLabel) roastBtnLabel.innerText = 'Lift Skewer';
+        if (roastBtn) {
+          roastBtn.style.background = 'linear-gradient(135deg, #10B981, #059669)';
+          roastBtn.style.boxShadow = '0 0 16px rgba(16,185,129,0.6)';
+        }
+        if (skewerBadge) {
+          skewerBadge.innerText = '🔥 Gracefully Lowering onto Coals...';
+          skewerBadge.style.background = '#EA580C';
+        }
+      } else {
+        sound.playClick();
+        if (roastBtnLabel) roastBtnLabel.innerText = 'Roast on Charcoal';
+        if (roastBtn) {
+          roastBtn.style.background = 'linear-gradient(135deg, #DC2626, #EA580C)';
+          roastBtn.style.boxShadow = '0 0 16px rgba(220,38,38,0.6)';
+        }
+
+        const pct = Math.min(150, Math.floor(doneness));
+        if (pct >= 80 && pct <= 105) {
+          sound.playFanfare();
+          launchConfetti();
+          showToast('✨ MASTERPIECE! Perfect Golden Char (+100 XP)', 'success');
+          this.addXP(100, '🔥 Tandoor Pitmaster');
+          if (skewerBadge) {
+            skewerBadge.innerText = '🏆 Golden Char Perfection!';
+            skewerBadge.style.background = '#10B981';
+          }
+        } else {
+          if (skewerBadge) {
+            skewerBadge.innerText = '🍢 Skewer: Resting';
+            skewerBadge.style.background = '#1E293B';
+          }
+        }
+      }
+    };
+
+    roastBtn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleRoast();
+    });
+
+    resetBtn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      sound.playClick();
+      doneness = 0;
+      isRoasting = false;
+      targetAnim = 0.0;
+      hasTouchedDown = false;
+      if (roastBtnLabel) roastBtnLabel.innerText = 'Roast on Charcoal';
+      if (roastBtn) {
+        roastBtn.style.background = 'linear-gradient(135deg, #DC2626, #EA580C)';
+        roastBtn.style.boxShadow = '0 0 16px rgba(220,38,38,0.6)';
+      }
+      if (skewerBadge) {
+        skewerBadge.innerText = '🍢 Skewer: Resting';
+        skewerBadge.style.background = '#1E293B';
+      }
+      updateFoodCharring();
+    });
+
+    // Heat Level Selection
     container.querySelectorAll('.tandoor-heat-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
         container.querySelectorAll('.tandoor-heat-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         const heatLevel = btn.getAttribute('data-heat');
-        const tempDisplay = container.querySelector('#tandoor-temp-display');
+        sound.playTick();
+
         if (heatLevel === 'simmer') {
           heatMultiplier = 0.5;
           if (tempDisplay) tempDisplay.innerText = 'Gentle Simmer: 180°C';
-          fireLight.color.setHex(0xff7722);
+          fireLight.color.setHex(0xFF7722);
+          coreGlowLight.color.setHex(0xFF8822);
         } else if (heatLevel === 'roast') {
           heatMultiplier = 1.0;
           if (tempDisplay) tempDisplay.innerText = 'Tandoori Roast: 350°C';
-          fireLight.color.setHex(0xff5500);
+          fireLight.color.setHex(0xFF5500);
+          coreGlowLight.color.setHex(0xFFAA00);
+          if (!isRoasting) toggleRoast();
         } else if (heatLevel === 'inferno') {
           heatMultiplier = 1.8;
           if (tempDisplay) tempDisplay.innerText = 'Inferno Sear: 480°C';
-          fireLight.color.setHex(0xff2200);
+          fireLight.color.setHex(0xFF2200);
+          coreGlowLight.color.setHex(0xFFDD44);
         }
       });
     });
 
+    // Direct Raycaster interaction: Tap 3D skewer to toggle roast
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+
+    renderer.domElement.addEventListener('click', (e) => {
+      const rect = renderer.domElement.getBoundingClientRect();
+      mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObjects(skewerGroup.children, true);
+      if (intersects.length > 0) {
+        toggleRoast();
+      }
+    });
+
+    // Touch/drag orbit on tandoor pot
+    let isDragging = false;
+    let prevX = 0;
+    renderer.domElement.addEventListener('pointerdown', (e) => {
+      isDragging = true;
+      prevX = e.clientX;
+    });
+    window.addEventListener('pointermove', (e) => {
+      if (!isDragging) return;
+      const dx = e.clientX - prevX;
+      prevX = e.clientX;
+      tandoorGroup.rotation.y += dx * 0.008;
+      coalsGroup.rotation.y += dx * 0.008;
+    });
+    window.addEventListener('pointerup', () => { isDragging = false; });
+
+    // 7. Real-Time Rendering & Animation Loop
     const animate = () => {
       if (isPaused) return;
       animId = requestAnimationFrame(animate);
 
       const time = Date.now() * 0.003;
-      fireLight.intensity = (2.6 + Math.sin(time * 5) * 0.8 + Math.sin(time * 11) * 0.4) * heatMultiplier;
 
-      emberMeshes.forEach(em => {
-        const pulse = Math.sin(time * 3 + em.pulseOffset);
-        em.mesh.material.emissiveIntensity = (em.baseIntensity + pulse * 0.7) * heatMultiplier;
+      // Firelight Thermal Flicker
+      const flicker = (Math.sin(time * 6.5) * 0.45 + Math.sin(time * 13.0) * 0.25 + (Math.random() - 0.5) * 0.35) * heatMultiplier;
+      fireLight.intensity = Math.max(1.2, 3.6 + flicker);
+      coreGlowLight.intensity = Math.max(0.8, 2.2 + flicker * 0.7);
+
+      // Coals Embers Breathing
+      coalsList.forEach(c => {
+        const u = c.userData;
+        const pulse = Math.sin(time * u.speed * heatMultiplier + u.phase) * 0.35 + 0.8;
+        const contactBoost = (isRoasting && animProgress > 0.85 && u.isCenter) ? 1.4 : 1.0;
+        c.material.emissiveIntensity = u.baseIntensity * pulse * heatMultiplier * contactBoost;
       });
 
-      const posArray = sparkGeo.attributes.position.array;
+      // Smooth Graceful Skewer Animation Interpolation
+      if (Math.abs(animProgress - targetAnim) > 0.002) {
+        animProgress += (targetAnim - animProgress) * 0.065;
+        const ease = easeInOutCubic(animProgress);
+        skewerGroup.position.y = REST_POS.y + (COAL_POS.y - REST_POS.y) * ease;
+        skewerGroup.rotation.x = REST_POS.rotX + (COAL_POS.rotX - REST_POS.rotX) * ease;
+        skewerGroup.rotation.z = REST_POS.rotZ + (COAL_POS.rotZ - REST_POS.rotZ) * ease;
+
+        if (targetAnim === 1.0 && animProgress > 0.94 && !hasTouchedDown) {
+          hasTouchedDown = true;
+          sound.playSizzle();
+          lastSizzleTime = Date.now();
+          if (skewerBadge) {
+            skewerBadge.innerText = '🔥 Sizzling Gracefully on Charcoal Coals!';
+            skewerBadge.style.background = '#DC2626';
+          }
+        }
+      } else {
+        animProgress = targetAnim;
+      }
+
+      // Roasting over coals physics & continuous sizzle
+      if (isRoasting && animProgress > 0.85) {
+        skewerGroup.position.y = COAL_POS.y + Math.sin(Date.now() * 0.045) * 0.35;
+        doneness += 0.26 * heatMultiplier;
+        updateFoodCharring();
+
+        if (Date.now() - lastSizzleTime > 1400) {
+          sound.playSizzle();
+          lastSizzleTime = Date.now();
+        }
+      }
+
+      // Rising Convection Sparks Physics
+      const pArr = sparkGeo.attributes.position.array;
+      const roastBoost = (isRoasting && animProgress > 0.85) ? 1.5 : 1.0;
       for (let i = 0; i < sparkCount; i++) {
-        posArray[i * 3] += sparkVelocities[i].vx;
-        posArray[i * 3 + 1] += sparkVelocities[i].vy * heatMultiplier;
-        posArray[i * 3 + 2] += sparkVelocities[i].vz;
-        if (posArray[i * 3 + 1] > 60) {
+        pArr[i * 3 + 1] += sparkVelocities[i].vy * heatMultiplier * roastBoost;
+        pArr[i * 3] += sparkVelocities[i].vx;
+        pArr[i * 3 + 2] += sparkVelocities[i].vz;
+        if (pArr[i * 3 + 1] > 60) {
           const a = Math.random() * Math.PI * 2;
-          const d = Math.random() * 55;
-          posArray[i * 3] = Math.cos(a) * d;
-          posArray[i * 3 + 1] = -35;
-          posArray[i * 3 + 2] = Math.sin(a) * d;
+          const d = Math.random() * 54;
+          pArr[i * 3] = Math.cos(a) * d;
+          pArr[i * 3 + 1] = -34;
+          pArr[i * 3 + 2] = Math.sin(a) * d;
         }
       }
       sparkGeo.attributes.position.needsUpdate = true;
-      clayCylinder.rotation.y += 0.001;
+
+      // Culinary Smoke Puffs Physics
+      const sArr = smokeGeo.attributes.position.array;
+      for (let i = 0; i < smokeCount; i++) {
+        sArr[i * 3 + 1] += smokeVelocities[i].vy * heatMultiplier * roastBoost;
+        sArr[i * 3] += smokeVelocities[i].vx;
+        sArr[i * 3 + 2] += smokeVelocities[i].vz;
+        if (sArr[i * 3 + 1] > 65) {
+          const a = Math.random() * Math.PI * 2;
+          const d = Math.random() * 42;
+          sArr[i * 3] = Math.cos(a) * d;
+          sArr[i * 3 + 1] = -30;
+          sArr[i * 3 + 2] = Math.sin(a) * d;
+        }
+      }
+      smokeGeo.attributes.position.needsUpdate = true;
 
       renderer.render(scene, camera);
     };
@@ -9053,10 +9273,10 @@ Guidelines:
       this.switchMainTab('games', false);
     }
 
-    // 3. Tandoor Skewer Roaster & Plating Studio
+    // 3. Tandoor Skewer Roaster & Plating Studio (Enabled across all versions including v1)
     const skewerStage = document.getElementById('tandoor-skewer-game-container');
     if (skewerStage) {
-      const showSkewer = ver !== 'v1' && v2.tandoorSkewerGame !== false;
+      const showSkewer = v2.tandoorSkewerGame !== false;
       skewerStage.style.display = showSkewer ? 'block' : 'none';
     }
 

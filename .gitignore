@@ -19,3 +19,10 @@ package-lock.json
 # Local env
 .env
 .env.local
+
+# Ephemeral artifacts & test recordings
+.agents/
+hyperframes/
+mobile_snapshots/
+scratch/
+

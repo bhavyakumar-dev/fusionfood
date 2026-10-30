@@ -4205,6 +4205,30 @@ input:checked + .slider:before {
   box-shadow: 0 0 10px rgba(153, 27, 27, 0.7);
 }
 
+.tandoor-roast-main-btn {
+  background: linear-gradient(135deg, #DC2626, #EA580C);
+  color: #FFFFFF;
+  font-weight: 900;
+  font-size: 0.82rem;
+  padding: 0.38rem 1.05rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 16px rgba(220, 38, 38, 0.6);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.tandoor-roast-main-btn:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 0 24px rgba(234, 88, 12, 0.85);
+  background: linear-gradient(135deg, #EF4444, #F97316);
+}
+.tandoor-roast-main-btn:active {
+  transform: translateY(1px) scale(0.98);
+}
+
 /* 3D Model HUD Elements */
 .model-3d-hud {
   position: absolute;
