@@ -224,7 +224,11 @@ export async function runSelfVerification() {
       if (!data.success || !Array.isArray(data.leaderboard)) throw new Error('Invalid leaderboard payload');
       if (data.leaderboard.length !== 5) throw new Error(`Expected 5 items, got ${data.leaderboard.length}`);
       if (data.leaderboard[0].rank !== 1) throw new Error('First item rank is not 1');
-      if (data.leaderboard[0].xp < data.leaderboard[1].xp) throw new Error('Items not sorted by XP DESC');
+      if (data.leaderboard[0].level === undefined) throw new Error('Leaderboard item missing level property');
+      if (data.leaderboard[0].level < data.leaderboard[1].level) throw new Error('Items not sorted by level DESC');
+      if (data.leaderboard[0].level === data.leaderboard[1].level && data.leaderboard[0].xp < data.leaderboard[1].xp) {
+        throw new Error('Items not sorted by level DESC then XP DESC');
+      }
     });
 
     // Test 4: Leaderboard (Challenge Filter: hotPotato)

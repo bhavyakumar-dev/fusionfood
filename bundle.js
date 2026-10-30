@@ -3871,6 +3871,13 @@ class FusionApp {
           if (this.buildDishSelectedIngredients.length === correctItems.length) {
             launchConfetti();
             sound.playFanfare();
+            const prof = this.getActiveProfile();
+            if (prof) {
+              if (!prof.bests) prof.bests = {};
+              prof.bests.buildDish = (prof.bests.buildDish || 0) + 1;
+              this.saveState();
+              this.submitScoreToGlobal('buildDish', prof.bests.buildDish, 50).catch(() => {});
+            }
             this.addXP(50, '🥘 Dish Master');
             showToast(`Perfected ${dish.name}! +50 XP`, 'success');
           }
@@ -4129,6 +4136,17 @@ class FusionApp {
           <button class="btn btn-primary" id="restart-trivia-btn">Play Trivia Again 🔄</button>
         </div>
       `;
+
+      // Update personal bests & submit trivia score
+      const profile = this.getActiveProfile();
+      if (profile) {
+        if (!profile.bests) profile.bests = {};
+        if (this.triviaScore > (profile.bests.trivia || 0)) {
+          profile.bests.trivia = this.triviaScore;
+          this.saveState();
+        }
+        this.submitScoreToGlobal('trivia', this.triviaScore, 0).catch(() => {});
+      }
 
       document.getElementById('restart-trivia-btn')?.addEventListener('click', () => {
         sound.playClick();
@@ -6322,6 +6340,17 @@ Guidelines:
       if (confirm('🗑️ CLEAR ALL WEBSITE DATA:\n\nAre you sure you want to completely clear all user XP, leaderboards, levels, best scores, and website history?')) {
         await this.clearAllWebsiteData();
       }
+    });
+
+    // Leaderboard scope toggle (Family Roster vs Global Hall of Fame)
+    document.querySelectorAll('#leaderboard-scope-toggle .scope-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        sound.playClick();
+        const scope = btn.getAttribute('data-scope') || 'local';
+        this.state.leaderboardScope = scope;
+        this.saveState();
+        this.renderLeaderboard();
+      });
     });
 
     // Leaderboard filter tabs
