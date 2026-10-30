@@ -3910,23 +3910,6 @@ input:checked + .slider:before {
   box-shadow: 0 10px 36px rgba(0, 0, 0, 0.75), 0 0 30px rgba(245, 158, 11, 0.28);
 }
 
-#dish-3d-canvas-container,
-.dish-3d-canvas-container {
-  width: 100%;
-  max-width: 420px;
-  aspect-ratio: 1 / 1;
-  min-height: 240px;
-  margin: 0.75rem auto;
-  border-radius: var(--radius-md);
-  border: 1.5px solid var(--border-color);
-  background: var(--bg-card-subtle);
-  position: relative;
-  overflow: hidden;
-  box-shadow: var(--shadow-warm);
-  contain: layout style paint;
-  display: block;
-}
-
 #molecule-3d-canvas,
 .molecule-3d-canvas {
   width: 100%;

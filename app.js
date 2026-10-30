@@ -3744,8 +3744,6 @@ class FusionApp {
       </div>
 
       <div class="build-dish-container">
-        <!-- 3D Interactive Vegetarian Ingredient Stage -->
-        <div id="dish-3d-canvas-container" class="dish-3d-canvas-container" aria-label="3D Interactive Ingredient Model"></div>
         <!-- Recipe Selector Chips -->
         <div class="recipe-selector-row">
           ${FUSION_DISHES.map((d, idx) => `
@@ -3828,23 +3826,6 @@ class FusionApp {
         </div>
       </div>
     `;
-
-        if (this.threeManager && this.threeManager.isSupported()) {
-      const stage = arena.querySelector('#dish-3d-canvas-container');
-      if (stage) {
-        const primary = dish.pantryItems.find(i => i.isCorrect)?.name || 'King Oyster Mushroom';
-        this.threeManager.initBuildDish3D(stage, primary);
-      }
-    }
-
-    // Hover and select hooks for 3D model
-    arena.querySelectorAll('.ingredient-btn').forEach(btn => {
-      btn.addEventListener('pointerenter', () => {
-        if (this.threeManager && this.threeManager.isSupported()) {
-          this.threeManager.switchIngredient3D(btn.getAttribute('data-ing-name'));
-        }
-      });
-    });
 
     arena.querySelectorAll('.recipe-chip').forEach(btn => {
       btn.addEventListener('click', () => {

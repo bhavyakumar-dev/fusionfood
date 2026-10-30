@@ -332,7 +332,7 @@ async function verifyViewportsWithChrome(tracker) {
           const bldBtn = document.querySelector('[data-game-id="buildDish"]');
           if (bldBtn) bldBtn.click();
           await new Promise(r => setTimeout(r, 300));
-          results.hasDishContainer = !!document.getElementById('dish-3d-canvas-container');
+          results.hasBuildDishBoard = !!document.querySelector('.build-dish-container');
           
           // Science Wheel
           const sciBtn = document.querySelector('[data-game-id="spinScience"]');
@@ -354,7 +354,7 @@ async function verifyViewportsWithChrome(tracker) {
     tracker.assert(threeAudit.hasApp, 'FusionApp instance is mounted on window.app');
     tracker.assert(threeAudit.hasPotatoCanvas, 'Hot Potato Rush 3D golden potato canvas is mounted');
     tracker.assert(threeAudit.hasTandoorStage, 'Kitchen Lab glowing tandoor hearth container is mounted');
-    tracker.assert(threeAudit.hasDishContainer, 'Build-a-Dish 3D vegetarian ingredient container is mounted');
+    tracker.assert(threeAudit.hasBuildDishBoard, 'Build-a-Dish interactive kitchen board is mounted');
     tracker.assert(threeAudit.hasMoleculeContainer, 'Science Wheel 3D molecular spice model container is mounted');
 
     // ----------------------------------------------------------------
