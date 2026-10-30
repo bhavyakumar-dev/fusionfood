@@ -4089,7 +4089,8 @@ class FusionApp {
     if (typeof window !== 'undefined') {
       const routeParams = new URLSearchParams(window.location.search);
       const routeVersion = (routeParams.get('v') || routeParams.get('version') || '').toLowerCase();
-      const routePath = (window.location.pathname || '').toLowerCase().replace(/\\/+$/, '');
+      let routePath = (window.location.pathname || '').toLowerCase();
+      while (routePath.endsWith('/')) routePath = routePath.slice(0, -1);
       if (['1', 'v1'].includes(routeVersion) || routePath.endsWith('/v1')) this.state.appVersion = 'v1';
       else if (['2', 'v2'].includes(routeVersion) || routePath.endsWith('/v2')) this.state.appVersion = 'v2';
       else if (['3', 'v3'].includes(routeVersion) || routePath.endsWith('/v3')) this.state.appVersion = 'v3';
