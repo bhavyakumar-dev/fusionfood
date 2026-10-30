@@ -160,4 +160,6 @@ Pushes and pull requests run the build, parity check, regression suite and Wrang
 
 ### CORS and custom domains
 
+The current Pages project URL assigned by Cloudflare is `https://fusionfood-383.pages.dev`. Keep the `CORS_ORIGIN` values in both Wrangler configurations aligned with the actual Pages production origin. The Pages middleware also permits this project's preview subdomains.
+
 `CORS_ORIGIN` is the primary Pages origin. For a custom domain, add its exact HTTPS origin to the `CORS_ALLOWED_ORIGINS` Pages/Worker variable (comma-separated when there are multiple origins). Do not use wildcard origins. CORS is not a substitute for authentication.
